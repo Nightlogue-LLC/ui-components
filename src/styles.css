@@ -1,0 +1,7 @@
+/*
+ * Shared foundation: tokens + every shared component's CSS.
+ * Add each new shared component here (tests/architecture.test.ts fails if one is missing).
+ * Themes are NOT included: import the theme(s) you need separately.
+ */
+@import './tokens/tokens.css';
+@import './components/button/button.css';

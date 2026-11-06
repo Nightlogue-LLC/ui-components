@@ -1,0 +1,46 @@
+/*
+ * "neutral" example theme.
+ *
+ * Purpose: proves the architecture (contract, scoping, exports, gallery) end to end.
+ * It is a grayscale placeholder, NOT a brand identity. Do not ship it as a product's look.
+ *
+ * Every selector is scoped under [data-nl-theme='neutral'] so it cannot affect anything outside
+ * an element that opted in. Dark mode is an optional convention: [data-nl-mode='dark'].
+ */
+[data-nl-theme='neutral'] {
+  color-scheme: light;
+
+  --nl-color-bg: #f6f6f7;
+  --nl-color-surface: #ffffff;
+  --nl-color-surface-hover: #ececee;
+  --nl-color-text: #1b1b1f;
+  --nl-color-border: #c4c4cc;
+  --nl-color-accent: #1b1b1f;
+  --nl-color-accent-hover: #34343a;
+  --nl-color-accent-active: #4a4a52;
+  --nl-color-on-accent: #ffffff;
+  --nl-color-focus-ring: #1b1b1f;
+  --nl-color-disabled-bg: #e3e3e6;
+  --nl-color-disabled-text: #6e6e78;
+
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+}
+
+[data-nl-theme='neutral'][data-nl-mode='dark'] {
+  color-scheme: dark;
+
+  --nl-color-bg: #121214;
+  --nl-color-surface: #1c1c20;
+  --nl-color-surface-hover: #2a2a30;
+  --nl-color-text: #f2f2f4;
+  --nl-color-border: #44444c;
+  --nl-color-accent: #f2f2f4;
+  --nl-color-accent-hover: #d8d8dc;
+  --nl-color-accent-active: #c0c0c6;
+  --nl-color-on-accent: #121214;
+  --nl-color-focus-ring: #f2f2f4;
+  --nl-color-disabled-bg: #2a2a30;
+  --nl-color-disabled-text: #8a8a94;
+}

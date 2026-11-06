@@ -1,0 +1,14 @@
+{
+  // Emits the published package: unbundled ES modules + .d.ts into dist/.
+  // No Node or Vite types on purpose: library code must only use DOM + ES2020.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "noEmit": false,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}
