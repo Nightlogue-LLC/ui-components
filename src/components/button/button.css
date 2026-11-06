@@ -1,0 +1,135 @@
+/*
+ * Button
+ *
+ * Markup:  <button class="nl-button nl-button--primary nl-button--md"><span class="nl-button__label">Save</span></button>
+ * Modifiers: --primary | --secondary | --ghost   and   --sm | --md | --lg
+ * States:  :disabled, [aria-busy='true'] (loading), :focus-visible
+ *
+ * Reads colors only from the theme contract (--nl-color-*). Themes may tune it with the optional
+ * hooks --nl-button-radius and --nl-button-padding-x without overriding any selector here.
+ *
+ * Private custom properties (--_*) are implementation details; do not set them from outside.
+ */
+.nl-button {
+  /* Default variant = primary */
+  --_bg: var(--nl-color-accent);
+  --_bg-hover: var(--nl-color-accent-hover);
+  --_bg-active: var(--nl-color-accent-active);
+  --_fg: var(--nl-color-on-accent);
+  --_border: transparent;
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nl-space-2);
+  min-height: var(--nl-size-control-md);
+  margin: 0;
+  padding: 0 var(--nl-button-padding-x, var(--nl-space-4));
+  border: var(--nl-border-width) solid var(--_border);
+  border-radius: var(--nl-button-radius, var(--nl-radius-md));
+  background: var(--_bg);
+  color: var(--_fg);
+  font-family: var(--nl-font-family);
+  font-size: var(--nl-font-size-md);
+  font-weight: var(--nl-font-weight-medium);
+  line-height: var(--nl-line-height);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  /* Touch: no double-tap zoom delay, no grey tap flash in Android WebView. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--nl-duration-fast) var(--nl-easing),
+    border-color var(--nl-duration-fast) var(--nl-easing);
+}
+
+/* Variants */
+.nl-button--secondary {
+  --_bg: var(--nl-color-surface);
+  --_bg-hover: var(--nl-color-surface-hover);
+  --_bg-active: var(--nl-color-surface-hover);
+  --_fg: var(--nl-color-text);
+  --_border: var(--nl-color-border);
+}
+
+.nl-button--ghost {
+  --_bg: transparent;
+  --_bg-hover: var(--nl-color-surface-hover);
+  --_bg-active: var(--nl-color-surface-hover);
+  --_fg: var(--nl-color-text);
+  --_border: transparent;
+}
+
+/* Sizes */
+.nl-button--sm {
+  min-height: var(--nl-size-control-sm);
+  font-size: var(--nl-font-size-sm);
+}
+
+.nl-button--md {
+  min-height: var(--nl-size-control-md);
+  font-size: var(--nl-font-size-md);
+}
+
+.nl-button--lg {
+  min-height: var(--nl-size-control-lg);
+  font-size: var(--nl-font-size-lg);
+}
+
+/* Interaction. Hover is gated so touch screens don't get a "stuck" hover after a tap. */
+@media (hover: hover) {
+  .nl-button:hover:not(:disabled) {
+    background: var(--_bg-hover);
+  }
+}
+
+.nl-button:active:not(:disabled) {
+  background: var(--_bg-active);
+}
+
+.nl-button:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+/* Disabled (but not merely loading) */
+.nl-button:disabled:not([aria-busy='true']) {
+  background: var(--nl-color-disabled-bg);
+  border-color: transparent;
+  color: var(--nl-color-disabled-text);
+  cursor: not-allowed;
+}
+
+/* Loading: keeps the variant colors, shows a spinner before the label. */
+.nl-button[aria-busy='true'] {
+  cursor: progress;
+}
+
+.nl-button[aria-busy='true']::before {
+  content: '';
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: nl-button-spin 0.8s linear infinite;
+}
+
+@keyframes nl-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-button {
+    transition: none;
+  }
+
+  .nl-button[aria-busy='true']::before {
+    animation: none;
+  }
+}

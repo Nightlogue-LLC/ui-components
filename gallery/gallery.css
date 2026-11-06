@@ -1,0 +1,212 @@
+/*
+ * Gallery chrome only. Deliberately independent of every theme (own colors, `gal-` prefix) so
+ * switching themes changes the previewed components, never the tool around them.
+ */
+:root {
+  --gal-bg: #ffffff;
+  --gal-fg: #1b1b1f;
+  --gal-muted: #5f5f69;
+  --gal-line: #d4d4da;
+  --gal-panel: #f3f3f5;
+  --gal-link: #1b1b1f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gal-bg: #0d0d0f;
+    --gal-fg: #ececf0;
+    --gal-muted: #9a9aa6;
+    --gal-line: #2c2c33;
+    --gal-panel: #17171b;
+    --gal-link: #ececf0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--gal-bg);
+  color: var(--gal-fg);
+  font:
+    16px/1.4 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  /* Respect notches / gesture bars like a Capacitor WebView with viewport-fit=cover. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  margin: 1.75rem 0 0.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gal-muted);
+}
+
+.gal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gal-line);
+}
+
+.gal-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.gal-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--gal-muted);
+}
+
+.gal-field select,
+.gal-field input[type='text'] {
+  min-height: 2.5rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--gal-line);
+  border-radius: 6px;
+  background: var(--gal-bg);
+  color: var(--gal-fg);
+  font: inherit;
+}
+
+.gal-field input[type='checkbox'] {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.gal-body {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+}
+
+.gal-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-right: 1px solid var(--gal-line);
+}
+
+.gal-nav a {
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  color: var(--gal-link);
+  text-decoration: none;
+}
+
+.gal-nav a[aria-current='page'] {
+  background: var(--gal-panel);
+  font-weight: 600;
+}
+
+.gal-main {
+  min-width: 0;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.gal-desc {
+  margin: 0.5rem 0 0;
+  color: var(--gal-muted);
+}
+
+/* The themed preview area. Its colors come from the active theme, not from the gallery. */
+.gal-stage {
+  margin-top: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--gal-line);
+  border-radius: 8px;
+}
+
+.gal-stage--tablet {
+  max-width: 768px;
+}
+
+.gal-stage--mobile {
+  max-width: 375px;
+}
+
+.gal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem;
+}
+
+.gal-cell--state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.gal-cell__label {
+  font:
+    0.75rem/1.2 ui-monospace,
+    monospace;
+  opacity: 0.7;
+}
+
+.gal-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.gal-log {
+  margin: 0;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border-radius: 6px;
+  background: var(--gal-panel);
+  font:
+    0.8rem/1.6 ui-monospace,
+    monospace;
+  color: var(--gal-muted);
+}
+
+/* Phones: stack the nav above the content as a horizontal scroller. */
+@media (max-width: 640px) {
+  .gal-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gal-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--gal-line);
+  }
+
+  .gal-nav a {
+    white-space: nowrap;
+  }
+}

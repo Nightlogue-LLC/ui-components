@@ -1,0 +1,42 @@
+/*
+ * Foundation tokens: structural defaults shared by every project.
+ *
+ * These are intentionally brand-neutral (spacing, sizing, motion, shape, system font stack).
+ * They live on :root so components work anywhere, and any theme may override them inside its
+ * own [data-nl-theme] scope. COLOR tokens are NOT defined here: every theme must supply them
+ * (see src/tokens/contract.ts for the required list).
+ */
+:root {
+  /* Spacing scale */
+  --nl-space-1: 0.25rem;
+  --nl-space-2: 0.5rem;
+  --nl-space-3: 0.75rem;
+  --nl-space-4: 1rem;
+  --nl-space-5: 1.5rem;
+  --nl-space-6: 2rem;
+
+  /* Typography */
+  --nl-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --nl-font-size-sm: 0.875rem;
+  --nl-font-size-md: 1rem;
+  --nl-font-size-lg: 1.125rem;
+  --nl-font-weight-medium: 600;
+  --nl-line-height: 1.25;
+
+  /* Shape */
+  --nl-radius-md: 0.5rem;
+  --nl-border-width: 1px;
+
+  /* Control heights (md = 44px, the common minimum touch target) */
+  --nl-size-control-sm: 2.25rem;
+  --nl-size-control-md: 2.75rem;
+  --nl-size-control-lg: 3.25rem;
+
+  /* Focus ring */
+  --nl-focus-ring-width: 2px;
+  --nl-focus-ring-offset: 2px;
+
+  /* Motion */
+  --nl-duration-fast: 120ms;
+  --nl-easing: cubic-bezier(0.2, 0, 0, 1);
+}
