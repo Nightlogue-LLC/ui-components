@@ -1,0 +1,44 @@
+/*
+ * Badge / status label: compact editorial text label.
+ *
+ * Markup:  <span class="nl-badge nl-badge--accent">Continue</span>
+ * Tones:   --neutral (outlined) | --accent (filled) | --muted (quiet fill)
+ * The text carries the meaning; tone never does so alone. Hook: --nl-badge-radius.
+ * Type uses the editorial label role (--nl-font-family-label etc.); a theme without it gets the
+ * regular UI font.
+ */
+.nl-badge {
+  --_bg: transparent;
+  --_fg: var(--nl-color-text);
+  --_border: var(--nl-color-border);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.125rem var(--nl-space-2);
+  border: var(--nl-border-width) solid var(--_border);
+  border-radius: var(--nl-badge-radius, calc(var(--nl-radius-md) * 0.6));
+  background: var(--_bg);
+  color: var(--_fg);
+  /* Editorial LABEL role tokens, never a font name. Fallbacks reproduce the unthemed look. */
+  font-family: var(--nl-font-family-label, var(--nl-font-family));
+  font-size: var(--nl-font-size-label, 0.75rem);
+  font-weight: var(--nl-font-weight-label, var(--nl-font-weight-medium));
+  line-height: 1.3;
+  letter-spacing: var(--nl-letter-spacing-label, 0.08em);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nl-badge--accent {
+  --_bg: var(--nl-color-accent);
+  --_fg: var(--nl-color-on-accent);
+  --_border: var(--nl-color-accent);
+}
+
+.nl-badge--muted {
+  --_bg: var(--nl-color-surface-hover);
+  --_fg: var(--nl-color-text);
+  --_border: transparent;
+}

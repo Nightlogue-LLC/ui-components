@@ -28,6 +28,8 @@ export interface Story<A extends Args = Args> {
   scope?: 'toolbar' | 'self';
   /** Show the event log section. Defaults to true; turn off for static pages. */
   showLog?: boolean;
+  /** Extra static sections (e.g. a size x state matrix), each rendered in its own stage. */
+  sections?: { title: string; render: (ctx: StoryContext) => HTMLElement }[];
   /** Static grid of notable states, rendered alongside the playground. */
   states?: { label: string; args: Partial<A> }[];
 }
