@@ -249,6 +249,7 @@
 /* The accent artwork stays in the game; StreakGlow is a reusable visual primitive. */
 .nl-grim-glimmer-success__glow {
   --nl-streak-glow-color: var(--nl-color-accent);
+  margin-bottom: var(--nl-space-3);
 }
 
 /* Quiet celestial accent: one small four-point star. Decorative; no confetti. */
@@ -256,7 +257,6 @@
   display: block;
   width: 1.75rem;
   height: 1.75rem;
-  margin-bottom: var(--nl-space-3);
   background: var(--nl-color-accent);
   clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
 }
