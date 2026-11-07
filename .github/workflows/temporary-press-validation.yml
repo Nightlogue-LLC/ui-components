@@ -1,0 +1,25 @@
+name: Temporary validation for press and haptics
+on:
+  push:
+    branches:
+      - fix/tactile-press-and-haptics
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Run Prettier formatter
+        run: npm run format
+      - name: Show formatting changes
+        run: git diff -- src stories
+      - name: Full checks on formatted source
+        run: npm run check
