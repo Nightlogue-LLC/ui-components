@@ -16,7 +16,13 @@
   --_bg-hover: var(--nl-color-accent-hover);
   --_bg-active: var(--nl-color-accent-active);
   --_fg: var(--nl-color-on-accent);
-  --_border: transparent;
+  --_border: var(--nl-button-primary-border, transparent);
+  --_surface: var(--nl-button-primary-background, var(--_bg));
+  --_surface-hover: var(--nl-button-primary-background-hover, var(--_bg-hover));
+  --_surface-active: var(--nl-button-primary-background-active, var(--_bg-active));
+  --_shadow: var(--nl-button-primary-shadow, none);
+  --_shadow-hover: var(--nl-button-primary-shadow-hover, var(--_shadow));
+  --_shadow-active: var(--nl-button-primary-shadow-active, var(--_shadow));
 
   box-sizing: border-box;
   display: inline-flex;
@@ -28,7 +34,8 @@
   padding: 0 var(--nl-button-padding-x, var(--nl-space-4));
   border: var(--nl-border-width) solid var(--_border);
   border-radius: var(--nl-button-radius, var(--nl-radius-md));
-  background: var(--_bg);
+  background: var(--_surface);
+  box-shadow: var(--_shadow);
   color: var(--_fg);
   font-family: var(--nl-font-family);
   font-size: var(--nl-font-size-md);
@@ -41,8 +48,10 @@
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color var(--nl-duration-fast) var(--nl-easing),
-    border-color var(--nl-duration-fast) var(--nl-easing);
+    background-color 120ms var(--nl-easing),
+    border-color 120ms var(--nl-easing),
+    box-shadow 120ms var(--nl-easing),
+    transform 120ms var(--nl-easing);
 }
 
 /* Variants */
@@ -51,7 +60,13 @@
   --_bg-hover: var(--nl-color-surface-hover);
   --_bg-active: var(--nl-color-surface-hover);
   --_fg: var(--nl-color-text);
-  --_border: var(--nl-color-border);
+  --_border: var(--nl-button-secondary-border, var(--nl-color-border));
+  --_surface: var(--nl-button-secondary-background, var(--_bg));
+  --_surface-hover: var(--nl-button-secondary-background-hover, var(--_bg-hover));
+  --_surface-active: var(--nl-button-secondary-background-active, var(--_bg-active));
+  --_shadow: var(--nl-button-secondary-shadow, none);
+  --_shadow-hover: var(--nl-button-secondary-shadow-hover, var(--_shadow));
+  --_shadow-active: var(--nl-button-secondary-shadow-active, var(--_shadow));
 }
 
 .nl-button--ghost {
@@ -59,7 +74,13 @@
   --_bg-hover: var(--nl-color-surface-hover);
   --_bg-active: var(--nl-color-surface-hover);
   --_fg: var(--nl-color-text);
-  --_border: transparent;
+  --_border: var(--nl-button-ghost-border, transparent);
+  --_surface: var(--nl-button-ghost-background, var(--_bg));
+  --_surface-hover: var(--nl-button-ghost-background-hover, var(--_bg-hover));
+  --_surface-active: var(--nl-button-ghost-background-active, var(--_bg-active));
+  --_shadow: var(--nl-button-ghost-shadow, none);
+  --_shadow-hover: var(--nl-button-ghost-shadow-hover, var(--_shadow));
+  --_shadow-active: var(--nl-button-ghost-shadow-active, var(--_shadow));
 }
 
 /* Sizes */
@@ -81,12 +102,16 @@
 /* Interaction. Hover is gated so touch screens don't get a "stuck" hover after a tap. */
 @media (hover: hover) {
   .nl-button:hover:not(:disabled) {
-    background: var(--_bg-hover);
+    background: var(--_surface-hover);
+    box-shadow: var(--_shadow-hover);
   }
 }
 
 .nl-button:active:not(:disabled) {
-  background: var(--_bg-active);
+  background: var(--_surface-active);
+  box-shadow: var(--_shadow-active);
+  transform: var(--nl-button-press-transform, none);
+  transition-duration: 50ms;
 }
 
 .nl-button:focus-visible {
@@ -96,8 +121,9 @@
 
 /* Disabled (but not merely loading) */
 .nl-button:disabled:not([aria-busy='true']) {
-  background: var(--nl-color-disabled-bg);
-  border-color: transparent;
+  background: var(--nl-button-disabled-background, var(--nl-color-disabled-bg));
+  border-color: var(--nl-button-disabled-border, transparent);
+  box-shadow: var(--nl-button-disabled-shadow, none);
   color: var(--nl-color-disabled-text);
   cursor: not-allowed;
 }
@@ -127,6 +153,10 @@
 @media (prefers-reduced-motion: reduce) {
   .nl-button {
     transition: none;
+  }
+
+  .nl-button:active:not(:disabled) {
+    transform: none;
   }
 
   .nl-button[aria-busy='true']::before {

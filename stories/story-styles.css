@@ -161,12 +161,15 @@
  */
 .nl-button.sb-force-hover:not(:disabled),
 .nl-icon-button.sb-force-hover:not(:disabled) {
-  background: var(--_bg-hover);
+  background: var(--_surface-hover);
+  box-shadow: var(--_shadow-hover);
 }
 
 .nl-button.sb-force-pressed:not(:disabled),
 .nl-icon-button.sb-force-pressed:not(:disabled) {
-  background: var(--_bg-active);
+  background: var(--_surface-active);
+  box-shadow: var(--_shadow-active);
+  transform: var(--nl-button-press-transform, none);
 }
 
 .nl-button.sb-force-focus,
