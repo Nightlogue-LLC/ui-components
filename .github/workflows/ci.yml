@@ -45,5 +45,5 @@ jobs:
       - name: Package check (publint + consumer smoke test)
         run: npm run package:check
 
-      - name: Build gallery
-        run: npm run gallery:build
+      - name: Build Storybook (static catalog)
+        run: npm run build-storybook
