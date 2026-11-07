@@ -146,7 +146,8 @@
   --nl-tactile-tile-shadow: inset 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(32, 25, 16, 0.14);
   --nl-tactile-tile-selected-background: linear-gradient(145deg, #fff1d6, #e8d7b5);
   --nl-tactile-tile-selected-border: #916b34;
-  --nl-tactile-tile-selected-shadow: inset 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(145, 107, 52, 0.28);
+  --nl-tactile-tile-selected-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(145, 107, 52, 0.28);
   --nl-tactile-tile-glyph-color: #805d2b;
   --nl-tactile-tile-selected-glyph: #6f4f23;
   --nl-tactile-tile-caption-color: #55504a;
@@ -191,7 +192,9 @@
   --nl-tactile-tile-shadow: inset 0 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.5);
   --nl-tactile-tile-selected-background: linear-gradient(145deg, #302817, #19150e);
   --nl-tactile-tile-selected-border: #d5af70;
-  --nl-tactile-tile-selected-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 0 15px rgba(213, 175, 112, 0.28), 0 0 28px rgba(177, 132, 75, 0.16);
+  --nl-tactile-tile-selected-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.3), 0 0 15px rgba(213, 175, 112, 0.28),
+    0 0 28px rgba(177, 132, 75, 0.16);
   --nl-tactile-tile-glyph-color: #d5af70;
   --nl-tactile-tile-selected-glyph: #f0d29b;
   --nl-tactile-tile-caption-color: #aaa7a0;

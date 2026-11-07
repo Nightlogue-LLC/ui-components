@@ -3,7 +3,10 @@ import { createButton } from '../../../src/components/button/index.js';
 import { createEditorialCallout } from '../../../src/components/editorial-callout/index.js';
 import { createGrainSurface } from '../../../src/components/grain-surface/index.js';
 import { createRecessedSlot } from '../../../src/components/recessed-slot/index.js';
-import { createTactileTile, updateTactileTile } from '../../../src/components/tactile-tile/index.js';
+import {
+  createTactileTile,
+  updateTactileTile,
+} from '../../../src/components/tactile-tile/index.js';
 import { el } from '../../lib/dom.js';
 import { compareModes } from '../../lib/stage.js';
 
@@ -62,7 +65,10 @@ function study(): HTMLElement {
 
   const panel = el('section', { className: 'sb-occult-study' }, [
     el('h2', { className: 'sb-occult-study__heading', text: 'Tile Study' }),
-    el('p', { className: 'sb-occult-study__hint', text: 'Recessed slots · tactile tiles · editorial callout' }),
+    el('p', {
+      className: 'sb-occult-study__hint',
+      text: 'Recessed slots · tactile tiles · editorial callout',
+    }),
     grid,
     callout,
     button,
