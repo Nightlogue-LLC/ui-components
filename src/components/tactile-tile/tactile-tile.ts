@@ -29,6 +29,25 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
   caption.setAttribute('aria-hidden', 'true');
   tile.append(glyph, caption);
   updateTactileTile(tile, options);
+
+  // A physical press is transient. Selection is a separate, persistent state.
+  const releasePress = () => tile.classList.remove('nl-tactile-tile--pressing');
+  tile.addEventListener('pointerdown', (event) => {
+    if (tile.disabled || event.button !== 0) return;
+    tile.classList.add('nl-tactile-tile--pressing');
+  });
+  tile.addEventListener('pointerup', releasePress);
+  tile.addEventListener('pointercancel', releasePress);
+  tile.addEventListener('lostpointercapture', releasePress);
+  tile.addEventListener('pointerleave', releasePress);
+  tile.addEventListener('keydown', (event) => {
+    if (!tile.disabled && (event.key === ' ' || event.key === 'Enter')) {
+      tile.classList.add('nl-tactile-tile--pressing');
+    }
+  });
+  tile.addEventListener('keyup', releasePress);
+  tile.addEventListener('blur', releasePress);
+
   if (options.onClick || options.onPressFeedback) {
     tile.addEventListener('click', (event) => {
       if (tile.disabled) return;
@@ -51,12 +70,13 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
     tile.addEventListener('pointerdown', (event) => {
       if (tile.disabled || event.button !== 0) return;
       start = { x: event.clientX, y: event.clientY, id: event.pointerId };
-      tile.setPointerCapture?.(event.pointerId);
+      if (typeof tile.setPointerCapture === 'function') tile.setPointerCapture(event.pointerId);
     });
     tile.addEventListener('pointermove', (event) => {
       if (start?.id !== event.pointerId) return;
       const movement = { x: event.clientX - start.x, y: event.clientY - start.y };
       if (Math.hypot(movement.x, movement.y) < 4) return;
+      releasePress();
       tile.classList.add('nl-tactile-tile--dragging');
       tile.style.setProperty('--nl-tactile-tile-drag-x', `${movement.x}px`);
       tile.style.setProperty('--nl-tactile-tile-drag-y', `${movement.y}px`);
@@ -73,6 +93,7 @@ export function updateTactileTile(tile: HTMLButtonElement, props: TactileTilePro
   tile.setAttribute('aria-pressed', String(props.selected ?? false));
   tile.classList.toggle('nl-tactile-tile--selected', props.selected ?? false);
   tile.disabled = props.disabled ?? false;
+  if (tile.disabled) tile.classList.remove('nl-tactile-tile--pressing');
   const glyph = tile.querySelector('.nl-tactile-tile__glyph');
   const caption = tile.querySelector('.nl-tactile-tile__caption');
   if (glyph) glyph.textContent = props.glyph;

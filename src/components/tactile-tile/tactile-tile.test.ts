@@ -52,6 +52,39 @@ describe('TactileTile', () => {
     expect(tile.hasAttribute('draggable')).toBe(false);
   });
 
+
+  it('releases temporary press without changing persistent selected state', () => {
+    const tile = createTactileTile({ label: 'Sol', glyph: '☉', selected: true });
+    tile.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, button: 0 }));
+    expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(true);
+    tile.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }));
+    expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(false);
+    expect(tile.getAttribute('aria-pressed')).toBe('true');
+    expect(tile.classList.contains('nl-tactile-tile--selected')).toBe(true);
+  });
+
+  it.each(['pointercancel', 'pointerleave', 'lostpointercapture', 'blur'])(
+    'clears physical press on %s',
+    (eventName) => {
+      const tile = createTactileTile({ label: 'Air', glyph: 'A' });
+      tile.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, button: 0 }));
+      expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(true);
+      tile.dispatchEvent(new Event(eventName));
+      expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(false);
+    },
+  );
+
+  it('handles keyboard press/release and clears on disable', () => {
+    const tile = createTactileTile({ label: 'Moon', glyph: '☽' });
+    tile.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(true);
+    tile.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true }));
+    expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(false);
+    tile.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    updateTactileTile(tile, { label: 'Moon', glyph: '☽', disabled: true });
+    expect(tile.classList.contains('nl-tactile-tile--pressing')).toBe(false);
+  });
+
   it('writes user text as text nodes, never HTML', () => {
     const tile = createTactileTile({ label: 'X', glyph: '<img>', caption: '<b>Text</b>' });
     expect(tile.querySelector('img, b')).toBeNull();

@@ -3,6 +3,7 @@ import { createButton } from '../../../src/components/button/index.js';
 import { createEditorialCallout } from '../../../src/components/editorial-callout/index.js';
 import { createGrainSurface } from '../../../src/components/grain-surface/index.js';
 import { createRecessedSlot } from '../../../src/components/recessed-slot/index.js';
+import { tryBrowserVibration } from '../../../src/components/tactile-tile/browser-vibration.js';
 import {
   createTactileTile,
   updateTactileTile,
@@ -30,6 +31,7 @@ function study(): HTMLElement {
       glyph,
       caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
       selected: selectedStates[i],
+      onPressFeedback: () => { tryBrowserVibration(); },
       onClick: () => {
         selectedStates[i] = !selectedStates[i];
         updateTactileTile(tile, {
