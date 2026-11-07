@@ -10,3 +10,7 @@
 @import './components/segmented-control/segmented-control.css';
 @import './components/dialog/dialog.css';
 @import './components/badge/badge.css';
+@import './components/recessed-slot/recessed-slot.css';
+@import './components/tactile-tile/tactile-tile.css';
+@import './components/editorial-callout/editorial-callout.css';
+@import './components/grain-surface/grain-surface.css';

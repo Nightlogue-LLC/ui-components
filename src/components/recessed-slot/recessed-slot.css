@@ -1,0 +1,19 @@
+/* Theme-neutral, inset puzzle slot. All dimensional styling may be supplied by the theme. */
+.nl-recessed-slot {
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 1;
+  min-height: 0;
+  border: var(--nl-border-width) solid var(--nl-recessed-slot-border, var(--nl-color-border));
+  border-radius: var(--nl-recessed-slot-radius, var(--nl-radius-md));
+  background: var(--nl-recessed-slot-background, var(--nl-color-bg));
+  box-shadow: var(--nl-recessed-slot-shadow, none);
+}
+
+.nl-recessed-slot > * {
+  width: 100%;
+  height: 100%;
+}

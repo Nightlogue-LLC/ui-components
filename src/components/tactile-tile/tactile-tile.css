@@ -1,0 +1,109 @@
+/* Selectable tactile puzzle tile; semantics and keyboard activation come from native button. */
+.nl-tactile-tile {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nl-space-1);
+  min-width: 0;
+  min-height: var(--nl-size-control-md);
+  margin: 0;
+  padding: var(--nl-space-2);
+  border: var(--nl-border-width) solid var(--nl-tactile-tile-border, var(--nl-color-border));
+  border-radius: var(--nl-tactile-tile-radius, var(--nl-radius-md));
+  background: var(--nl-tactile-tile-background, var(--nl-color-surface));
+  box-shadow: var(--nl-tactile-tile-shadow, none);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1.2),
+    box-shadow var(--nl-duration-fast) var(--nl-easing),
+    border-color var(--nl-duration-fast) var(--nl-easing);
+}
+
+.nl-tactile-tile__glyph {
+  font-size: var(--nl-tactile-tile-glyph-size, 1.5rem);
+  line-height: 1.1;
+  color: var(--nl-tactile-tile-glyph-color, var(--nl-color-accent));
+}
+
+.nl-tactile-tile__caption {
+  font-size: var(--nl-font-size-sm);
+  line-height: 1.2;
+  color: var(--nl-tactile-tile-caption-color, var(--nl-color-text));
+}
+
+.nl-tactile-tile__caption[hidden] {
+  display: none;
+}
+
+.nl-tactile-tile--selected {
+  border-color: var(--nl-tactile-tile-selected-border, var(--nl-color-accent));
+  background: var(--nl-tactile-tile-selected-background, var(--nl-color-surface-hover));
+  box-shadow: var(--nl-tactile-tile-selected-shadow, none);
+  border: 1px solid transparent;
+  background: var(
+    --nl-tactile-tile-selected-metallic,
+    var(--nl-tactile-tile-selected-background, var(--nl-color-surface-hover))
+  );
+}
+
+.nl-tactile-tile--selected .nl-tactile-tile__glyph {
+  color: var(--nl-tactile-tile-selected-glyph, var(--nl-color-accent));
+}
+
+.nl-tactile-tile--selected .nl-tactile-tile__caption {
+  color: var(--nl-tactile-tile-selected-caption, var(--nl-color-text));
+}
+
+.nl-tactile-tile:active:not(:disabled) {
+  transform: scale(0.95) translateY(1px);
+}
+
+@media (hover: hover) {
+  .nl-tactile-tile:hover:not(:disabled) {
+    transform: var(--nl-tactile-tile-hover-transform, translateY(-2px) scale(1.04));
+  }
+}
+
+/* Optional draggable treatment is visual only; app owns hit-testing and puzzle rules. */
+.nl-tactile-tile--draggable {
+  touch-action: none;
+}
+
+.nl-tactile-tile--draggable.nl-tactile-tile--dragging {
+  position: relative;
+  z-index: 2;
+  transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px))
+    scale(1.04);
+  transition: none;
+}
+
+.nl-tactile-tile:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+.nl-tactile-tile:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-tactile-tile {
+    transition: none;
+    --nl-tactile-tile-hover-transform: none;
+  }
+
+  .nl-tactile-tile:active:not(:disabled) {
+    transform: none;
+  }
+
+  .nl-tactile-tile--draggable.nl-tactile-tile--dragging {
+    transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px));
+  }
+}
