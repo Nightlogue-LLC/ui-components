@@ -8,6 +8,7 @@
   place-items: center;
   isolation: isolate;
   max-width: 100%;
+  overflow: hidden;
 }
 
 .nl-streak-glow__content {
@@ -18,10 +19,10 @@
   content: '';
   position: absolute;
   z-index: 1;
-  top: -30%;
-  left: -55%;
-  width: 34%;
-  height: 160%;
+  top: -20%;
+  left: -35%;
+  width: 24%;
+  height: 140%;
   pointer-events: none;
   opacity: 0;
   background: linear-gradient(
@@ -30,7 +31,7 @@
     var(--nl-streak-glow-color, var(--nl-color-accent)),
     transparent
   );
-  filter: blur(5px);
+  filter: blur(2px);
 }
 
 .nl-streak-glow--active::after {
@@ -47,7 +48,7 @@
 
 @keyframes nl-streak-glow-pass {
   0% {
-    left: -55%;
+    left: -35%;
     opacity: 0;
   }
 
@@ -60,7 +61,7 @@
   }
 
   100% {
-    left: 120%;
+    left: 110%;
     opacity: 0;
   }
 }
