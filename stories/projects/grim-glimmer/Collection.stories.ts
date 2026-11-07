@@ -16,24 +16,30 @@ function homeScreen(): HTMLElement {
   });
   wordmark.setAttribute('role', 'img');
   wordmark.setAttribute('aria-label', 'Wordmark placeholder');
-  return el('section', { className: 'nl-grim-glimmer-screen' }, [
-    wordmark,
-    el('div', { className: 'sb-gg-heading-group' }, [
-      el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
-      el('h2', {
-        className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
-        text: 'Choose a puzzle',
-      }),
-    ]),
-    createPuzzleCollection(
-      [
-        card('Tents & Trees', 'continue', 1, true),
-        card('Ghosts & Graves', 'coming-soon', 4),
-        card('Placeholder puzzle', 'coming-soon', 5),
-      ],
-      { label: 'Puzzles' },
-    ),
-  ]);
+  return el(
+    'section',
+    {
+      className: 'nl-grim-glimmer-screen nl-grim-glimmer-collection-home',
+    },
+    [
+      wordmark,
+      el('div', { className: 'sb-gg-heading-group' }, [
+        el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
+        el('h2', {
+          className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
+          text: 'Choose a puzzle',
+        }),
+      ]),
+      createPuzzleCollection(
+        [
+          card('Tents & Trees', 'continue', 1, true),
+          card('Ghosts & Graves', 'coming-soon', 4),
+          card('Placeholder puzzle', 'coming-soon', 5),
+        ],
+        { label: 'Puzzles' },
+      ),
+    ],
+  );
 }
 
 function cardStates(): HTMLElement {
@@ -53,8 +59,9 @@ const meta = {
     docs: {
       description: {
         component: `
-The home collection: one column of equally sized landscape cards (144px tall), static preview on the left
-(~40%), puzzle title and a small status on the right. **Play** and **Continue** are native buttons;
+The home collection: one column of compact landscape cards (120px tall), static preview on the left
+(~35%), smaller puzzle title and restrained status on the right. The home heading and eyebrow
+use a reduced mobile-first type scale independent of other screens. **Play** and **Continue** are native buttons;
 **Coming Soon** is a static, visibly unavailable card that is not actionable (no tab stop). There is no bottom
 navigation and no game-details route. The wordmark is app-owned artwork, so these stories only reserve a
 labelled slot for it.

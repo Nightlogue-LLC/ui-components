@@ -88,7 +88,7 @@
 .nl-grim-glimmer-collection {
   display: flex;
   flex-direction: column;
-  gap: var(--nl-space-4);
+  gap: var(--nl-space-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -99,53 +99,54 @@
   padding: 0;
 }
 
-/* Landscape card: 144px tall, preview ~40% on the left, title + status on the right. */
+/* Compact editorial collection card: 120px tall, preview ~35% on the left. */
 .nl-card.nl-grim-glimmer-collection-card {
   --nl-card-padding: 0;
 
   display: flex;
   align-items: stretch;
-  height: var(--nl-grim-glimmer-card-height, 9rem);
+  height: var(--nl-grim-glimmer-card-height, 7.5rem);
   overflow: hidden;
 }
 
 .nl-grim-glimmer-collection-card__preview {
   display: flex;
-  flex: 0 0 40%;
+  flex: 0 0 35%;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: var(--nl-space-3);
+  padding: var(--nl-space-2);
   border-right: var(--nl-border-width) solid var(--nl-color-border);
   background: var(--nl-color-bg);
 }
 
 /* Keep the preview board square and within the pane at any card width. */
 .nl-grim-glimmer-collection-card__preview .nl-grim-glimmer-board {
-  max-width: 6.5rem;
+  max-width: 5.5rem;
 }
 
 .nl-grim-glimmer-collection-card__content {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--nl-space-2);
   min-width: 0;
-  padding: var(--nl-space-3) var(--nl-space-4);
+  padding: var(--nl-space-2) var(--nl-space-3);
 }
 
-/*
- * Puzzle title: display role (Cormorant Upright in this theme).
- * Height budget inside the 144px card: 142px inner - 24px padding - 24px status = 94px for the
- * title, so three lines must fit in that. The font size is capped at 23px for cards and the line
- * height is the display token (1.3, above the font's 1.21em content area), so three lines take at
- * most ~90px and no ascender or descender is ever clipped. A fourth line ends in an ellipsis.
- */
+.nl-grim-glimmer-collection-card__content .nl-badge {
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+}
+
+/* Keep puzzle titles smaller than the main heading; long names may wrap to three lines. */
 .nl-grim-glimmer-collection-card__title {
   display: -webkit-box;
   overflow: hidden;
   font-family: var(--nl-font-family-display, var(--nl-font-family));
-  font-size: min(var(--nl-font-size-display-md, 1.375rem), 1.4375rem);
+  font-size: clamp(1.125rem, 1rem + 0.75vw, 1.3125rem);
   font-weight: var(--nl-font-weight-display, 400);
   line-height: var(--nl-line-height-display, 1.3);
   overflow-wrap: anywhere;
@@ -167,6 +168,22 @@
 .nl-grim-glimmer-collection-card--unavailable .nl-grim-glimmer-collection-card__preview {
   opacity: 0.55;
   filter: grayscale(1);
+}
+
+/* Collection-home typography and rhythm; do not reduce other screens' heading sizes. */
+.nl-grim-glimmer-collection-home {
+  gap: var(--nl-space-4);
+  padding-top: max(var(--nl-space-3), env(safe-area-inset-top, 0px));
+}
+
+.nl-grim-glimmer-collection-home .nl-grim-glimmer-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.11em;
+}
+
+.nl-grim-glimmer-collection-home .nl-grim-glimmer-heading--lg {
+  font-size: clamp(1.625rem, 1.45rem + 0.8vw, 1.75rem);
+  line-height: 1.2;
 }
 
 /* --- Game screen ---------------------------------------------------------------------------- */
