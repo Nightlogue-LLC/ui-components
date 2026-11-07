@@ -13,6 +13,18 @@
   color: var(--nl-color-text);
 }
 
+/* A small paired hairline creates a restrained alchemical corner detail. */
+.nl-editorial-callout::before {
+  content: '';
+  justify-self: end;
+  width: 28px;
+  height: 5px;
+  margin-bottom: calc(-1 * var(--nl-space-2));
+  border-top: 1px solid var(--nl-editorial-callout-accent, var(--nl-color-accent));
+  border-right: 1px solid var(--nl-editorial-callout-accent, var(--nl-color-accent));
+  opacity: 0.6;
+}
+
 .nl-editorial-callout__title {
   margin: 0;
   font-family: var(--nl-font-family-label, var(--nl-font-family));

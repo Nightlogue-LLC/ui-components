@@ -67,6 +67,18 @@
   }
 }
 
+/* Optional draggable treatment is visual only; app owns hit-testing and puzzle rules. */
+.nl-tactile-tile--draggable {
+  touch-action: none;
+}
+
+.nl-tactile-tile--draggable.nl-tactile-tile--dragging {
+  position: relative;
+  z-index: 2;
+  transform: translate(var(--nl-tactile-drag-x, 0px), var(--nl-tactile-drag-y, 0px)) scale(1.04);
+  transition: none;
+}
+
 .nl-tactile-tile:focus-visible {
   outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
   outline-offset: var(--nl-focus-ring-offset);
@@ -88,5 +100,9 @@
 
   .nl-tactile-tile:hover:not(:disabled) {
     transform: none;
+  }
+
+  .nl-tactile-tile--draggable.nl-tactile-tile--dragging {
+    transform: translate(var(--nl-tactile-drag-x, 0px), var(--nl-tactile-drag-y, 0px));
   }
 }

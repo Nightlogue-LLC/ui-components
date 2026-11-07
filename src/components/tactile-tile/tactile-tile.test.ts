@@ -29,6 +29,29 @@ describe('TactileTile', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it('lets the host trigger tactile feedback on activation', () => {
+    const feedback = vi.fn();
+    const tile = createTactileTile({ label: 'Star', glyph: '✦', onPressFeedback: feedback });
+    tile.click();
+    expect(feedback).toHaveBeenCalledTimes(1);
+    tile.disabled = true;
+    tile.click();
+    expect(feedback).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepts optional drag hooks without managing puzzle placement', () => {
+    const moved = vi.fn();
+    const ended = vi.fn();
+    const tile = createTactileTile({
+      label: 'Star',
+      glyph: '✦',
+      onDragMove: moved,
+      onDragEnd: ended,
+    });
+    expect(tile.classList.contains('nl-tactile-tile--draggable')).toBe(true);
+    expect(tile.hasAttribute('draggable')).toBe(false);
+  });
+
   it('writes user text as text nodes, never HTML', () => {
     const tile = createTactileTile({ label: 'X', glyph: '<img>', caption: '<b>Text</b>' });
     expect(tile.querySelector('img, b')).toBeNull();
