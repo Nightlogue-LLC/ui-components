@@ -134,8 +134,11 @@
   gap: var(--nl-space-2);
   min-width: 0;
   padding: var(--nl-space-2) var(--nl-space-3);
-  --nl-font-size-label: 0.6875rem;
-  --nl-letter-spacing-label: 0.09em;
+}
+
+.nl-grim-glimmer-collection-card__content .nl-badge {
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
 }
 
 /* Keep puzzle titles smaller than the main heading; long names may wrap to three lines. */
