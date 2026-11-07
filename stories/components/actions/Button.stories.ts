@@ -69,7 +69,8 @@ container.append(save);
 updateButton(save, { label: 'Saving…', loading: true }); // pass the FULL props each time
 \`\`\`
 
-Colors, radius and type come from the active theme's tokens. Hover, pressed and focus cells in the
+Colors, radius and type come from the active theme's tokens. Optional surface and shadow hooks
+add tactile depth to Grim & Glimmer without changing the neutral theme. Hover, pressed and focus cells in the
 grids are **simulated** for review; Tab to or hover over the playground button for the real states.
 `,
       },
