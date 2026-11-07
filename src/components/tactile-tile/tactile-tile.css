@@ -60,12 +60,6 @@
   color: var(--nl-tactile-tile-selected-caption, var(--nl-color-text));
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .nl-tactile-tile:hover:not(:disabled):not(.nl-tactile-tile--pressing) {
-    transform: var(--nl-tactile-tile-hover-transform, translateY(-2px) scale(1.04));
-  }
-}
-
 /* Explicit transient press state avoids sticky mobile :hover and selected-state confusion. */
 .nl-tactile-tile.nl-tactile-tile--pressing:not(:disabled) {
   transform: translateY(1.5px) scale(0.965);
@@ -99,7 +93,6 @@
 @media (prefers-reduced-motion: reduce) {
   .nl-tactile-tile {
     transition: none;
-    --nl-tactile-tile-hover-transform: none;
   }
 
   .nl-tactile-tile.nl-tactile-tile--pressing:not(:disabled) {
