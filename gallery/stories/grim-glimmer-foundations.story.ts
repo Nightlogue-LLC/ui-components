@@ -19,23 +19,6 @@ function section(title: string, ...children: Node[]): HTMLElement {
   ]);
 }
 
-function typography(): HTMLElement {
-  const sample = (cls: string, text: string, note: string) =>
-    el('div', { className: 'gal-gg-type' }, [
-      el('span', { className: `gal-gg-type__sample ${cls}`, text }),
-      el('span', { className: 'gal-gg-note', text: note }),
-    ]);
-  return section(
-    'Typography',
-    sample('gal-gg-display-xl', 'Grim & Glimmer', 'Display XL · serif (display hook) · 32px'),
-    sample('gal-gg-display-l', 'Tents & Trees', 'Display L · serif (display hook) · 24px'),
-    sample('gal-gg-title', "Today's puzzle", 'Title · sans · --nl-font-size-lg, medium'),
-    sample('gal-gg-body', 'Place a tent beside every tree.', 'Body · sans · --nl-font-size-md'),
-    sample('gal-gg-label', 'Continue', 'Label · sans · --nl-font-size-sm, caps'),
-    sample('gal-gg-numerals', '1 2 3 4 5', 'Puzzle numerals · sans · tabular figures'),
-  );
-}
-
 function palette(mode: ModeName): HTMLElement {
   const values = modes[mode];
   const swatches = requiredThemeTokens.map((token) => {
@@ -102,7 +85,6 @@ function buttons(): HTMLElement {
 function panel(mode: ModeName): HTMLElement {
   const root = el('div', { className: 'gal-gg-panel' }, [
     el('h3', { className: 'gal-gg-mode', text: mode === 'light' ? 'Light' : 'Dark' }),
-    typography(),
     palette(mode),
     contrast(mode),
     geometry(),
@@ -116,7 +98,7 @@ export default defineStory({
   id: 'grim-glimmer-foundations',
   title: 'G&G · Foundations',
   description:
-    'Provisional Grim & Glimmer palette, type, geometry and contrast results, light and dark side by side. Palette and display font await visual sign-off.',
+    'Provisional Grim & Glimmer palette, geometry and contrast results, light and dark side by side. The palette awaits visual sign-off. Typography is approved and has its own story.',
   scope: 'self',
   showLog: false,
   controls: [],
