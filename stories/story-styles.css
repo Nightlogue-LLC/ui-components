@@ -496,45 +496,104 @@
   font: 400 var(--nl-font-size-md) / 1.5 var(--nl-font-family);
 }
 
-/* Storybook-only mobile study: shared primitives, no game implementation. */
-.sb-occult-study {
-  display: grid;
-  gap: 1rem;
-  width: min(100%, 24rem);
+/* Centered reference-faithful 390px study, responsive to Storybook mobile viewports. */
+.sb-occult-study__canvas {
+  box-sizing: border-box;
+  width: min(100%, 390px);
+  max-width: 390px;
+  min-width: 0;
   margin-inline: auto;
-  padding: 1rem;
-  border: 1px solid var(--nl-color-border);
-  border-radius: var(--nl-radius-md);
+  border-radius: 5px;
+  overflow: hidden;
   background: var(--nl-color-bg);
+  box-shadow: var(--nl-shadow-card, none);
+}
+
+.sb-occult-study {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 700px;
+  gap: 18px;
+  padding: clamp(12px, 4vw, 20px);
+  border: 1px solid var(--nl-color-border);
+  border-radius: inherit;
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+.sb-occult-study__eyebrow {
+  margin: 5px 0 -12px;
+  font: 600 10px/1.35 var(--nl-font-family);
+  letter-spacing: 0.22em;
+  color: var(--nl-color-accent);
+  text-align: center;
 }
 
 .sb-occult-study__heading {
   margin: 0;
-  font-family: var(--nl-font-family-heading, var(--nl-font-family));
-  font-size: 1.5rem;
+  font: var(--nl-font-weight-heading, 600) 24px/1.2 var(--nl-font-family-heading, serif);
+  letter-spacing: 0.1em;
   text-align: center;
-  color: var(--nl-color-text);
 }
 
 .sb-occult-study__hint {
-  margin: 0;
-  font-size: 0.75rem;
+  margin: -14px 0 4px;
+  font: 12px/1.4 var(--nl-font-family);
+  letter-spacing: 0.04em;
   text-align: center;
-  color: var(--nl-color-text);
-  opacity: 0.75;
+  opacity: 0.7;
 }
 
 .sb-occult-study__grid {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: clamp(5px, 2.5vw, 12px);
+  min-width: 0;
+  width: 100%;
+  padding: clamp(8px, 3vw, 16px);
   border: 1px solid var(--nl-color-border);
-  border-radius: var(--nl-radius-md);
+  border-radius: 12px;
   background: var(--nl-color-surface);
-  box-shadow: inset 0 2px 8px color-mix(in srgb, var(--nl-color-text) 22%, transparent);
+  box-shadow: inset 0 3px 9px color-mix(in srgb, var(--nl-color-bg) 75%, black);
+}
+
+.sb-occult-study__grid .nl-recessed-slot {
+  min-width: 0;
+}
+
+.sb-occult-study__grid .nl-tactile-tile {
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  padding: 3px;
+}
+
+.sb-occult-study__grid .nl-tactile-tile__glyph {
+  font-size: clamp(21px, 7vw, 30px);
+}
+
+.sb-occult-study__grid .nl-tactile-tile__caption {
+  font-size: clamp(7px, 2.15vw, 10px);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.sb-occult-study .nl-editorial-callout {
+  margin-top: auto;
 }
 
 .sb-occult-study__action {
   width: 100%;
+  font-family: var(--nl-font-family-label, var(--nl-font-family));
+  letter-spacing: 0.13em;
+}
+
+@media (max-width: 360px) {
+  .sb-occult-study {
+    min-height: 590px;
+  }
 }

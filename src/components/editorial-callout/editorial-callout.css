@@ -7,6 +7,7 @@
   border: var(--nl-border-width) solid var(--nl-editorial-callout-border, var(--nl-color-border));
   border-left: 2px solid var(--nl-editorial-callout-accent, var(--nl-color-accent));
   border-radius: var(--nl-editorial-callout-radius, var(--nl-radius-md));
+  clip-path: var(--nl-editorial-callout-clip, none);
   background: var(--nl-editorial-callout-background, var(--nl-color-surface));
   box-shadow: var(--nl-editorial-callout-shadow, none);
   color: var(--nl-color-text);
@@ -14,7 +15,7 @@
 
 .nl-editorial-callout__title {
   margin: 0;
-  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-family: var(--nl-font-family-label, var(--nl-font-family));
   font-size: var(--nl-font-size-md);
   font-weight: var(--nl-font-weight-medium);
   letter-spacing: 0.08em;

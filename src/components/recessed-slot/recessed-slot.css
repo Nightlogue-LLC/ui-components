@@ -6,6 +6,7 @@
   place-items: center;
   min-width: 0;
   aspect-ratio: 1;
+  min-height: 0;
   border: var(--nl-border-width) solid var(--nl-recessed-slot-border, var(--nl-color-border));
   border-radius: var(--nl-recessed-slot-radius, var(--nl-radius-md));
   background: var(--nl-recessed-slot-background, var(--nl-color-bg));

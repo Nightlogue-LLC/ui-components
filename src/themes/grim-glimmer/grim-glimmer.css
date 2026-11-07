@@ -146,6 +146,7 @@
   --nl-tactile-tile-shadow: inset 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(32, 25, 16, 0.14);
   --nl-tactile-tile-selected-background: linear-gradient(145deg, #fff1d6, #e8d7b5);
   --nl-tactile-tile-selected-border: #916b34;
+  --nl-tactile-tile-selected-metallic: linear-gradient(145deg, #fff1d6, #e8d7b5) padding-box, linear-gradient(135deg, #c5a165, #896533 50%, #dfc18e) border-box;
   --nl-tactile-tile-selected-shadow:
     inset 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(145, 107, 52, 0.28);
   --nl-tactile-tile-glyph-color: #805d2b;
@@ -153,6 +154,7 @@
   --nl-tactile-tile-caption-color: #55504a;
   --nl-tactile-tile-selected-caption: #6f4f23;
   --nl-editorial-callout-background: linear-gradient(180deg, #fcfaf6, #f3f0ea);
+  --nl-editorial-callout-clip: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
   --nl-editorial-callout-border: #bcb4a8;
   --nl-editorial-callout-shadow: 0 8px 22px rgba(32, 25, 16, 0.14);
   --nl-editorial-callout-description-color: #4d4a44;
@@ -192,14 +194,16 @@
   --nl-tactile-tile-shadow: inset 0 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.5);
   --nl-tactile-tile-selected-background: linear-gradient(145deg, #302817, #19150e);
   --nl-tactile-tile-selected-border: #d5af70;
+  --nl-tactile-tile-selected-metallic: linear-gradient(145deg, #302817, #19150e) padding-box, linear-gradient(135deg, #f0d29b, #8a6d27 50%, #e6ca65) border-box;
   --nl-tactile-tile-selected-shadow:
-    inset 0 1px rgba(255, 255, 255, 0.3), 0 0 15px rgba(213, 175, 112, 0.28),
-    0 0 28px rgba(177, 132, 75, 0.16);
+    inset 0 1px rgba(255, 255, 255, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.17),
+    0 0 15px rgba(213, 175, 112, 0.36), 0 0 30px rgba(177, 132, 75, 0.22);
   --nl-tactile-tile-glyph-color: #d5af70;
   --nl-tactile-tile-selected-glyph: #f0d29b;
   --nl-tactile-tile-caption-color: #aaa7a0;
   --nl-tactile-tile-selected-caption: #d5af70;
   --nl-editorial-callout-background: linear-gradient(180deg, #202023, #151517);
+  --nl-editorial-callout-clip: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
   --nl-editorial-callout-border: #515055;
   --nl-editorial-callout-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
   --nl-editorial-callout-description-color: #c0bec3;

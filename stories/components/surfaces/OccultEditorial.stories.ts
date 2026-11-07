@@ -28,11 +28,15 @@ function study(): HTMLElement {
     const tile = createTactileTile({
       label,
       glyph,
-      caption: label,
+      caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
       selected: selectedStates[i],
       onClick: () => {
         selectedStates[i] = !selectedStates[i];
-        updateTactileTile(tile, { label, glyph, caption: label, selected: selectedStates[i] });
+        updateTactileTile(tile, {
+          label, glyph,
+          caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
+          selected: selectedStates[i],
+        });
       },
     });
     return createRecessedSlot({ content: tile });
@@ -40,11 +44,11 @@ function study(): HTMLElement {
 
   const grid = el('div', { className: 'sb-occult-study__grid' }, tiles);
   const callout = createEditorialCallout({
-    title: 'Occult insight',
-    description: 'Toggle the glyphs to compare raised, recessed and selected tile treatments.',
+    title: 'OCCULT INSIGHT',
+    description: 'Align the elemental triad with Sol and Mars to channel the required resonance through the grid.',
   });
   const button = createButton({
-    label: 'Reset tiles',
+    label: 'TRANSMUTE GRID',
     onClick: () => {
       tiles.forEach((slot, i) => {
         selectedStates[i] = false;
@@ -54,7 +58,7 @@ function study(): HTMLElement {
           updateTactileTile(tile, {
             label: symbol[1],
             glyph: symbol[0],
-            caption: symbol[1],
+            caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${symbol[1].toUpperCase()}`,
             selected: false,
           });
         }
@@ -64,16 +68,19 @@ function study(): HTMLElement {
   button.classList.add('sb-occult-study__action');
 
   const panel = el('section', { className: 'sb-occult-study' }, [
-    el('h2', { className: 'sb-occult-study__heading', text: 'Tile Study' }),
+    el('p', { className: 'sb-occult-study__eyebrow', text: 'RITUAL II · ALIGNMENT' }),
+    el('h2', { className: 'sb-occult-study__heading', text: 'THE ECLIPSE' }),
     el('p', {
       className: 'sb-occult-study__hint',
-      text: 'Recessed slots · tactile tiles · editorial callout',
+      text: 'Tap glyphs in sequence to unlock',
     }),
     grid,
     callout,
     button,
   ]);
-  return createGrainSurface({ content: panel });
+  const canvas = createGrainSurface({ content: panel });
+  canvas.classList.add('sb-occult-study__canvas');
+  return canvas;
 }
 
 const meta = {
@@ -81,6 +88,7 @@ const meta = {
   tags: ['autodocs'],
   render: study,
   parameters: {
+    nlTheme: 'grim-glimmer',
     docs: {
       description: {
         component:
@@ -97,7 +105,7 @@ export const InteractiveStudy: Story = {};
 
 export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },
-  render: (_args, context) => compareModes(context, () => study()),
+  render: (_args, context) => compareModes(context, () => study(), { theme: 'grim-glimmer' }),
 };
 
 export const TilesOnly: Story = {
