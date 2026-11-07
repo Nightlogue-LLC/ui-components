@@ -40,7 +40,7 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
     tile.classList.add('nl-tactile-tile--draggable');
     let start: { x: number; y: number; id: number } | null = null;
     const finish = (event: PointerEvent) => {
-      if (!start || start.id !== event.pointerId) return;
+      if (start?.id !== event.pointerId) return;
       const movement = { x: event.clientX - start.x, y: event.clientY - start.y };
       tile.classList.remove('nl-tactile-tile--dragging');
       tile.style.removeProperty('--nl-tactile-drag-x');
@@ -54,7 +54,7 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
       tile.setPointerCapture?.(event.pointerId);
     });
     tile.addEventListener('pointermove', (event) => {
-      if (!start || start.id !== event.pointerId) return;
+      if (start?.id !== event.pointerId) return;
       const movement = { x: event.clientX - start.x, y: event.clientY - start.y };
       if (Math.hypot(movement.x, movement.y) < 4) return;
       tile.classList.add('nl-tactile-tile--dragging');

@@ -46,7 +46,10 @@
   background: var(--nl-tactile-tile-selected-background, var(--nl-color-surface-hover));
   box-shadow: var(--nl-tactile-tile-selected-shadow, none);
   border: 1px solid transparent;
-  background: var(--nl-tactile-tile-selected-metallic, var(--nl-tactile-tile-selected-background, var(--nl-color-surface-hover)));
+  background: var(
+    --nl-tactile-tile-selected-metallic,
+    var(--nl-tactile-tile-selected-background, var(--nl-color-surface-hover))
+  );
 }
 
 .nl-tactile-tile--selected .nl-tactile-tile__glyph {

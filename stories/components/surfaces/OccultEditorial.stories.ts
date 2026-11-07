@@ -33,7 +33,8 @@ function study(): HTMLElement {
       onClick: () => {
         selectedStates[i] = !selectedStates[i];
         updateTactileTile(tile, {
-          label, glyph,
+          label,
+          glyph,
           caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
           selected: selectedStates[i],
         });
@@ -45,7 +46,8 @@ function study(): HTMLElement {
   const grid = el('div', { className: 'sb-occult-study__grid' }, tiles);
   const callout = createEditorialCallout({
     title: 'OCCULT INSIGHT',
-    description: 'Align the elemental triad with Sol and Mars to channel the required resonance through the grid.',
+    description:
+      'Align the elemental triad with Sol and Mars to channel the required resonance through the grid.',
   });
   const button = createButton({
     label: 'TRANSMUTE GRID',
@@ -85,6 +87,7 @@ function study(): HTMLElement {
 
 const meta = {
   title: 'Components/Surfaces/Occult Editorial',
+  globals: { mode: 'dark' },
   tags: ['autodocs'],
   render: study,
   parameters: {
