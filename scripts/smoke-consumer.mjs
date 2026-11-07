@@ -112,6 +112,8 @@ const specs = [
   '${name}/tokens.css',
   '${name}/components/button.css',
   '${name}/themes/neutral.css',
+  '${name}/themes/grim-glimmer.css',
+  '${name}/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2',
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
