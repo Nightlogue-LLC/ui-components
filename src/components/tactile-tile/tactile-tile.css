@@ -66,7 +66,7 @@
 
 @media (hover: hover) {
   .nl-tactile-tile:hover:not(:disabled) {
-    transform: translateY(-2px) scale(1.04);
+    transform: var(--nl-tactile-tile-hover-transform, translateY(-2px) scale(1.04));
   }
 }
 
@@ -78,7 +78,7 @@
 .nl-tactile-tile--draggable.nl-tactile-tile--dragging {
   position: relative;
   z-index: 2;
-  transform: translate(var(--nl-tactile-drag-x, 0px), var(--nl-tactile-drag-y, 0px)) scale(1.04);
+  transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px)) scale(1.04);
   transition: none;
 }
 
@@ -95,17 +95,14 @@
 @media (prefers-reduced-motion: reduce) {
   .nl-tactile-tile {
     transition: none;
+    --nl-tactile-tile-hover-transform: none;
   }
 
   .nl-tactile-tile:active:not(:disabled) {
     transform: none;
   }
 
-  .nl-tactile-tile:hover:not(:disabled) {
-    transform: none;
-  }
-
   .nl-tactile-tile--draggable.nl-tactile-tile--dragging {
-    transform: translate(var(--nl-tactile-drag-x, 0px), var(--nl-tactile-drag-y, 0px));
+    transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px));
   }
 }

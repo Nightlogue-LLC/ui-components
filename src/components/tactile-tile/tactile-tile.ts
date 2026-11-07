@@ -43,8 +43,8 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
       if (start?.id !== event.pointerId) return;
       const movement = { x: event.clientX - start.x, y: event.clientY - start.y };
       tile.classList.remove('nl-tactile-tile--dragging');
-      tile.style.removeProperty('--nl-tactile-drag-x');
-      tile.style.removeProperty('--nl-tactile-drag-y');
+      tile.style.removeProperty('--nl-tactile-tile-drag-x');
+      tile.style.removeProperty('--nl-tactile-tile-drag-y');
       start = null;
       options.onDragEnd?.(movement);
     };
@@ -58,8 +58,8 @@ export function createTactileTile(options: TactileTileOptions): HTMLButtonElemen
       const movement = { x: event.clientX - start.x, y: event.clientY - start.y };
       if (Math.hypot(movement.x, movement.y) < 4) return;
       tile.classList.add('nl-tactile-tile--dragging');
-      tile.style.setProperty('--nl-tactile-drag-x', `${movement.x}px`);
-      tile.style.setProperty('--nl-tactile-drag-y', `${movement.y}px`);
+      tile.style.setProperty('--nl-tactile-tile-drag-x', `${movement.x}px`);
+      tile.style.setProperty('--nl-tactile-tile-drag-y', `${movement.y}px`);
       options.onDragMove?.(movement);
     });
     tile.addEventListener('pointerup', finish);
