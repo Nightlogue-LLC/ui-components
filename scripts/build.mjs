@@ -1,6 +1,7 @@
 // Builds the publishable package into dist/:
 //   1. tsc emits unbundled ES modules + .d.ts (preserves per-component entry points, tree-shakeable)
-//   2. every .css file under src/ is copied verbatim to the same path under dist/
+//   2. every .css file under src/ is copied verbatim to the same path under dist/, together with
+//      the assets those stylesheets reference (theme font files, .woff2) and their OFL licenses
 // CSS is shipped as plain, readable CSS files rather than being bundled into JS.
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
@@ -27,7 +28,7 @@ function copyCss(dir) {
     const from = join(dir, entry.name);
     if (entry.isDirectory()) {
       copyCss(from);
-    } else if (entry.name.endsWith('.css')) {
+    } else if (/\.(css|woff2)$/.test(entry.name) || /^OFL-.*\.txt$/.test(entry.name)) {
       const to = join(dist, relative(src, from));
       mkdirSync(dirname(to), { recursive: true });
       copyFileSync(from, to);
@@ -37,4 +38,4 @@ function copyCss(dir) {
 }
 copyCss(src);
 
-console.log(`Built dist/ (copied ${copied} CSS files)`);
+console.log(`Built dist/ (copied ${copied} CSS, font and license files)`);
