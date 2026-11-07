@@ -113,7 +113,7 @@ Cormorant has a small x-height, so its sizes run larger than Inter's to look bal
 ### Files, licensing and loading
 
 - Six WOFF2 files, about 147KB in total, normal style only, **Latin subset**, copied unmodified from the Fontsource 5.3.0 packages. All four families are **SIL Open Font License 1.1**; each license (with its copyright notice) ships next to the files, and `fonts/README.md` records provenance and SHA-256 hashes (a test checks them). Neither license declares a Reserved Font Name.
-- **Local only.** `src/` URLs are relative (`./fonts/...`); a test forbids network URLs and `@import`. Your bundler (Vite) emits the files as hashed assets. They are also exported as `@nightlogue-llc/ui-components/themes/<theme>/fonts/*`.
+- **Local only.** `src/` URLs are relative (`./fonts/...`); a test forbids network URLs and `@import`. Your bundler (Vite) emits the files as hashed assets. They are also exported as `@nightlogue-llc/ui-components/theme-assets/grim-glimmer/fonts/*`.
 - **Only what is used.** A test fails if a declared weight is not referenced by a token, or a token weight has no file. No italics are loaded; do not use italic styles in this theme (the browser would fake them).
 - `font-display: swap`, so text is always visible. The fallback stacks are Georgia / Times New Roman for the Cormorants and system sans for Inter. Family names are prefixed `GG ` (for example `'GG Cormorant Infant'`) so they cannot clash with another copy of the font.
 - **Light/dark:** typography does not change by mode (the role tokens are defined once on the theme scope, which both modes inherit).
