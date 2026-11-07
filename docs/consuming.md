@@ -55,7 +55,7 @@ A theme that bundles fonts (currently `grim-glimmer`) carries them with its CSS.
 
 ## Capacitor Android
 
-Nothing special is required: the output is plain JS and CSS. Include `viewport-fit=cover` in your `index.html` viewport meta and use `env(safe-area-inset-*)` in your app shell (the gallery does the same). Confirm your minimum Android System WebView version against the [browser baseline](architecture.md#browser-baseline-capacitor-android-webview).
+Nothing special is required: the output is plain JS and CSS. Include `viewport-fit=cover` in your `index.html` viewport meta and use `env(safe-area-inset-*)` in your app shell (the Storybook stories do the same). Confirm your minimum Android System WebView version against the [browser baseline](architecture.md#browser-baseline-capacitor-android-webview).
 
 ## Theming an app region differently
 

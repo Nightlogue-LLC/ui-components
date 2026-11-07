@@ -38,7 +38,7 @@ The library is published as **unbundled ES modules + `.d.ts`** (built with plain
 
 ## Browser baseline (Capacitor Android WebView)
 
-Target: Android System WebView / Chrome ~90+. TS compiles to ES2020, the gallery build targets `chrome90`.
+Target: Android System WebView / Chrome ~90+. TS compiles to ES2020, the Storybook preview build targets `chrome90`.
 
 CSS conventions to stay inside that baseline: custom properties, flex/grid, `env(safe-area-inset-*)`, `:focus-visible`, `prefers-reduced-motion`. **Avoid** `@layer`, native CSS nesting, `color-mix()`, `:has()`, and container queries unless the consumer's minimum WebView is confirmed to support them. This is a convention, not an automated check (see limitations in the PR).
 
@@ -48,18 +48,19 @@ Touch: controls default to a 44px height (`--nl-size-control-md`); `sm` is small
 
 Runtime dependencies: **none**. Dev dependencies, and why each exists:
 
-| Tool                       | Why                                                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| TypeScript (pinned `~6.0`) | Type-checking and emitting the package. Pinned below 6.1 because `typescript-eslint` doesn't yet support newer. |
-| Vite                       | Dev server and build for the gallery only. Not used to build the library.                                       |
-| Vitest + jsdom             | Unit tests for DOM factories and architecture tests. Reuses Vite's pipeline.                                    |
-| ESLint + typescript-eslint | Linting, including type-aware rules.                                                                            |
-| Prettier                   | Formatting (TS, CSS, Markdown, JSON).                                                                           |
-| publint                    | Validates `exports`/`files` of the built package.                                                               |
+| Tool                       | Why                                                                                                                                          |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript (pinned `~6.0`) | Type-checking and emitting the package. Pinned below 6.1 because `typescript-eslint` doesn't yet support newer.                              |
+| Storybook (HTML + Vite)    | The visual catalog and docs site (dev only). Brings Vite as its builder; the library itself is built with `tsc`. Addons: docs and a11y only. |
+| Vite                       | Storybook's builder and Vitest's pipeline. Not used to build the library.                                                                    |
+| Vitest + jsdom             | Unit tests for DOM factories and architecture tests. Reuses Vite's pipeline.                                                                 |
+| ESLint + typescript-eslint | Linting, including type-aware rules.                                                                                                         |
+| Prettier                   | Formatting (TS, CSS, Markdown, JSON).                                                                                                        |
+| publint                    | Validates `exports`/`files` of the built package.                                                                                            |
 
 ### Deliberately not used
 
-- **Storybook** - heavy (hundreds of packages, its own build system and upgrade treadmill) for what we need: preview, switch theme, tweak a few props. The Vite gallery is ~300 lines and needs no framework. Reconsider if we need interaction testing, visual regression, or non-engineers browsing a hosted catalog.
+- ~~**Storybook**~~ **Adopted in [#6](https://github.com/Nightlogue-LLC/ui-components/issues/6)**, replacing the custom Vite gallery. The earlier "not used" reasoning (a lot of dependencies, its own build system and upgrade treadmill) still stands as a cost: it is accepted because the catalog is now the long-term, hosted visual reference for every Nightlogue project, which was the reconsider-trigger we named (non-engineers browsing a hosted catalog, interaction testing, and per-PR previews). Mitigations: it is **dev-only** (the package keeps zero runtime dependencies), the addon set is deliberately small (docs and a11y; controls, actions, viewport and interactions are Storybook core), the framework is HTML + Vite so no React/Vue/web-component layer is introduced, and telemetry is disabled. See [storybook.md](storybook.md).
 - **Lit / web components** - adds a runtime dependency and Shadow DOM theming complexity; the first consumer renders plain DOM. Reconsider if a consumer needs framework-agnostic _custom elements_ specifically.
 - **Tailwind / daisyUI** - utility frameworks pull styling decisions into markup and bring their own design vocabulary and build step, which fights the token/theme-contract model and per-project isolation. Plain CSS with custom properties does the job with zero tooling.
 - **Monorepo tooling (workspaces, Turborepo, Nx)** - one package is enough for now. See [distribution.md](distribution.md) for when to split.

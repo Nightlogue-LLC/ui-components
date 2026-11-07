@@ -1,0 +1,497 @@
+/*
+ * Story content styles: specimens, grids and simulations used by the stories. They are not part of
+ * the library and are only loaded by Storybook. Colors and fonts come from the active stage theme
+ * through the library's tokens; the sb- prefix keeps these away from shared (nl-) and project
+ * (nl-<project>-) classes.
+ */
+
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem;
+}
+
+.sb-cell--state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.sb-cell__label {
+  font:
+    0.75rem/1.2 ui-monospace,
+    monospace;
+  opacity: 0.7;
+}
+
+/*
+ * Grim & Glimmer foundations story. Panels carry their own [data-nl-theme], so every color here
+ * comes from the theme under review; only layout lives in this file.
+ */
+.sb-gg-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+}
+
+.sb-gg-panel {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+}
+
+.sb-gg-mode {
+  margin: 0 0 0.5rem;
+  font: 0.75rem/1 var(--nl-font-family);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nl-color-text);
+}
+
+.sb-gg-section {
+  margin-top: 1.5rem;
+}
+
+.sb-gg-h {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--nl-color-border);
+  font: 600 0.8rem/1.2 var(--nl-font-family);
+  color: var(--nl-color-text);
+}
+
+.sb-gg-note {
+  display: block;
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.sb-gg-swatches,
+.sb-gg-contrast-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sb-gg-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.sb-gg-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.sb-gg-swatch__chip {
+  display: block;
+  height: 2.25rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+}
+
+.sb-gg-swatch__name {
+  font: 600 0.75rem/1.2 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}
+
+.sb-gg-contrast {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--nl-color-surface-hover);
+  font: 0.85rem/1.3 var(--nl-font-family);
+}
+
+.sb-gg-contrast__sample {
+  display: grid;
+  place-items: center;
+  height: 2rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  font: 600 0.9rem/1 var(--nl-font-family);
+}
+
+.sb-gg-contrast__status {
+  font: 600 0.75rem/1 var(--nl-font-family);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sb-gg-boxes {
+  display: grid;
+  gap: 1rem;
+}
+
+.sb-gg-box {
+  padding: 1rem;
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  font: 0.85rem/1.4 var(--nl-font-family);
+}
+
+.sb-gg-box--card {
+  box-shadow: var(--nl-shadow-card, none);
+}
+
+.sb-gg-box--dialog {
+  box-shadow: var(--nl-shadow-dialog, none);
+}
+
+.sb-gg-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* --- Component stories ------------------------------------------------------------------- */
+
+/*
+ * Preview aid: simulate pseudo-states in static grids. These deliberately READ the components'
+ * private --_ hooks to mirror their real hover/pressed/focus rules, so they can drift if those
+ * rules change; the playground always shows the real behavior.
+ */
+.nl-button.sb-force-hover:not(:disabled),
+.nl-icon-button.sb-force-hover:not(:disabled) {
+  background: var(--_bg-hover);
+}
+
+.nl-button.sb-force-pressed:not(:disabled),
+.nl-icon-button.sb-force-pressed:not(:disabled) {
+  background: var(--_bg-active);
+}
+
+.nl-button.sb-force-focus,
+.nl-icon-button.sb-force-focus {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+.sb-matrix {
+  display: grid;
+  gap: 1rem;
+}
+
+.sb-matrix__row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.sb-card-title,
+.sb-card-body {
+  display: block;
+}
+
+.sb-card-title {
+  font-weight: var(--nl-font-weight-medium);
+}
+
+.sb-card-body {
+  margin-top: 0.25rem;
+  font-size: var(--nl-font-size-sm);
+  opacity: 0.85;
+}
+
+/* --- Grim & Glimmer overview / flow stories -------------------------------------------------- */
+.sb-gg-frame {
+  margin-top: 1.25rem;
+}
+
+.sb-gg-screen {
+  margin-top: 0.4rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+/* Reserved slot for the app's wordmark artwork. The catalog never typesets the wordmark. */
+.sb-gg-wordmark-slot {
+  display: grid;
+  place-items: center;
+  min-height: 3.5rem;
+  border: 1px dashed var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.sb-gg-heading-group {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.sb-gg-states {
+  display: grid;
+  gap: var(--nl-space-4);
+  padding: var(--nl-space-4);
+}
+
+.sb-flow {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sb-flow > .nl-grim-glimmer-screen {
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+.sb-flow__status {
+  margin: 0;
+  font:
+    0.8rem/1.4 ui-monospace,
+    monospace;
+}
+
+.sb-flow__demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sb-gg-panel--screens {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.sb-gg-panel--screens .sb-gg-mode,
+.sb-gg-panel--screens .sb-gg-note {
+  padding-inline: 1rem;
+}
+
+.sb-gg-panel--screens .sb-gg-mode {
+  padding-top: 1rem;
+}
+
+.sb-gg-panel--screens .sb-gg-screen {
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.sb-gg-panel--screens .sb-gg-screen > .sb-gg-states {
+  padding-inline: var(--nl-space-5);
+}
+
+.sb-flow > .nl-grim-glimmer-screen {
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.sb-flow__status,
+.sb-flow__demo {
+  padding-inline: 1rem;
+}
+
+.sb-flow__demo {
+  padding-bottom: 1rem;
+}
+
+/* --- Grim & Glimmer typography story ---------------------------------------------------------- */
+/* Role classes consume the SEMANTIC tokens only, exactly as app code is expected to. */
+.sb-ty-face,
+.sb-ty-row {
+  margin: 0.9rem 0 1.1rem;
+}
+
+.sb-ty-face__name,
+.sb-ty-row__level {
+  margin: 0 0 0.25rem;
+  font: 600 0.8rem/1.3 var(--nl-font-family);
+}
+
+.sb-ty-face__role {
+  font-weight: 400;
+}
+
+.sb-ty-spec,
+.sb-ty-alphabet,
+.sb-ty-sample {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.sb-ty-spec--display {
+  font: var(--nl-font-weight-display) var(--nl-font-size-display-lg) / var(--nl-line-height-display)
+    var(--nl-font-family-display);
+}
+
+.sb-ty-spec--heading {
+  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-lg) / var(--nl-line-height-heading)
+    var(--nl-font-family-heading);
+}
+
+.sb-ty-spec--label {
+  font: var(--nl-font-weight-label) 1.125rem / 1.5 var(--nl-font-family-label);
+  letter-spacing: var(--nl-letter-spacing-label);
+}
+
+.sb-ty-spec--ui {
+  font: var(--nl-font-weight-medium) var(--nl-font-size-lg) / 1.4 var(--nl-font-family);
+}
+
+.sb-ty-alphabet {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+  opacity: 0.85;
+}
+
+.sb-ty-status {
+  display: block;
+  margin-top: 0.15rem;
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.sb-ty-pad {
+  padding: 0 1rem 1rem;
+}
+
+.sb-ty-cards {
+  border-top: 1px solid var(--nl-color-border);
+}
+
+/* The typography panel pads its own content, so cancel the screen-panel padding inside it. */
+.sb-ty-pad .sb-gg-mode {
+  padding: 1rem 0 0;
+}
+
+.sb-ty-pad .sb-gg-note {
+  padding-inline: 0;
+}
+
+/* Flex row for buttons and other controls shown side by side. */
+.sb-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Side-by-side light/dark comparison (compareModes). Each pane is its own themed stage. */
+.sb-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+.sb-compare__pane {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 1.25rem;
+}
+
+.sb-compare__label {
+  margin: 0 0 0.75rem;
+  font:
+    0.75rem/1 ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* Edge-to-edge panes for full-screen compositions: only the label is padded. */
+.sb-compare__pane--bleed {
+  padding: 0;
+}
+
+.sb-compare__pane--bleed > .sb-compare__label {
+  padding: 1rem 1rem 0;
+}
+
+/* --- Foundations / Tokens & Typography ------------------------------------------------------- */
+.sb-tok-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sb-tok-item {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 0.75rem;
+  align-items: center;
+  font: 0.8rem/1.3 var(--nl-font-family);
+}
+
+.sb-tok-item--plain {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.sb-tok-chip {
+  grid-row: 1 / 3;
+  height: 2.25rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+}
+
+.sb-tok-item .sb-gg-swatch__name {
+  overflow-wrap: anywhere;
+}
+
+.sb-tok-bars {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.sb-tok-barrow {
+  display: grid;
+  grid-template-columns: 7rem auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  font: 0.75rem/1.3 var(--nl-font-family);
+}
+
+.sb-tok-bar {
+  display: block;
+  height: 0.75rem;
+  background: var(--nl-color-accent);
+}
+
+.sb-tok-role {
+  margin: 0.9rem 0 1.1rem;
+}
+
+.sb-tok-role__sample {
+  margin: 0.15rem 0;
+}
+
+/* Role samples read the semantic tokens with the SAME fallbacks shared components use. */
+.sb-tok-role__sample--display {
+  font: var(--nl-font-weight-display, 600) var(--nl-font-size-display-md, 1.5rem) /
+    var(--nl-line-height-display, 1.3) var(--nl-font-family-display, var(--nl-font-family));
+}
+
+.sb-tok-role__sample--heading {
+  font: var(--nl-font-weight-heading, 600) var(--nl-font-size-heading-md, 1.375rem) /
+    var(--nl-line-height-heading, 1.25) var(--nl-font-family-heading, var(--nl-font-family));
+}
+
+.sb-tok-role__sample--label {
+  font: var(--nl-font-weight-label, 600) var(--nl-font-size-label, 0.75rem) / 1.4
+    var(--nl-font-family-label, var(--nl-font-family));
+  letter-spacing: var(--nl-letter-spacing-label, 0.08em);
+  text-transform: uppercase;
+}
+
+.sb-tok-role__sample--ui {
+  font: 400 var(--nl-font-size-md) / 1.5 var(--nl-font-family);
+}

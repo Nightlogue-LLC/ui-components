@@ -1,7 +1,7 @@
 /*
  * "neutral" example theme.
  *
- * Purpose: proves the architecture (contract, scoping, exports, gallery) end to end.
+ * Purpose: proves the architecture (contract, scoping, exports, Storybook) end to end.
  * It is a grayscale placeholder, NOT a brand identity. Do not ship it as a product's look.
  *
  * Every selector is scoped under [data-nl-theme='neutral'] so it cannot affect anything outside

@@ -1,0 +1,60 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Nightlogue UI Components
+
+The visual catalog for **all Nightlogue projects**. The components are plain TypeScript DOM factories plus CSS: no
+framework, no web components, and no runtime dependencies. Storybook only hosts them; it is a development tool and
+is never part of the published package.
+
+Grim & Glimmer is one project built on the shared components. Its fonts, palette and layouts live in its own theme
+and project folders and are never part of the shared primitives.
+
+## Where things are
+
+| Sidebar                               | What it shows                                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Foundations / Tokens & Typography** | The theme contract, foundation tokens and typography roles, as the selected theme resolves them   |
+| **Components / Actions**              | Button, IconButton                                                                                |
+| **Components / Surfaces**             | Card                                                                                              |
+| **Components / Inputs**               | SegmentedControl                                                                                  |
+| **Components / Overlays**             | Dialog (with a mobile review checklist)                                                           |
+| **Components / Feedback**             | Badge                                                                                             |
+| **Projects / Grim & Glimmer**         | Foundations (palette, contrast, typography), Collection, Gameplay, Dialogs (incl. the modal flow) |
+
+Each component page has a **Playground** (change props in the Controls panel; events appear in Actions), the
+variants and states, and a **Light / dark comparison** story that shows both modes side by side.
+
+## Toolbar
+
+- **Theme** and **Mode** apply the library's `applyTheme()` to the story stage only (`[data-nl-theme]` /
+  `[data-nl-mode]`). Nothing is applied to `<html>` or `<body>`, so a project theme cannot leak into other
+  stories. **Theme: Auto** (the default) uses each story's own theme: `neutral` for shared components and the
+  project theme on project stories. Pick any theme to override it everywhere, for example to see how a project
+  component behaves under the neutral theme.
+- **Viewport** resizes the preview frame to 320, 375 or 430 (phones), 768 (tablet) or 1280 (desktop). It is a real
+  frame resize, so media queries apply too.
+
+## Accessibility and testing
+
+- The **Accessibility** panel runs axe on the open story. Treat violations as review items, and remember that
+  automated checks catch only part of the problem: also use the keyboard and a screen reader.
+- The **Interactions** panel replays each story's interaction step (for example opening a dialog). Open
+  **Components / Overlays / Dialog** for the mobile dialog checklist.
+
+## Adding a story
+
+1. Create `stories/<group>/<Name>.stories.ts` (the file name does not decide the sidebar; `title` does).
+2. Use a title in the existing structure, for example `Components/Inputs/TextField` or `Projects/<Project>/Collection`.
+   A new project needs no change to shared components: add `Projects/<Project>/...` stories.
+3. Write typed CSF with `satisfies Meta<Args>`; use `fn()` for callbacks so they show up in Actions.
+4. Show variants and states, add a `LightDarkComparison` story (`parameters: { nlStage: 'self' }` with
+   `compareModes`), and describe usage in `parameters.docs.description.component`.
+
+Never import a project's fonts or styles into a shared component story: the theme supplies them.
+
+## Previewing on a phone
+
+`npm run storybook:lan` binds the dev server to all network interfaces. **Anyone on the same network can reach it**,
+so use it only on a network you trust. See `docs/storybook.md`.

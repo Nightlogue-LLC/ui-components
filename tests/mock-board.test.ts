@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { mockBoard } from '../gallery/lib/mock-board.js';
+import { mockBoard } from '../stories/lib/mock-board.js';
 
 const given = (cells: readonly string[]) => cells.filter((c) => c === 'fixed').length;
 

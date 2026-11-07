@@ -16,5 +16,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "gallery", "tests", "vite.config.ts", "vitest.config.ts"]
+  "include": ["src", "stories", ".storybook/**/*", "tests", "vitest.config.ts"]
 }
