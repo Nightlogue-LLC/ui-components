@@ -401,9 +401,20 @@ h3 {
   color: var(--nl-color-text);
 }
 
-.gal-gg-screen-title {
-  margin: 0;
-  font: 400 1.75rem/1.1 var(--nl-font-family-display, var(--nl-font-family));
+/* Reserved slot for the app's wordmark artwork. The gallery never typesets the wordmark. */
+.gal-gg-wordmark-slot {
+  display: grid;
+  place-items: center;
+  min-height: 3.5rem;
+  border: 1px dashed var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.gal-gg-heading-group {
+  display: grid;
+  gap: 0.25rem;
 }
 
 .gal-gg-states {
@@ -543,55 +554,19 @@ h3 {
   opacity: 0.8;
 }
 
-.gal-ty-display-lg {
-  font: var(--nl-font-weight-display) var(--nl-font-size-display-lg) / var(--nl-line-height-display)
-    var(--nl-font-family-display);
+.gal-ty-pad {
+  padding: 0 1rem 1rem;
 }
 
-.gal-ty-display-md {
-  font: var(--nl-font-weight-display) var(--nl-font-size-display-md) / var(--nl-line-height-display)
-    var(--nl-font-family-display);
+.gal-ty-cards {
+  border-top: 1px solid var(--nl-color-border);
 }
 
-.gal-ty-heading-lg {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-lg) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
+/* The typography panel pads its own content, so cancel the screen-panel padding inside it. */
+.gal-ty-pad .gal-gg-mode {
+  padding: 1rem 0 0;
 }
 
-.gal-ty-heading-md {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-md) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
-}
-
-.gal-ty-heading-sm {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-sm) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
-}
-
-.gal-ty-heading-soft {
-  font: var(--nl-font-weight-heading-soft) var(--nl-font-size-heading-sm) /
-    var(--nl-line-height-heading) var(--nl-font-family-heading);
-}
-
-.gal-ty-label {
-  font: var(--nl-font-weight-label) var(--nl-font-size-label) / 1.4 var(--nl-font-family-label);
-  letter-spacing: var(--nl-letter-spacing-label);
-  text-transform: uppercase;
-}
-
-.gal-ty-ui-body {
-  font: 400 var(--nl-font-size-md) / 1.5 var(--nl-font-family);
-}
-
-.gal-ty-ui-strong {
-  font: var(--nl-font-weight-medium) var(--nl-font-size-md) / 1.4 var(--nl-font-family);
-}
-
-.gal-ty-ui-small {
-  font: 400 var(--nl-font-size-sm) / 1.4 var(--nl-font-family);
-}
-
-.gal-ty-ui-numbers {
-  font: var(--nl-font-weight-medium) var(--nl-font-size-lg) / 1.4 var(--nl-font-family);
-  font-variant-numeric: tabular-nums;
+.gal-ty-pad .gal-gg-note {
+  padding-inline: 0;
 }

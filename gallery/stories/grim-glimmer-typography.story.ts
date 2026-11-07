@@ -1,5 +1,12 @@
 import { applyTheme } from '../../src/core/index.js';
+import {
+  createBoard,
+  createPuzzleCollection,
+  createPuzzleCollectionCard,
+  type PuzzleStatus,
+} from '../../src/projects/grim-glimmer/index.js';
 import { el } from '../lib/dom.js';
+import { mockBoard } from '../lib/mock-board.js';
 import type { ModeName } from '../lib/theme-tokens.js';
 import { defineStory } from './types.js';
 
@@ -49,65 +56,98 @@ const TYPEFACES = [
   },
 ] as const;
 
-/** Hierarchy levels. Each row's meta line is filled with the real computed values after attach. */
+/**
+ * Hierarchy levels, rendered with the SAME classes app markup uses (project CSS), so this story
+ * shows what an app gets. Each row's meta line is filled with the real computed values after attach.
+ */
 const LEVELS = [
   {
-    cls: 'display-lg',
+    id: 'display-lg',
+    cls: 'nl-grim-glimmer-puzzle-title nl-grim-glimmer-puzzle-title--lg',
     level: 'Display large',
     text: 'Ghosts & Graves',
     tokens: 'display · --nl-font-size-display-lg',
   },
   {
-    cls: 'display-md',
+    id: 'display-md',
+    cls: 'nl-grim-glimmer-puzzle-title',
     level: 'Display medium',
     text: 'Tents & Trees',
     tokens: 'display · --nl-font-size-display-md',
   },
   {
-    cls: 'heading-lg',
+    id: 'heading-lg',
+    cls: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
     level: 'Heading large',
     text: 'Choose a puzzle',
     tokens: 'heading 600 · --nl-font-size-heading-lg',
   },
   {
-    cls: 'heading-md',
+    id: 'heading-md',
+    cls: 'nl-grim-glimmer-heading',
     level: 'Heading medium',
     text: 'How to play',
     tokens: 'heading 600 · --nl-font-size-heading-md',
   },
   {
-    cls: 'heading-sm',
+    id: 'heading-sm',
+    cls: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--sm',
     level: 'Heading small',
     text: 'Puzzle complete',
     tokens: 'heading 600 · --nl-font-size-heading-sm',
   },
   {
-    cls: 'heading-soft',
+    id: 'heading-soft',
+    cls: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--sm nl-grim-glimmer-heading--soft',
     level: 'Heading, soft editorial',
     text: 'Nicely done. Another puzzle awaits.',
     tokens: 'heading 400 · --nl-font-size-heading-sm',
   },
   {
-    cls: 'label',
+    id: 'label',
+    cls: 'nl-grim-glimmer-eyebrow',
     level: 'Editorial label',
     text: 'Collection',
     tokens: 'label · --nl-font-size-label',
   },
   {
-    cls: 'ui-body',
+    id: 'ui-body',
+    cls: 'nl-grim-glimmer-text',
     level: 'UI body',
     text: 'Place a tent beside every tree.',
     tokens: 'ui 400 · --nl-font-size-md',
   },
-  { cls: 'ui-strong', level: 'UI control', text: 'New Game', tokens: 'ui 600 · --nl-font-size-md' },
-  { cls: 'ui-small', level: 'UI small', text: 'Step 1 of 3', tokens: 'ui 400 · --nl-font-size-sm' },
   {
-    cls: 'ui-numbers',
+    id: 'ui-strong',
+    cls: 'nl-grim-glimmer-text nl-grim-glimmer-text--strong',
+    level: 'UI control',
+    text: 'New Game',
+    tokens: 'ui 600 · --nl-font-size-md',
+  },
+  {
+    id: 'ui-small',
+    cls: 'nl-grim-glimmer-text nl-grim-glimmer-text--small',
+    level: 'UI small',
+    text: 'Step 1 of 3',
+    tokens: 'ui 400 · --nl-font-size-sm',
+  },
+  {
+    id: 'ui-numbers',
+    cls: 'nl-grim-glimmer-numerals',
     level: 'Clues and numbers',
     text: '1 2 3 4 5  ·  12 08 31',
     tokens: 'ui 600 · tabular figures',
   },
 ] as const;
+
+/** Sample puzzle cards: real names, plus deliberately long titles to test wrapping and clipping. */
+const SAMPLE_CARDS: readonly { title: string; status: PuzzleStatus }[] = [
+  { title: 'Tents & Trees', status: 'continue' },
+  { title: 'Ghosts & Graves', status: 'play' },
+  { title: 'Ghosts & Graves', status: 'coming-soon' },
+  { title: 'The Cartographer’s Midnight Orchard', status: 'coming-soon' },
+  { title: 'Nightingales & Nettles in the Orchard of Forgotten Names', status: 'coming-soon' },
+];
 
 const family = (css: string) =>
   (css.split(',')[0] ?? '').replace(/["']/g, '').replace(/^GG /, '').trim();
@@ -149,10 +189,10 @@ function hierarchy(): HTMLElement {
     'Hierarchy',
     ...LEVELS.map((row) => {
       const meta = el('span', { className: 'gal-gg-note' });
-      meta.dataset.level = row.cls;
+      meta.dataset.level = row.id;
       return el('div', { className: 'gal-ty-row' }, [
         el('p', { className: 'gal-ty-row__level', text: row.level }),
-        el('p', { className: `gal-ty-sample gal-ty-${row.cls}`, text: row.text }),
+        el('p', { className: `gal-ty-sample ${row.cls}`, text: row.text }),
         el('p', { className: 'gal-gg-note', text: row.tokens }),
         meta,
       ]);
@@ -179,11 +219,39 @@ async function annotate(panel: HTMLElement): Promise<void> {
   }
 }
 
+function sampleCards(): HTMLElement {
+  const cards = SAMPLE_CARDS.map((sample, index) =>
+    createPuzzleCollectionCard({
+      title: sample.title,
+      status: sample.status,
+      preview: createBoard({
+        label: 'Preview',
+        size: 5,
+        mode: 'preview',
+        cells: mockBoard('easy', index + 1),
+      }),
+      onOpen: () => undefined,
+    }),
+  );
+  // Same width as a real phone screen: the 24px screen padding comes from the project layout class.
+  return el('div', { className: 'nl-grim-glimmer-screen gal-ty-cards' }, [
+    el('h4', { className: 'gal-gg-h', text: 'Sample puzzle cards' }),
+    createPuzzleCollection(cards, { label: 'Sample puzzle cards' }),
+    el('p', {
+      className: 'gal-gg-note',
+      text: 'Titles in the display face (Cormorant Upright), status in the label face (Cormorant SC). The last two titles are deliberately long: up to three lines are shown without clipping, then an ellipsis.',
+    }),
+  ]);
+}
+
 function panel(mode: ModeName): HTMLElement {
-  const root = el('div', { className: 'gal-gg-panel' }, [
-    el('h3', { className: 'gal-gg-mode', text: mode === 'light' ? 'Light' : 'Dark' }),
-    typefaces(),
-    hierarchy(),
+  const root = el('div', { className: 'gal-gg-panel gal-gg-panel--screens' }, [
+    el('div', { className: 'gal-ty-pad' }, [
+      el('h3', { className: 'gal-gg-mode', text: mode === 'light' ? 'Light' : 'Dark' }),
+      typefaces(),
+      hierarchy(),
+    ]),
+    sampleCards(),
   ]);
   applyTheme(root, THEME, mode);
   requestAnimationFrame(() => {
@@ -196,8 +264,9 @@ export default defineStory({
   id: 'grim-glimmer-typography',
   title: 'G&G · Typography',
   description:
-    'The approved type system, light and dark side by side: Cormorant Upright for puzzle titles, Cormorant Infant for headings, Cormorant SC for editorial labels, Inter for functional UI. Sizes are the live computed values at the current viewport width.',
+    'The approved type system, light and dark side by side: Cormorant Upright for puzzle titles, Cormorant Infant for headings, Cormorant SC for editorial labels, Inter for functional UI. Sizes are the live computed values at the current viewport width, and the sample puzzle cards (including long titles) use the real collection-card component.',
   scope: 'self',
+  bleed: true,
   showLog: false,
   controls: [],
   defaults: {},

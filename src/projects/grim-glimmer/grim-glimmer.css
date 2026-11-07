@@ -99,13 +99,13 @@
   padding: 0;
 }
 
-/* Landscape card: ~136px tall, preview ~40% on the left, title + status on the right. */
+/* Landscape card: 144px tall, preview ~40% on the left, title + status on the right. */
 .nl-card.nl-grim-glimmer-collection-card {
   --nl-card-padding: 0;
 
   display: flex;
   align-items: stretch;
-  height: var(--nl-grim-glimmer-card-height, 8.5rem);
+  height: var(--nl-grim-glimmer-card-height, 9rem);
   overflow: hidden;
 }
 
@@ -131,16 +131,23 @@
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
-  padding: var(--nl-space-4);
+  padding: var(--nl-space-3) var(--nl-space-4);
 }
 
+/*
+ * Puzzle title: display role (Cormorant Upright in this theme).
+ * Height budget inside the 144px card: 142px inner - 24px padding - 24px status = 94px for the
+ * title, so three lines must fit in that. The font size is capped at 23px for cards and the line
+ * height is the display token (1.3, above the font's 1.21em content area), so three lines take at
+ * most ~90px and no ascender or descender is ever clipped. A fourth line ends in an ellipsis.
+ */
 .nl-grim-glimmer-collection-card__title {
   display: -webkit-box;
   overflow: hidden;
   font-family: var(--nl-font-family-display, var(--nl-font-family));
-  font-size: 1.25rem;
-  font-weight: 400;
-  line-height: 1.15;
+  font-size: min(var(--nl-font-size-display-md, 1.375rem), 1.4375rem);
+  font-weight: var(--nl-font-weight-display, 400);
+  line-height: var(--nl-line-height-display, 1.3);
   overflow-wrap: anywhere;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -184,16 +191,19 @@
   gap: var(--nl-space-3);
 }
 
+/* Puzzle name: display role. It may wrap to two lines (never clipped) so long names still fit. */
 .nl-grim-glimmer-game-header__title {
+  display: -webkit-box;
   margin: 0;
   overflow: hidden;
   font-family: var(--nl-font-family-display, var(--nl-font-family));
-  font-size: 1.5rem;
-  font-weight: 400;
-  line-height: 1.15;
+  font-size: var(--nl-font-size-display-md, 1.375rem);
+  font-weight: var(--nl-font-weight-display, 400);
+  line-height: var(--nl-line-height-display, 1.3);
+  overflow-wrap: anywhere;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .nl-grim-glimmer-game-controls {
@@ -218,6 +228,14 @@
   margin: 0;
 }
 
+/* Instructions stay in the UI face (Inter). The success MESSAGE is a heading-role line, softer. */
+.nl-grim-glimmer-success__message {
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-sm, 1.125rem);
+  font-weight: var(--nl-font-weight-heading-soft, 400);
+  line-height: var(--nl-line-height-heading, 1.4);
+}
+
 .nl-grim-glimmer-tutorial__demo {
   margin-top: var(--nl-space-4);
 }
@@ -236,4 +254,82 @@
   margin-bottom: var(--nl-space-3);
   background: var(--nl-color-accent);
   clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}
+
+/* --- Typography roles for app markup ----------------------------------------------------------
+ * The same roles the components use, as classes. They read only semantic tokens, so each has a
+ * sensible look in any theme and the Cormorant/Inter mapping lives in the theme alone.
+ *   puzzle-title  display role        heading   heading role (+ --lg / --sm / --soft)
+ *   eyebrow       editorial label     text      UI role (+ --strong / --small)     numerals  clues
+ * Use Inter (text/numerals) for anything interactive or instructional; reserve the eyebrow for
+ * small editorial headings, never for functional UI text.
+ */
+.nl-grim-glimmer-puzzle-title {
+  margin: 0;
+  font-family: var(--nl-font-family-display, var(--nl-font-family));
+  font-size: var(--nl-font-size-display-md, 1.375rem);
+  font-weight: var(--nl-font-weight-display, 400);
+  line-height: var(--nl-line-height-display, 1.3);
+  overflow-wrap: anywhere;
+}
+
+.nl-grim-glimmer-puzzle-title--lg {
+  font-size: var(--nl-font-size-display-lg, 1.75rem);
+}
+
+.nl-grim-glimmer-heading {
+  margin: 0;
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-md, 1.375rem);
+  font-weight: var(--nl-font-weight-heading, 400);
+  line-height: var(--nl-line-height-heading, 1.25);
+  overflow-wrap: anywhere;
+}
+
+.nl-grim-glimmer-heading--lg {
+  font-size: var(--nl-font-size-heading-lg, 1.75rem);
+}
+
+.nl-grim-glimmer-heading--sm {
+  font-size: var(--nl-font-size-heading-sm, 1.125rem);
+}
+
+.nl-grim-glimmer-heading--soft {
+  font-weight: var(--nl-font-weight-heading-soft, 400);
+}
+
+.nl-grim-glimmer-eyebrow {
+  margin: 0;
+  font-family: var(--nl-font-family-label, var(--nl-font-family));
+  font-size: var(--nl-font-size-label, 0.75rem);
+  font-weight: var(--nl-font-weight-label, var(--nl-font-weight-medium));
+  line-height: 1.4;
+  letter-spacing: var(--nl-letter-spacing-label, 0.08em);
+  text-transform: uppercase;
+}
+
+.nl-grim-glimmer-text {
+  margin: 0;
+  font-family: var(--nl-font-family);
+  font-size: var(--nl-font-size-md);
+  line-height: 1.5;
+}
+
+.nl-grim-glimmer-text--strong {
+  font-weight: var(--nl-font-weight-medium);
+}
+
+.nl-grim-glimmer-text--small {
+  font-size: var(--nl-font-size-sm);
+  line-height: 1.4;
+}
+
+/* Puzzle clues and numbers: Inter, tabular figures so columns line up. */
+.nl-grim-glimmer-numerals {
+  margin: 0;
+  font-family: var(--nl-font-family);
+  font-size: var(--nl-font-size-lg);
+  font-weight: var(--nl-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
 }

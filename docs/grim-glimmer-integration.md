@@ -18,21 +18,41 @@ Allowed imports inside the library: project code may import shared `components/`
 
 ## What is provided
 
-| Export                                   | Purpose                                                                                                                                                                                                                                         |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createBoard` / `updateBoard`            | Square board of cells in `preview` (decorative), `interactive` (buttons; given cells announced but inert) or `readonly` (images) mode. Reports activations by index; draws whatever cell states it is given: `empty / fixed / placed / marked`. |
-| `createPuzzleCollectionCard`             | Full-width landscape card (136px tall by default; preview ~40% left; serif title and status on the right). `play` / `continue` are native buttons; `coming-soon` is a static, dashed, non-actionable card whose status is real text.            |
-| `createPuzzleCollection`                 | One-column `<ul>` of equally sized cards.                                                                                                                                                                                                       |
-| `createGameHeader`                       | Back, short title (`h1`), help. 48px targets via the icon button's size hook. Icon artwork is passed in by the app.                                                                                                                             |
-| `createGameControls`                     | Compact New Game button shown below the board.                                                                                                                                                                                                  |
-| `createGameScreen` / `getGameScreenSlot` | Single-column screen layout (header, difficulty, board, controls) with 24px side padding and safe-area insets. No bottom navigation anywhere.                                                                                                   |
-| `createTutorialDialog`                   | Multi-step copy plus a **mock, tappable 5x5 demo** (empty → placed → marked → empty). Skip always available, Finish on the last step. Does not touch the real board.                                                                            |
-| `createSuccessDialog`                    | Concise success message with a small decorative accent (no confetti). Play Again / Close.                                                                                                                                                       |
-| `createDiscardConfirmDialog`             | Compulsory confirmation (not dismissible, Cancel focused first).                                                                                                                                                                                |
+| Export                                   | Purpose                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createBoard` / `updateBoard`            | Square board of cells in `preview` (decorative), `interactive` (buttons; given cells announced but inert) or `readonly` (images) mode. Reports activations by index; draws whatever cell states it is given: `empty / fixed / placed / marked`.                                                               |
+| `createPuzzleCollectionCard`             | Full-width landscape card (144px tall by default; preview ~40% left; puzzle title in the display typeface and a status label on the right; up to three title lines, never clipped). `play` / `continue` are native buttons; `coming-soon` is a static, dashed, non-actionable card whose status is real text. |
+| `createPuzzleCollection`                 | One-column `<ul>` of equally sized cards.                                                                                                                                                                                                                                                                     |
+| `createGameHeader`                       | Back, short title (`h1`), help. 48px targets via the icon button's size hook. Icon artwork is passed in by the app.                                                                                                                                                                                           |
+| `createGameControls`                     | Compact New Game button shown below the board.                                                                                                                                                                                                                                                                |
+| `createGameScreen` / `getGameScreenSlot` | Single-column screen layout (header, difficulty, board, controls) with 24px side padding and safe-area insets. No bottom navigation anywhere.                                                                                                                                                                 |
+| `createTutorialDialog`                   | Multi-step copy plus a **mock, tappable 5x5 demo** (empty → placed → marked → empty). Skip always available, Finish on the last step. Does not touch the real board.                                                                                                                                          |
+| `createSuccessDialog`                    | Concise success message with a small decorative accent (no confetti). Play Again / Close.                                                                                                                                                                                                                     |
+| `createDiscardConfirmDialog`             | Compulsory confirmation (not dismissible, Cancel focused first).                                                                                                                                                                                                                                              |
 
 The dialogs return a closed, detached `<dialog>`; the app appends it inside its themed container and calls `openDialog()`. Their callbacks run **after** the dialog has closed and focus has returned to the opener. All strings (and `labels` options for button words) come from the app, for translation.
 
 Difficulty uses the shared `SegmentedControl`, with the app's own option values. Easy / Medium / Hard are sample values in the gallery, not built into the library.
+
+## Typography
+
+Approved system, supplied by the **theme** (see [grim-glimmer-theme.md](grim-glimmer-theme.md#typography)); the project components below read semantic role tokens and never name a font.
+
+| Role    | Typeface                   | Where it appears                                                                                        |
+| ------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| display | Cormorant Upright 500      | Puzzle titles: collection cards (`__title`) and the game header title                                   |
+| heading | Cormorant Infant 600 / 400 | Screen headings, section titles, dialog titles (600); the success message and soft editorial text (400) |
+| label   | Cormorant SC 600           | Status labels (Play / Continue / Coming Soon) and the eyebrow label                                     |
+| ui      | Inter 400 / 600            | Buttons, difficulty control, tutorial and confirmation text, step counter, clues and numbers            |
+
+For app markup the same roles are available as classes (project CSS): `nl-grim-glimmer-puzzle-title` (`--lg`), `nl-grim-glimmer-heading` (`--lg`, `--sm`, `--soft`), `nl-grim-glimmer-eyebrow`, `nl-grim-glimmer-text` (`--strong`, `--small`) and `nl-grim-glimmer-numerals`. Use Inter (`text`, `numerals`) for anything interactive or instructional, and keep the eyebrow for small editorial headings only. The **G&G · Typography** story renders every level with these classes.
+
+Layout decisions that follow from the fonts:
+
+- **No clipping.** Cormorant's content area is 1.21em tall, so display and heading line heights are 1.3 and 1.25. The card title (up to three lines, then an ellipsis) and the game header title (up to two lines) are clamped on whole lines, so ascenders and descenders are never cut. Card titles are capped at 23px so three lines always fit above the status label.
+- **Long names.** The collection card keeps its full accessible name even when the visible title ends in an ellipsis. The header title wraps to two lines instead of truncating a short name like "Ghosts & Graves" at 320px.
+- **Status labels** are small caps/uppercase Cormorant SC with 0.14em tracking and are `nowrap`. A much longer translation of "Coming Soon" may not fit a 320px card; check translations.
+- **The wordmark** is app-owned artwork. Nothing here typesets it; the gallery reserves a labelled slot instead.
 
 ## What the game app owns (contracts)
 
@@ -56,10 +76,9 @@ Clearly marked as such in the gallery and code comments; none is final artwork:
 - The four-point star in the success dialog.
 - The sample icons (chevron, help) in the gallery; real icons are supplied by the app as DOM nodes.
 - All sample copy, and the "Placeholder puzzle A/B" cards.
-- The display font (Georgia stack), pending sign-off.
 
 ## Previewing
 
-`npm run dev`, then open **G&G · Overview** (home and game screens, light and dark side by side, in true phone-width stages), **G&G · Modal flow** (the working simulation) and **G&G · Foundations**. Use the Viewport menu or device emulation for 320 / 375 / 430px. "Overview" and "Modal flow" render edge to edge so a screen is as wide as the viewport, which matters for touch-target sizes.
+`npm run dev`, then open **G&G · Overview** (home and game screens, light and dark side by side, in true phone-width stages), **G&G · Modal flow** (the working simulation), **G&G · Typography** (typefaces, hierarchy, and sample puzzle cards including long titles) and **G&G · Foundations**. Use the Viewport menu or device emulation for 320 / 375 / 430px. "Overview" and "Modal flow" render edge to edge so a screen is as wide as the viewport, which matters for touch-target sizes.
 
-Review screenshots (375px, mock data) are in `docs/screenshots/grim-glimmer/`; they can be deleted after review.
+Review screenshots (mock data; 375px unless named) are in `docs/screenshots/grim-glimmer/`, including the 320px sample cards; they can be deleted after review.

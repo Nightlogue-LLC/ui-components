@@ -31,8 +31,10 @@ const STATUS_TONES: Record<PuzzleStatus, BadgeTone> = {
 };
 
 /**
- * Full-width landscape card for the home collection: preview on the left (~40%), editorial title
- * and a small status on the right. Available puzzles are native buttons. `coming-soon` renders as
+ * Full-width landscape card for the home collection: preview on the left (~40%), the puzzle title
+ * (display typography role) and a small status label (editorial label role) on the right. Titles
+ * wrap to three lines at phone widths and never clip; a longer title ends in an ellipsis, while the
+ * accessible name always carries the full text. Available puzzles are native buttons. `coming-soon` renders as
  * a static, visibly unavailable card: no button, no hover, no activation, and its status text
  * ("Coming Soon") is what assistive technology reads after the title.
  */

@@ -54,20 +54,36 @@ function card(
   });
 }
 
-/** Home: one column of equally sized landscape cards. Only Tents & Trees is a real puzzle. */
+/**
+ * Home: one column of equally sized landscape cards. The app's wordmark is artwork owned by the
+ * app, so the gallery only reserves a labelled slot for it and never typesets it. Only
+ * Tents & Trees is playable; Ghosts & Graves and the placeholder are Coming Soon.
+ */
 function homeScreen(): HTMLElement {
-  const screen = el('section', { className: 'nl-grim-glimmer-screen' }, [
-    el('h2', { className: 'gal-gg-screen-title', text: 'Grim & Glimmer' }),
+  const wordmark = el('div', {
+    className: 'gal-gg-wordmark-slot',
+    text: 'Wordmark artwork (app-owned)',
+  });
+  wordmark.setAttribute('role', 'img');
+  wordmark.setAttribute('aria-label', 'Wordmark placeholder');
+  return el('section', { className: 'nl-grim-glimmer-screen' }, [
+    wordmark,
+    el('div', { className: 'gal-gg-heading-group' }, [
+      el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
+      el('h2', {
+        className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
+        text: 'Choose a puzzle',
+      }),
+    ]),
     createPuzzleCollection(
       [
         card('Tents & Trees', 'continue', 1, true),
-        card('Placeholder puzzle A', 'coming-soon', 4),
-        card('Placeholder puzzle B', 'coming-soon', 5),
+        card('Ghosts & Graves', 'coming-soon', 4),
+        card('Placeholder puzzle', 'coming-soon', 5),
       ],
       { label: 'Puzzles' },
     ),
   ]);
-  return screen;
 }
 
 /** Game screen: header, separate difficulty control, board, compact New Game. No bottom tabs. */
