@@ -243,6 +243,11 @@ function renderMain(story: Story | undefined): HTMLElement {
     grid.append(el('div', { className: 'gal-grid' }, cells));
     main.append(el('h3', { text: 'States' }), grid);
   }
+  for (const section of story.sections ?? []) {
+    const stage = createStage(themed);
+    stage.append(section.render(ctx));
+    main.append(el('h3', { text: section.title }), stage);
+  }
   return main;
 }
 

@@ -39,6 +39,7 @@ tests/           architecture tests (theme contract, scoping, import boundaries)
 | -------------------------------------------------------- | ---------------------------------------------------------------------- |
 | [docs/architecture.md](docs/architecture.md)             | Structure, isolation rules, browser support, tools and why             |
 | [docs/development.md](docs/development.md)               | Scripts, the gallery, CI                                               |
+| [docs/components.md](docs/components.md)                 | Shared component APIs, accessibility behavior, usage                   |
 | [docs/adding-components.md](docs/adding-components.md)   | Adding a shared component, story, and tests                            |
 | [docs/project-themes.md](docs/project-themes.md)         | Creating a project theme and project-specific components               |
 | [docs/grim-glimmer-theme.md](docs/grim-glimmer-theme.md) | Grim & Glimmer provisional theme: tokens, contrast results, departures |

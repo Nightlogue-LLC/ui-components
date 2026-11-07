@@ -19,4 +19,4 @@ Use `src/components/button/` as the reference. Example: adding `badge`.
 4. **Need a new color?** Prefer reusing an existing contract token. If a component truly needs a new one, add it to `src/tokens/contract.ts` **and** to every theme in `src/themes/` (the architecture test lists what's missing).
 5. Run `npm run check`.
 
-`package.json` needs no change: `exports` has wildcards, so consumers can immediately `import '@nightlogue-llc/ui-components/components/badge'` and `.../components/badge.css`.
+Existing components (APIs, accessibility notes) are documented in [components.md](components.md); add yours there too. `package.json` needs no change: `exports` has wildcards, so consumers can immediately `import '@nightlogue-llc/ui-components/components/badge'` and `.../components/badge.css`.

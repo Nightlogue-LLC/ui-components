@@ -1,0 +1,107 @@
+/*
+ * Segmented control: single select, built on native radio inputs.
+ *
+ * Markup (made by createSegmentedControl):
+ *   <div class="nl-segmented-control" role="radiogroup" aria-label="...">
+ *     <label class="nl-segmented-control__option">
+ *       <input class="nl-segmented-control__input" type="radio" ...>
+ *       <span class="nl-segmented-control__label">Label</span>
+ *     </label> ...
+ *
+ * Selected = filled with the accent. Focus = a ring drawn OUTSIDE the option, so the two states
+ * are always distinguishable. The radio input is stretched invisibly over its whole option, so
+ * the entire segment is the touch target (44px high by default). Hook: --nl-segmented-control-radius.
+ */
+.nl-segmented-control {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--nl-font-family);
+}
+
+.nl-segmented-control__option {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  /* Neighbouring borders overlap so adjacent segments share one 1px line. */
+  margin-left: calc(var(--nl-border-width) * -1);
+}
+
+.nl-segmented-control__option:first-child {
+  margin-left: 0;
+}
+
+.nl-segmented-control__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.nl-segmented-control__label {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--nl-size-control-md);
+  padding: 0 var(--nl-space-3);
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  font-size: var(--nl-font-size-md);
+  font-weight: var(--nl-font-weight-medium);
+  line-height: var(--nl-line-height);
+  text-align: center;
+  overflow-wrap: anywhere;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--nl-duration-fast) var(--nl-easing),
+    color var(--nl-duration-fast) var(--nl-easing);
+}
+
+.nl-segmented-control__option:first-child .nl-segmented-control__label {
+  border-start-start-radius: var(--nl-segmented-control-radius, var(--nl-radius-md));
+  border-end-start-radius: var(--nl-segmented-control-radius, var(--nl-radius-md));
+}
+
+.nl-segmented-control__option:last-child .nl-segmented-control__label {
+  border-start-end-radius: var(--nl-segmented-control-radius, var(--nl-radius-md));
+  border-end-end-radius: var(--nl-segmented-control-radius, var(--nl-radius-md));
+}
+
+@media (hover: hover) {
+  .nl-segmented-control__input:not(:checked):hover + .nl-segmented-control__label {
+    background: var(--nl-color-surface-hover);
+  }
+}
+
+.nl-segmented-control__input:checked + .nl-segmented-control__label {
+  border-color: var(--nl-color-accent);
+  background: var(--nl-color-accent);
+  color: var(--nl-color-on-accent);
+}
+
+/* Raise the selected/focused segment so its border and ring are never covered by a neighbour. */
+.nl-segmented-control__input:checked,
+.nl-segmented-control__input:focus-visible {
+  z-index: 2;
+}
+
+.nl-segmented-control__input:focus-visible + .nl-segmented-control__label {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-segmented-control__label {
+    transition: none;
+  }
+}

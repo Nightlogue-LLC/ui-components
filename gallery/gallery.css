@@ -373,3 +373,51 @@ h3 {
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
+/* --- Component stories ------------------------------------------------------------------- */
+
+/*
+ * Preview aid: simulate pseudo-states in static grids. These deliberately READ the components'
+ * private --_ hooks to mirror their real hover/pressed/focus rules, so they can drift if those
+ * rules change; the playground always shows the real behavior.
+ */
+.nl-button.gal-force-hover:not(:disabled),
+.nl-icon-button.gal-force-hover:not(:disabled) {
+  background: var(--_bg-hover);
+}
+
+.nl-button.gal-force-pressed:not(:disabled),
+.nl-icon-button.gal-force-pressed:not(:disabled) {
+  background: var(--_bg-active);
+}
+
+.nl-button.gal-force-focus,
+.nl-icon-button.gal-force-focus {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+.gal-matrix {
+  display: grid;
+  gap: 1rem;
+}
+
+.gal-matrix__row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.gal-card-title,
+.gal-card-body {
+  display: block;
+}
+
+.gal-card-title {
+  font-weight: var(--nl-font-weight-medium);
+}
+
+.gal-card-body {
+  margin-top: 0.25rem;
+  font-size: var(--nl-font-size-sm);
+  opacity: 0.85;
+}
