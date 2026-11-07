@@ -40,8 +40,6 @@ The dev server listens on your network (`server.host: true`). Open the printed `
 
 **Limitation:** the viewport selector constrains the preview _container width_. It does not change the browser viewport, so `@media (max-width)` rules inside components are not triggered by it. Use browser device emulation or a real device for that. Prefer container-relative sizing in components.
 
-Note: until the first `src/projects/<project>/` exists, `publint` prints three warnings that the `projects/*` export patterns match no files. That is expected and not a failure; it disappears with the first project.
-
 ## CI
 
 `.github/workflows/ci.yml` runs on every PR and push to `main`: `npm ci`, lint, format check, typecheck, tests, library build, package check, gallery build. Nothing is published or deployed.

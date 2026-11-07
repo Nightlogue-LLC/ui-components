@@ -2,7 +2,7 @@
 
 Reusable, framework-independent UI components, design tokens, and per-project themes for Nightlogue LLC projects. Plain TypeScript + CSS; works in vanilla apps and Capacitor Android WebViews. No runtime dependencies.
 
-> Status: early. Not published (`"private": true`). Includes a neutral example theme and `button`, and the provisional Grim & Glimmer theme (see docs).
+> Status: early. Not published (`"private": true`). Includes a neutral example theme and `button`, the provisional Grim & Glimmer theme, and its project compositions (see docs).
 
 ## Quick start
 
@@ -35,13 +35,14 @@ tests/           architecture tests (theme contract, scoping, import boundaries)
 
 ## Docs
 
-| Doc                                                      | Covers                                                                 |
-| -------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [docs/architecture.md](docs/architecture.md)             | Structure, isolation rules, browser support, tools and why             |
-| [docs/development.md](docs/development.md)               | Scripts, the gallery, CI                                               |
-| [docs/components.md](docs/components.md)                 | Shared component APIs, accessibility behavior, usage                   |
-| [docs/adding-components.md](docs/adding-components.md)   | Adding a shared component, story, and tests                            |
-| [docs/project-themes.md](docs/project-themes.md)         | Creating a project theme and project-specific components               |
-| [docs/grim-glimmer-theme.md](docs/grim-glimmer-theme.md) | Grim & Glimmer provisional theme: tokens, contrast results, departures |
-| [docs/consuming.md](docs/consuming.md)                   | Using the library from another repository (incl. Vite/Capacitor)       |
-| [docs/distribution.md](docs/distribution.md)             | Recommended packaging, versioning, and release strategy                |
+| Doc                                                                  | Covers                                                                    |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [docs/architecture.md](docs/architecture.md)                         | Structure, isolation rules, browser support, tools and why                |
+| [docs/development.md](docs/development.md)                           | Scripts, the gallery, CI                                                  |
+| [docs/components.md](docs/components.md)                             | Shared component APIs, accessibility behavior, usage                      |
+| [docs/adding-components.md](docs/adding-components.md)               | Adding a shared component, story, and tests                               |
+| [docs/project-themes.md](docs/project-themes.md)                     | Creating a project theme and project-specific components                  |
+| [docs/grim-glimmer-theme.md](docs/grim-glimmer-theme.md)             | Grim & Glimmer provisional theme: tokens, contrast results, departures    |
+| [docs/grim-glimmer-integration.md](docs/grim-glimmer-integration.md) | Grim & Glimmer compositions and the contracts the game app must implement |
+| [docs/consuming.md](docs/consuming.md)                               | Using the library from another repository (incl. Vite/Capacitor)          |
+| [docs/distribution.md](docs/distribution.md)                         | Recommended packaging, versioning, and release strategy                   |

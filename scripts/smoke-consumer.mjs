@@ -68,6 +68,17 @@ import { createCard } from '${name}/components/card';
 import { createSegmentedControl, updateSegmentedControl } from '${name}/components/segmented-control';
 import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseReason } from '${name}/components/dialog';
 import { createBadge } from '${name}/components/badge';
+import {
+  createBoard,
+  createPuzzleCollectionCard,
+  createTutorialDialog,
+  type BoardCellState,
+  type TutorialOutcome,
+} from '${name}/projects/grim-glimmer';
+
+const cellState: BoardCellState = 'fixed';
+const outcome: TutorialOutcome = 'skip';
+void [createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
 
 const reason: DialogCloseReason = 'escape';
 const dialog: HTMLDialogElement = createDialog({ title: 't', onClose: (r) => void r });
@@ -129,6 +140,8 @@ const specs = [
   '${name}/components/badge.css',
   '${name}/components/dialog',
   '${name}/themes/grim-glimmer.css',
+  '${name}/projects/grim-glimmer',
+  '${name}/projects/grim-glimmer.css',
   '${name}/themes/neutral.css',
   '${name}/themes/grim-glimmer.css',
   '${name}/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2',
@@ -174,7 +187,7 @@ document.body.append(createButton({ label: 'Smoke' }));
   step('vite build of a consumer using both themes');
   const both = bundle(
     'app-themes',
-    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css'],
+    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css', 'projects/grim-glimmer.css'],
     'grim-glimmer',
   );
   for (const needle of [
@@ -182,6 +195,7 @@ document.body.append(createButton({ label: 'Smoke' }));
     '--nl-space-1',
     '[data-nl-theme=neutral]',
     '[data-nl-theme=grim-glimmer]',
+    '.nl-grim-glimmer-board',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
   }

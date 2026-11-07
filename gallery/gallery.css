@@ -129,8 +129,10 @@ h3 {
 }
 
 .gal-main {
+  --gal-main-pad: 1rem;
+
   min-width: 0;
-  padding: 1.25rem 1rem 3rem;
+  padding: 1.25rem var(--gal-main-pad) 3rem;
 }
 
 .gal-desc {
@@ -386,6 +388,115 @@ h3 {
   opacity: 0.85;
 }
 
+/* --- Grim & Glimmer overview / flow stories -------------------------------------------------- */
+.gal-gg-frame {
+  margin-top: 1.25rem;
+}
+
+.gal-gg-screen {
+  margin-top: 0.4rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+/* Reserved slot for the app's wordmark artwork. The gallery never typesets the wordmark. */
+.gal-gg-wordmark-slot {
+  display: grid;
+  place-items: center;
+  min-height: 3.5rem;
+  border: 1px dashed var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.gal-gg-heading-group {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.gal-gg-states {
+  display: grid;
+  gap: var(--nl-space-4);
+  padding: var(--nl-space-4);
+}
+
+.gal-flow {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gal-flow > .nl-grim-glimmer-screen {
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+.gal-flow__status {
+  margin: 0;
+  font:
+    0.8rem/1.4 ui-monospace,
+    monospace;
+}
+
+.gal-flow__demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/*
+ * Bleed stages span the full width of the viewport, so a "screen" inside them is as wide as it
+ * would be on the device (this matters for touch-target sizes). Chrome around them stays padded.
+ */
+.gal-stage--bleed {
+  margin-inline: calc(var(--gal-main-pad) * -1);
+  padding: 0;
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.gal-gg-panel--screens {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.gal-gg-panel--screens .gal-gg-mode,
+.gal-gg-panel--screens .gal-gg-note {
+  padding-inline: 1rem;
+}
+
+.gal-gg-panel--screens .gal-gg-mode {
+  padding-top: 1rem;
+}
+
+.gal-gg-panel--screens .gal-gg-screen {
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.gal-gg-panel--screens .gal-gg-screen > .gal-gg-states {
+  padding-inline: var(--nl-space-5);
+}
+
+.gal-flow > .nl-grim-glimmer-screen {
+  border-inline: 0;
+  border-radius: 0;
+}
+
+.gal-flow__status,
+.gal-flow__demo {
+  padding-inline: 1rem;
+}
+
+.gal-flow__demo {
+  padding-bottom: 1rem;
+}
+
 /* --- Grim & Glimmer typography story ---------------------------------------------------------- */
 /* Role classes consume the SEMANTIC tokens only, exactly as app code is expected to. */
 .gal-ty-face,
@@ -443,55 +554,19 @@ h3 {
   opacity: 0.8;
 }
 
-.gal-ty-display-lg {
-  font: var(--nl-font-weight-display) var(--nl-font-size-display-lg) / var(--nl-line-height-display)
-    var(--nl-font-family-display);
+.gal-ty-pad {
+  padding: 0 1rem 1rem;
 }
 
-.gal-ty-display-md {
-  font: var(--nl-font-weight-display) var(--nl-font-size-display-md) / var(--nl-line-height-display)
-    var(--nl-font-family-display);
+.gal-ty-cards {
+  border-top: 1px solid var(--nl-color-border);
 }
 
-.gal-ty-heading-lg {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-lg) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
+/* The typography panel pads its own content, so cancel the screen-panel padding inside it. */
+.gal-ty-pad .gal-gg-mode {
+  padding: 1rem 0 0;
 }
 
-.gal-ty-heading-md {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-md) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
-}
-
-.gal-ty-heading-sm {
-  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-sm) / var(--nl-line-height-heading)
-    var(--nl-font-family-heading);
-}
-
-.gal-ty-heading-soft {
-  font: var(--nl-font-weight-heading-soft) var(--nl-font-size-heading-sm) /
-    var(--nl-line-height-heading) var(--nl-font-family-heading);
-}
-
-.gal-ty-label {
-  font: var(--nl-font-weight-label) var(--nl-font-size-label) / 1.4 var(--nl-font-family-label);
-  letter-spacing: var(--nl-letter-spacing-label);
-  text-transform: uppercase;
-}
-
-.gal-ty-ui-body {
-  font: 400 var(--nl-font-size-md) / 1.5 var(--nl-font-family);
-}
-
-.gal-ty-ui-strong {
-  font: var(--nl-font-weight-medium) var(--nl-font-size-md) / 1.4 var(--nl-font-family);
-}
-
-.gal-ty-ui-small {
-  font: 400 var(--nl-font-size-sm) / 1.4 var(--nl-font-family);
-}
-
-.gal-ty-ui-numbers {
-  font: var(--nl-font-weight-medium) var(--nl-font-size-lg) / 1.4 var(--nl-font-family);
-  font-variant-numeric: tabular-nums;
+.gal-ty-pad .gal-gg-note {
+  padding-inline: 0;
 }
