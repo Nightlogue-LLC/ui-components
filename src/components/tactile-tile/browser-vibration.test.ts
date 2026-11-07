@@ -28,7 +28,9 @@ describe('tryBrowserVibration', () => {
   it('handles exceptions from the host environment', () => {
     Object.defineProperty(navigator, 'vibrate', {
       configurable: true,
-      value: () => { throw new Error('Blocked'); },
+      value: () => {
+        throw new Error('Blocked');
+      },
     });
     expect(tryBrowserVibration()).toBe(false);
   });

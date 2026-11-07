@@ -52,7 +52,6 @@ describe('TactileTile', () => {
     expect(tile.hasAttribute('draggable')).toBe(false);
   });
 
-
   it('releases temporary press without changing persistent selected state', () => {
     const tile = createTactileTile({ label: 'Sol', glyph: '☉', selected: true });
     tile.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, button: 0 }));

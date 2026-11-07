@@ -31,7 +31,9 @@ function study(): HTMLElement {
       glyph,
       caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
       selected: selectedStates[i],
-      onPressFeedback: () => { tryBrowserVibration(); },
+      onPressFeedback: () => {
+        tryBrowserVibration();
+      },
       onClick: () => {
         selectedStates[i] = !selectedStates[i];
         updateTactileTile(tile, {
