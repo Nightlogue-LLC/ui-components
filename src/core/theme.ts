@@ -10,7 +10,7 @@ export type ColorMode = 'light' | 'dark';
  * Activates a theme for `root` and everything inside it.
  *
  * Themes are scoped by attribute, not applied globally, so several themes can coexist on one page
- * (the gallery relies on this) and a theme's CSS never leaks outside its own subtree.
+ * (the Storybook catalog relies on this) and a theme's CSS never leaks outside its own subtree.
  * Pass `document.documentElement` for an app-wide theme.
  */
 export function applyTheme(root: Element, theme: string, mode?: ColorMode): void {

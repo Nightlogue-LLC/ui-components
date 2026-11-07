@@ -1,0 +1,55 @@
+/*
+ * Card: neutral surface container.
+ *
+ * Markup:  <div class="nl-card">...</div>
+ *          <button class="nl-card nl-card--interactive">...</button>   (phrasing content inside)
+ *
+ * Hooks: --nl-card-padding, --nl-card-width (default 100%, so cards fill their column).
+ * Elevation uses the optional --nl-shadow-card hook, with a no-shadow fallback.
+ */
+.nl-card {
+  box-sizing: border-box;
+  display: block;
+  width: var(--nl-card-width, 100%);
+  margin: 0;
+  padding: var(--nl-card-padding, var(--nl-space-4));
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  box-shadow: var(--nl-shadow-card, none);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+  font-size: var(--nl-font-size-md);
+  line-height: var(--nl-line-height);
+  text-align: start;
+}
+
+/* Interactive only: static cards deliberately have no hover or pressed effect. */
+.nl-card--interactive {
+  min-height: var(--nl-size-control-md);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--nl-duration-fast) var(--nl-easing);
+}
+
+@media (hover: hover) {
+  .nl-card--interactive:hover {
+    background: var(--nl-color-surface-hover);
+  }
+}
+
+.nl-card--interactive:active {
+  background: var(--nl-color-surface-hover);
+}
+
+.nl-card--interactive:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-card--interactive {
+    transition: none;
+  }
+}

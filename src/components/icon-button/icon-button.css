@@ -1,0 +1,89 @@
+/*
+ * Icon button: a square, icon-only control. The icon artwork is supplied by the consumer.
+ *
+ * Markup:  <button class="nl-icon-button nl-icon-button--ghost" aria-label="Back">
+ *            <span class="nl-icon-button__icon" aria-hidden="true"><svg>...</svg></span>
+ *          </button>
+ * Modifiers: --secondary (outlined surface) | --ghost (minimal)
+ *
+ * The target is at least 44x44 CSS px by default. Themes/projects may enlarge it (for example
+ * 48px on mobile) through --nl-icon-button-size; --nl-icon-button-radius is the other hook.
+ */
+.nl-icon-button {
+  --_bg: transparent;
+  --_bg-hover: var(--nl-color-surface-hover);
+  --_bg-active: var(--nl-color-surface-hover);
+  --_border: transparent;
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--nl-icon-button-size, var(--nl-size-control-md));
+  height: var(--nl-icon-button-size, var(--nl-size-control-md));
+  min-width: var(--nl-size-control-md);
+  min-height: var(--nl-size-control-md);
+  margin: 0;
+  padding: 0;
+  border: var(--nl-border-width) solid var(--_border);
+  border-radius: var(--nl-icon-button-radius, var(--nl-radius-md));
+  background: var(--_bg);
+  color: var(--nl-color-text);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--nl-duration-fast) var(--nl-easing),
+    border-color var(--nl-duration-fast) var(--nl-easing);
+}
+
+.nl-icon-button--secondary {
+  --_bg: var(--nl-color-surface);
+  --_border: var(--nl-color-border);
+}
+
+.nl-icon-button--ghost {
+  --_bg: transparent;
+  --_border: transparent;
+}
+
+.nl-icon-button__icon {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  pointer-events: none;
+}
+
+.nl-icon-button__icon > * {
+  width: 100%;
+  height: 100%;
+}
+
+@media (hover: hover) {
+  .nl-icon-button:hover:not(:disabled) {
+    background: var(--_bg-hover);
+  }
+}
+
+.nl-icon-button:active:not(:disabled) {
+  background: var(--_bg-active);
+}
+
+.nl-icon-button:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+.nl-icon-button:disabled {
+  background: var(--nl-color-disabled-bg);
+  border-color: transparent;
+  color: var(--nl-color-disabled-text);
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-icon-button {
+    transition: none;
+  }
+}

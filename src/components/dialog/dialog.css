@@ -1,0 +1,174 @@
+/*
+ * Dialog: modal built on the native <dialog> element (opened with showModal()).
+ *
+ * Structure (made by createDialog):
+ *   <dialog class="nl-dialog" aria-labelledby>
+ *     <div class="nl-dialog__panel">
+ *       <div class="nl-dialog__header"><h2 class="nl-dialog__title"> + <button class="nl-dialog__close">
+ *       <div class="nl-dialog__body">    <- append content
+ *       <div class="nl-dialog__actions"> <- append buttons
+ *
+ * The panel fills the <dialog> completely, so a click that lands on the <dialog> itself is always
+ * a backdrop click. Width is capped at ~440px, height at the viewport, and the body scrolls if
+ * large text needs it. Safe-area insets are respected.
+ *
+ * ::backdrop cannot rely on theme tokens in older WebViews (it did not inherit custom properties
+ * before Chrome 122), so the scrim uses literal black-based colors.
+ */
+.nl-dialog {
+  box-sizing: border-box;
+  /* Closed state is controlled by the UA ([open] toggles display). */
+  width: min(
+    27.5rem,
+    calc(
+      100% - 2 * var(--nl-space-4) - env(safe-area-inset-left, 0px) -
+        env(safe-area-inset-right, 0px)
+    )
+  );
+  max-width: none;
+  max-height: calc(
+    100% - 2 * var(--nl-space-4) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+  );
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  box-shadow: var(--nl-shadow-dialog, none);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+  font-size: var(--nl-font-size-md);
+  line-height: 1.4;
+}
+
+.nl-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: nl-dialog-in 160ms var(--nl-easing);
+}
+
+.nl-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .nl-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Used only when showModal() is unavailable: the scrim is a huge box-shadow around the dialog. */
+.nl-dialog--fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  height: fit-content;
+  box-shadow:
+    0 0 0 100vmax rgba(0, 0, 0, 0.6),
+    var(--nl-shadow-dialog, none);
+}
+
+.nl-dialog__panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.nl-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nl-space-3);
+  padding: var(--nl-space-4) var(--nl-space-4) 0 var(--nl-space-5);
+}
+
+.nl-dialog__title {
+  margin: var(--nl-space-2) 0 0;
+  /* Heading ROLE tokens, never a font name. Fallbacks reproduce the unthemed look exactly. */
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-md, 1.375rem);
+  font-weight: var(--nl-font-weight-heading, 400);
+  line-height: var(--nl-line-height-heading, 1.2);
+  overflow-wrap: anywhere;
+}
+
+.nl-dialog__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--nl-space-3) var(--nl-space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.nl-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--nl-space-3);
+  padding: 0 var(--nl-space-5) var(--nl-space-5);
+}
+
+.nl-dialog__actions:empty {
+  display: none;
+}
+
+/* Close button: a CSS-drawn cross (no icon asset), 44x44 target. */
+.nl-dialog__close {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--nl-size-control-md);
+  height: var(--nl-size-control-md);
+  margin: 0;
+  padding: 0;
+  border: var(--nl-border-width) solid transparent;
+  border-radius: var(--nl-radius-md);
+  background: transparent;
+  color: var(--nl-color-text);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nl-dialog__close::before,
+.nl-dialog__close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.125rem;
+  height: 2px;
+  background: currentcolor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.nl-dialog__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+@media (hover: hover) {
+  .nl-dialog__close:hover {
+    background: var(--nl-color-surface-hover);
+  }
+}
+
+.nl-dialog__close:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+@keyframes nl-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-dialog[open] {
+    animation: none;
+  }
+}

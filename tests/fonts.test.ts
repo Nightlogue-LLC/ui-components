@@ -7,7 +7,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { parseThemeModes } from '../gallery/lib/theme-tokens.js';
+import { parseThemeModes } from '../stories/lib/theme-tokens.js';
 import { optionalThemeTokens } from '../src/tokens/contract.js';
 
 const src = fileURLToPath(new URL('../src/', import.meta.url));

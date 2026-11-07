@@ -63,6 +63,28 @@ import { createButton, applyTheme, requiredThemeTokens, type ButtonProps } from 
 import { createButton as createButton2 } from '${name}/components/button';
 import { requiredThemeTokens as tokens } from '${name}/tokens';
 import { applyTheme as applyTheme2 } from '${name}/core';
+import { createIconButton } from '${name}/components/icon-button';
+import { createCard } from '${name}/components/card';
+import { createSegmentedControl, updateSegmentedControl } from '${name}/components/segmented-control';
+import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseReason } from '${name}/components/dialog';
+import { createBadge } from '${name}/components/badge';
+import {
+  createBoard,
+  createPuzzleCollectionCard,
+  createTutorialDialog,
+  type BoardCellState,
+  type TutorialOutcome,
+} from '${name}/projects/grim-glimmer';
+
+const cellState: BoardCellState = 'fixed';
+const outcome: TutorialOutcome = 'skip';
+void [createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
+
+const reason: DialogCloseReason = 'escape';
+const dialog: HTMLDialogElement = createDialog({ title: 't', onClose: (r) => void r });
+const seg: HTMLElement = createSegmentedControl({ label: 'x', options: [{ value: 'a', label: 'A' }], value: 'a', onChange: (n) => void n });
+updateSegmentedControl(seg, { label: 'x', options: [], value: '' });
+void [reason, dialog, openDialog, closeDialog, getDialogBody, createBadge, createCard, createIconButton];
 
 const props: ButtonProps = { label: 'Hello', variant: 'secondary' };
 const el: HTMLButtonElement = createButton({ ...props, onClick: () => {} });
@@ -111,13 +133,24 @@ const specs = [
   '${name}/styles.css',
   '${name}/tokens.css',
   '${name}/components/button.css',
+  '${name}/components/icon-button.css',
+  '${name}/components/card.css',
+  '${name}/components/segmented-control.css',
+  '${name}/components/dialog.css',
+  '${name}/components/badge.css',
+  '${name}/components/dialog',
+  '${name}/themes/grim-glimmer.css',
+  '${name}/projects/grim-glimmer',
+  '${name}/projects/grim-glimmer.css',
   '${name}/themes/neutral.css',
   '${name}/themes/grim-glimmer.css',
   '${name}/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2',
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
-if (typeof lib.createButton !== 'function') throw new Error('createButton missing');
+for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge']) {
+  if (typeof lib[fn] !== 'function') throw new Error(fn + ' missing');
+}
 `,
   );
   run(process.execPath, ['resolve.mjs'], app);
@@ -154,7 +187,7 @@ document.body.append(createButton({ label: 'Smoke' }));
   step('vite build of a consumer using both themes');
   const both = bundle(
     'app-themes',
-    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css'],
+    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css', 'projects/grim-glimmer.css'],
     'grim-glimmer',
   );
   for (const needle of [
@@ -162,6 +195,7 @@ document.body.append(createButton({ label: 'Smoke' }));
     '--nl-space-1',
     '[data-nl-theme=neutral]',
     '[data-nl-theme=grim-glimmer]',
+    '.nl-grim-glimmer-board',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
   }

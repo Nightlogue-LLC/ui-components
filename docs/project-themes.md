@@ -29,9 +29,9 @@ Shared components stay untouched. Replace `<project>` with a short kebab-case na
    }
    ```
 
-3. Use **literal values** (hex) for contract colors so the contrast test can read them. Project themes (everything except the `neutral` example) must meet the WCAG AA policy in `gallery/lib/contrast-pairs.ts`: 4.5:1 for text, 3:1 for control boundaries and the focus ring. A worked example with measured results: [grim-glimmer-theme.md](grim-glimmer-theme.md).
+3. Use **literal values** (hex) for contract colors so the contrast test can read them. Project themes (everything except the `neutral` example) must meet the WCAG AA policy in `stories/lib/contrast-pairs.ts`: 4.5:1 for text, 3:1 for control boundaries and the focus ring. A worked example with measured results: [grim-glimmer-theme.md](grim-glimmer-theme.md).
 4. `npm test` tells you exactly which contract tokens are missing or which selectors are unscoped.
-5. `npm run dev`: the theme appears in the gallery's Theme menu automatically.
+5. `npm run storybook`: the theme appears in the toolbar's Theme menu automatically (select it to preview any story under it).
 
 Fonts are **theme assets**, never shared-library assets:
 
@@ -58,7 +58,7 @@ src/projects/<project>/
 - Classes: `nl-<project>-<thing>` (e.g. `nl-<project>-health-bar`). Never reuse or restyle shared `nl-button`-style classes from here; compose them in markup instead, or add a modifier hook in the shared component if every project would benefit.
 - Imports: shared `components/` and `core/` are fine; other projects are not; nothing in shared code may import `projects/`. (Tested.)
 - Project code is **not** re-exported from the package root. Consumers import it explicitly (`.../projects/<project>`), so an app only bundles its own project.
-- Add gallery stories under `gallery/stories/` the same way as shared components.
+- Add Storybook stories under `stories/projects/<project>/` (titles `Projects/<Project>/Foundations`, `Collection`, `Gameplay`, `Dialogs`, ...) the same way as shared components. Set `parameters.nlTheme` to the project theme so the stories start on it. Adding a project needs no change to shared components or to `.storybook/`.
 
 ## What belongs where
 

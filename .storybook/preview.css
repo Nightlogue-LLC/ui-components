@@ -1,0 +1,23 @@
+/*
+ * Canvas chrome only. Colors come from the stage's theme, never from this file, and nothing here
+ * touches <html>/<body> theming: a theme applies to its own stage element only.
+ */
+.sb-stage {
+  box-sizing: border-box;
+  padding: 1.25rem;
+}
+
+/* Fill the canvas so the themed background reaches the edges (not in the docs page). */
+.sb-stage:not(.sb-stage--docs) {
+  min-height: 100vh;
+}
+
+.sb-stage--bleed {
+  padding: 0;
+}
+
+/* Docs page: each story is a self-contained rounded stage. */
+.sb-stage--docs {
+  border: 1px solid rgb(128 128 128 / 0.35);
+  border-radius: 6px;
+}

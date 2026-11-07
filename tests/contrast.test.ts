@@ -1,14 +1,14 @@
 // @vitest-environment node
 //
-// Contrast policy for project themes (see gallery/lib/contrast-pairs.ts). Runs on every theme in
+// Contrast policy for project themes (see stories/lib/contrast-pairs.ts). Runs on every theme in
 // src/themes/ except the neutral placeholder, in both modes, on literal token values.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { contrastRatio, parseColor } from '../gallery/lib/contrast.js';
-import { contrastPairs } from '../gallery/lib/contrast-pairs.js';
-import { parseThemeModes } from '../gallery/lib/theme-tokens.js';
+import { contrastRatio, parseColor } from '../stories/lib/contrast.js';
+import { contrastPairs } from '../stories/lib/contrast-pairs.js';
+import { parseThemeModes } from '../stories/lib/theme-tokens.js';
 
 const themesDir = fileURLToPath(new URL('../src/themes/', import.meta.url));
 // `neutral` is the architecture-proof example, not a product look, so it is not held to the policy.

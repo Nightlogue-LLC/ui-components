@@ -16,7 +16,10 @@ const dirs = (p: string) =>
     : [];
 
 /** Custom properties declared (`--x: ...;`) in a CSS string. */
-const declared = (css: string) => new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]!));
+// The lookarounds skip BEM modifiers such as `.cell--fixed::before` (not preceded by a word char,
+// not followed by a second colon), so only real `--prop: value` declarations match.
+const declared = (css: string) =>
+  new Set([...css.matchAll(/(?<![\w-])(--[\w-]+)\s*:(?!:)/g)].map((m) => m[1]!));
 /** Custom properties read via var(--x ...). */
 const used = (css: string) => new Set([...css.matchAll(/var\(\s*(--[\w-]+)/g)].map((m) => m[1]!));
 /** Strips comments so documentation never trips the checks. */
@@ -120,6 +123,55 @@ describe('shared components', () => {
 
   it('foundation tokens do not define theme-contract (color) tokens', () => {
     expect(requiredThemeTokens.filter((t) => foundation.has(t))).toEqual([]);
+  });
+});
+
+describe('project folders', () => {
+  const projects = dirs('projects');
+  const foundation = declared(read('tokens/tokens.css'));
+  const known = new Set<string>([...foundation, ...requiredThemeTokens, ...optionalThemeTokens]);
+  // Documented hooks of shared components that a project may set to tune them.
+  const sharedHook = /^--nl-(button|icon-button|card|segmented-control|dialog|badge)-/;
+
+  it.each(projects)('%s: has index.ts and <name>.css (the exported entry points)', (project) => {
+    expect(existsSync(join(src, 'projects', project, 'index.ts'))).toBe(true);
+    expect(existsSync(join(src, 'projects', project, `${project}.css`))).toBe(true);
+  });
+
+  it.each(projects)('%s: every selector contains one of its own nl-<name>- classes', (project) => {
+    const css = read(`projects/${project}/${project}.css`);
+    const own = new RegExp(`\\.nl-${project}-`);
+    const offenders = rules(css)
+      .filter((r) => !r.selector.startsWith('@'))
+      .flatMap((r) => r.selector.split(','))
+      .map((sel) => sel.trim())
+      .filter((sel) => !own.test(sel));
+    expect(offenders).toEqual([]);
+  });
+
+  it.each(projects)('%s: reads only known tokens or its own hooks', (project) => {
+    const css = stripComments(read(`projects/${project}/${project}.css`));
+    const unknown = [...used(css)].filter(
+      (t) =>
+        !t.startsWith('--_') &&
+        !t.startsWith(`--nl-${project}-`) &&
+        !known.has(t) &&
+        !sharedHook.test(t),
+    );
+    expect(unknown).toEqual([]);
+  });
+
+  it.each(projects)('%s: declares only its own hooks or documented shared hooks', (project) => {
+    const css = stripComments(read(`projects/${project}/${project}.css`));
+    const offenders = [...declared(css)].filter(
+      (t) => !t.startsWith(`--nl-${project}-`) && !sharedHook.test(t),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it.each(projects)('%s: uses no literal colors (colors come from the theme)', (project) => {
+    const css = stripComments(read(`projects/${project}/${project}.css`));
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
   });
 });
 

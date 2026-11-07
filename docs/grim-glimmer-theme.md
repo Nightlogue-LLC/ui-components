@@ -1,16 +1,16 @@
 # Grim & Glimmer theme
 
-> **Status:** the **typography is approved** (see [Typography](#typography)). The **palette is still provisional**, a proposal for visual review in the gallery. Both live in one file, `src/themes/grim-glimmer/grim-glimmer.css`, and can be adjusted without component changes.
+> **Status:** the **typography is approved** (see [Typography](#typography)). The **palette is still provisional**, a proposal for visual review in Storybook. Both live in one file, `src/themes/grim-glimmer/grim-glimmer.css`, and can be adjusted without component changes.
 
 Direction: a mobile-first, contemporary occult-editorial puzzle collection. Light = bright surfaces, dark type, sparse gold. Dark = near-black surfaces, light type, sparse gold. Sharp, architectural geometry; thin borders; restrained elevation.
 
 ## Viewing it
 
 ```bash
-npm run dev
+npm run storybook
 ```
 
-Open **G&G · Foundations** (full palette, live contrast results, geometry/elevation, real `Button`s) and **G&G · Typography** (the four typefaces, the hierarchy with live computed sizes, and whether each bundled font loaded). Both show light and dark side by side regardless of the toolbar's Theme/Mode (they apply their own scopes). Use the Viewport menu or browser device emulation for phone widths. To see any other story in this theme, pick **grim-glimmer** in the Theme menu.
+Open **Projects / Grim & Glimmer / Foundations**: the palette, live contrast results, geometry and elevation, real `Button`s, and the typography (the four typefaces, the hierarchy with live computed sizes, whether each bundled font loaded, and sample puzzle cards). Each story shows light and dark side by side regardless of the toolbar's Mode (it applies its own scopes). Use the **Viewport** toolbar for phone widths. To see any other story under this theme, pick **grim-glimmer** in the toolbar's Theme menu (the default, **Auto**, uses each story's own theme).
 
 ## Using it
 
