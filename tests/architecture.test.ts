@@ -131,7 +131,7 @@ describe('project folders', () => {
   const foundation = declared(read('tokens/tokens.css'));
   const known = new Set<string>([...foundation, ...requiredThemeTokens, ...optionalThemeTokens]);
   // Documented hooks of shared components that a project may set to tune them.
-  const sharedHook = /^--nl-(button|icon-button|card|segmented-control|dialog|badge|streak-glow)-/;
+  const sharedHook = /^--nl-(button|icon-button|card|segmented-control|dialog|badge)-/;
 
   it.each(projects)('%s: has index.ts and <name>.css (the exported entry points)', (project) => {
     expect(existsSync(join(src, 'projects', project, 'index.ts'))).toBe(true);

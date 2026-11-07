@@ -5,7 +5,6 @@ import {
   getDialogActions,
   getDialogBody,
 } from '../../components/dialog/index.js';
-import { createStreakGlow } from '../../components/streak-glow/index.js';
 import { createBoard, updateBoard, type BoardCellState } from './board.js';
 
 /*
@@ -178,10 +177,8 @@ export function createSuccessDialog(options: SuccessDialogOptions): HTMLDialogEl
   const accent = document.createElement('span');
   accent.className = 'nl-grim-glimmer-success__accent';
   accent.setAttribute('aria-hidden', 'true');
-  const glow = createStreakGlow({ content: accent, direction: 'diagonal', durationMs: 2200 });
-  glow.classList.add('nl-grim-glimmer-success__glow');
   getDialogBody(dialog).append(
-    glow,
+    accent,
     paragraph('nl-grim-glimmer-success__message', options.message),
   );
 
