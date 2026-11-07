@@ -1,0 +1,66 @@
+/*
+ * Grim & Glimmer theme (PROVISIONAL v1: palette and display font await visual sign-off).
+ *
+ * Mobile-first, contemporary occult-editorial puzzle collection:
+ *   light = bright white surfaces, dark type, sparse gold accent
+ *   dark  = near-black surfaces, light type, sparse gold accent
+ * Sharp, architectural geometry (5px radius, 1px borders, restrained elevation).
+ *
+ * Values are tokens only; no component selectors are overridden here. Contrast is checked by
+ * tests/contrast.test.ts (AA: 4.5:1 text, 3:1 control boundaries and focus ring), and the
+ * measured ratios are listed in docs/grim-glimmer-theme.md.
+ * Departures from the issue's proposed swatches are documented there too.
+ *
+ * Every selector is scoped under [data-nl-theme='grim-glimmer']. Dark mode repeats the full
+ * contract, as the architecture tests require.
+ */
+[data-nl-theme='grim-glimmer'] {
+  color-scheme: light;
+
+  --nl-color-bg: #ffffff;
+  --nl-color-surface: #f7f7f5;
+  --nl-color-surface-hover: #eeeeeb;
+  --nl-color-text: #151515;
+  --nl-color-border: #878683;
+  --nl-color-accent: #916b34;
+  --nl-color-accent-hover: #805d2b;
+  --nl-color-accent-active: #6f4f23;
+  --nl-color-on-accent: #ffffff;
+  --nl-color-focus-ring: #80602f;
+  --nl-color-disabled-bg: #eaeae7;
+  --nl-color-disabled-text: #707070;
+
+  /* Structural values */
+  --nl-radius-md: 0.3125rem;
+  --nl-border-width: 1px;
+  --nl-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+  /* Optional hooks (see src/tokens/contract.ts). System fonts only: no network or bundled fonts. */
+  --nl-font-family-display: Georgia, 'Times New Roman', serif;
+  --nl-shadow-card: 0 1px 2px rgba(21, 21, 21, 0.06);
+  --nl-shadow-dialog: 0 8px 24px rgba(21, 21, 21, 0.16);
+
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+}
+
+[data-nl-theme='grim-glimmer'][data-nl-mode='dark'] {
+  color-scheme: dark;
+
+  --nl-color-bg: #101011;
+  --nl-color-surface: #1a1a1c;
+  --nl-color-surface-hover: #262629;
+  --nl-color-text: #f5f3ef;
+  --nl-color-border: #727077;
+  --nl-color-accent: #d5af70;
+  --nl-color-accent-hover: #e4c38b;
+  --nl-color-accent-active: #c49a5a;
+  --nl-color-on-accent: #17130d;
+  --nl-color-focus-ring: #f0d29b;
+  --nl-color-disabled-bg: #333336;
+  --nl-color-disabled-text: #b5b4b4;
+
+  --nl-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --nl-shadow-dialog: 0 8px 24px rgba(0, 0, 0, 0.6);
+}

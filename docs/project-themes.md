@@ -17,6 +17,7 @@ Shared components stay untouched. Replace `<project>` with a short kebab-case na
      color-scheme: light;
      --nl-color-bg: /* ... every token in src/tokens/contract.ts ... */;
      /* optional: override foundation tokens, e.g. --nl-radius-md, --nl-font-family */
+     /* optional hooks (src/tokens/contract.ts): --nl-font-family-display, --nl-shadow-card, --nl-shadow-dialog */
      /* optional: component hooks, e.g. --nl-button-radius */
      background: var(--nl-color-bg);
      color: var(--nl-color-text);
@@ -28,8 +29,9 @@ Shared components stay untouched. Replace `<project>` with a short kebab-case na
    }
    ```
 
-3. `npm test` tells you exactly which contract tokens are missing or which selectors are unscoped.
-4. `npm run dev`: the theme appears in the gallery's Theme menu automatically.
+3. Use **literal values** (hex) for contract colors so the contrast test can read them. Project themes (everything except the `neutral` example) must meet the WCAG AA policy in `gallery/lib/contrast-pairs.ts`: 4.5:1 for text, 3:1 for control boundaries and the focus ring. A worked example with measured results: [grim-glimmer-theme.md](grim-glimmer-theme.md).
+4. `npm test` tells you exactly which contract tokens are missing or which selectors are unscoped.
+5. `npm run dev`: the theme appears in the gallery's Theme menu automatically.
 
 Fonts: add `@font-face` in the theme CSS (or an extra CSS file `@import`ed by it) and ship font files with the theme. For a Capacitor app, prefer fonts bundled with the app over network fonts.
 

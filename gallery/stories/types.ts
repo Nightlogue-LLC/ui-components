@@ -20,6 +20,14 @@ export interface Story<A extends Args = Args> {
   controls: Control[];
   defaults: A;
   render: (args: A, ctx: StoryContext) => HTMLElement;
+  /**
+   * 'toolbar' (default): the gallery wraps the story in a stage themed by the Theme/Mode toolbar.
+   * 'self': the story applies its own theme scopes (e.g. light and dark side by side); the stage
+   * is only a width-constrained container.
+   */
+  scope?: 'toolbar' | 'self';
+  /** Show the event log section. Defaults to true; turn off for static pages. */
+  showLog?: boolean;
   /** Static grid of notable states, rendered alongside the playground. */
   states?: { label: string; args: Partial<A> }[];
 }

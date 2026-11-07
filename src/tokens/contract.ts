@@ -24,3 +24,20 @@ export const requiredThemeTokens = [
 ] as const;
 
 export type ThemeToken = (typeof requiredThemeTokens)[number];
+
+/**
+ * Optional theme hooks: a theme MAY define these, and components that read them MUST supply a
+ * fallback at the point of use, e.g. `var(--nl-shadow-card, none)`. That is what keeps themes
+ * that don't define them (such as `neutral`) rendering exactly as before.
+ * tests/architecture.test.ts enforces the fallback rule.
+ */
+export const optionalThemeTokens = [
+  /** Serif/editorial family for display headings. Fall back to `var(--nl-font-family)`. */
+  '--nl-font-family-display',
+  /** Subtle elevation for cards. Fall back to `none`. */
+  '--nl-shadow-card',
+  /** Elevation for dialogs/overlays. Fall back to `none`. */
+  '--nl-shadow-dialog',
+] as const;
+
+export type OptionalThemeToken = (typeof optionalThemeTokens)[number];

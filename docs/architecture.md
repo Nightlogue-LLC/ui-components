@@ -25,7 +25,8 @@ Enforced by `tests/architecture.test.ts`: shared code never imports `projects/`,
 3. **Attribute scoping.** A theme's CSS is written under `[data-nl-theme='<name>']` (and optionally `[data-nl-mode='dark']`). `applyTheme(el, 'name', 'dark')` sets those attributes. Nothing is applied until an element opts in, so two themes can sit side by side and a theme can't restyle the host app. A test fails any selector in a theme file that is not scoped to its own theme.
 4. **Foundation tokens** (spacing, sizing, font stack, radius, motion) live on `:root` as neutral defaults. A theme may override any of them inside its own scope.
 5. **Namespaced classes.** Shared classes are `nl-<component>`; project classes are `nl-<project>-<component>`. A test checks each shared component only styles its own `nl-<component>` classes.
-6. **Per-component hooks.** A component may expose optional `--nl-<component>-*` properties (e.g. `--nl-button-radius`) so a theme can tune it without overriding selectors. Components use `var(--hook, default)`, so no theme is required to set them.
+6. **Optional theme hooks.** `--nl-font-family-display`, `--nl-shadow-card` and `--nl-shadow-dialog` may be defined by a theme but are not required. Components read them only with a use-site fallback (`var(--nl-shadow-card, none)`), so themes that omit them are unaffected. Enforced by test.
+7. **Per-component hooks.** A component may expose optional `--nl-<component>-*` properties (e.g. `--nl-button-radius`) so a theme can tune it without overriding selectors. Components use `var(--hook, default)`, so no theme is required to set them.
 
 ## Component model
 
