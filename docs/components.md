@@ -62,7 +62,7 @@ themedContainer.append(dialog); // inside the themed element so it inherits the 
 openDialog(dialog);
 ```
 
-- Native `<dialog>` + `showModal()`: browser-provided focus trap, inert background, top layer. The title is the accessible name (`aria-labelledby`). Created closed and detached; it must be in the document to open.
+- Native `<dialog>` + `showModal()`: browser-provided focus trap, inert background, top layer. The title is the accessible name (`aria-labelledby`) and is set in the **heading** typography role (`--nl-font-family-heading`, `--nl-font-size-heading-md`, ...); body text and buttons use the UI font. Created closed and detached; it must be in the document to open.
 - `onClose(reason)` fires once, after closing, with `'close-button' | 'escape' | 'backdrop' | 'programmatic'`.
 - `dismissible: true` (default) honors the close button, Escape and backdrop clicks. A backdrop click only counts if the press also started on the backdrop, so dragging a text selection out of the content does not dismiss.
 - `dismissible: false` is for compulsory choices: no close button, Escape and backdrop are ignored, and if the browser closes it anyway (Chrome does this on a repeated Escape) it is reopened. Only `closeDialog` closes it.
@@ -73,7 +73,20 @@ openDialog(dialog);
 
 ## Badge
 
-`createBadge({ label, tone? })` / `updateBadge(el, props)`. Tones `neutral | accent | muted`. A compact, non-interactive `span`; the text carries the meaning and tone is emphasis only. Do not put interactive elements inside it.
+`createBadge({ label, tone? })` / `updateBadge(el, props)`. Tones `neutral | accent | muted`. A compact, non-interactive `span` set in the **editorial label** typography role (a theme that defines it, like Grim & Glimmer, gets its label face; otherwise the UI font); the text carries the meaning and tone is emphasis only. Do not put interactive elements inside it.
+
+## Typography
+
+Shared components never name or import a font. They read **semantic typography role tokens** from the theme, each with a use-site fallback to the regular UI font, so they work unchanged in any theme, including `neutral` and future ones:
+
+| Role                 | Tokens read                                                                                   | Read by                                                 |
+| -------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| ui (functional text) | `--nl-font-family`, `--nl-font-size-sm / md / lg`, `--nl-font-weight-medium`                  | Button, SegmentedControl, Card, Dialog body, IconButton |
+| heading              | `--nl-font-family-heading`, `-weight-heading`, `-size-heading-md`, `--nl-line-height-heading` | Dialog title                                            |
+| label                | `--nl-font-family-label`, `-weight-label`, `-size-label`, `--nl-letter-spacing-label`         | Badge                                                   |
+| display              | `--nl-font-family-display`, ...                                                               | project components only (puzzle titles)                 |
+
+Tests enforce that shared CSS and TS contain no font names, no `@font-face`, and only `var(--nl-font-family...)` in `font-family` declarations. See [grim-glimmer-theme.md](grim-glimmer-theme.md#typography) for how a theme supplies the fonts.
 
 ## Theme hooks
 

@@ -30,10 +30,46 @@ export type ThemeToken = (typeof requiredThemeTokens)[number];
  * fallback at the point of use, e.g. `var(--nl-shadow-card, none)`. That is what keeps themes
  * that don't define them (such as `neutral`) rendering exactly as before.
  * tests/architecture.test.ts enforces the fallback rule.
+ *
+ * Typography is expressed as SEMANTIC ROLES, never as font names. A theme maps each role to
+ * whatever families it ships (loaded by its own @font-face rules, as theme assets); shared
+ * components only ever read the role tokens and never reference or import a font:
+ *
+ *   ui       functional text: buttons, controls, instructions, numbers  -> --nl-font-family
+ *   display  expressive titles such as puzzle names
+ *   heading  primary heading hierarchy: screens, sections, modals
+ *   label    small editorial labels and supporting text
+ *
+ * Fallback for a missing role is the UI family, e.g.
+ * `var(--nl-font-family-heading, var(--nl-font-family))`.
  */
 export const optionalThemeTokens = [
-  /** Serif/editorial family for display headings. Fall back to `var(--nl-font-family)`. */
+  // --- families -------------------------------------------------------------------------------
+  /** Expressive titles (puzzle names). */
   '--nl-font-family-display',
+  /** Primary heading hierarchy (screen, section and modal headings, success messages). */
+  '--nl-font-family-heading',
+  /** Small editorial labels and decorative supporting text. Never functional UI text. */
+  '--nl-font-family-label',
+  // --- weights --------------------------------------------------------------------------------
+  '--nl-font-weight-display',
+  /** Major headings. */
+  '--nl-font-weight-heading',
+  /** Softer editorial text set in the heading family. */
+  '--nl-font-weight-heading-soft',
+  '--nl-font-weight-label',
+  // --- responsive type scale (usually clamp()) ---------------------------------------------------
+  '--nl-font-size-display-lg',
+  '--nl-font-size-display-md',
+  '--nl-font-size-heading-lg',
+  '--nl-font-size-heading-md',
+  '--nl-font-size-heading-sm',
+  '--nl-font-size-label',
+  // --- rhythm ---------------------------------------------------------------------------------
+  '--nl-line-height-display',
+  '--nl-line-height-heading',
+  '--nl-letter-spacing-label',
+  // --- elevation ------------------------------------------------------------------------------
   /** Subtle elevation for cards. Fall back to `none`. */
   '--nl-shadow-card',
   /** Elevation for dialogs/overlays. Fall back to `none`. */

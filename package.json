@@ -42,6 +42,7 @@
       "import": "./dist/components/*/index.js"
     },
     "./themes/*.css": "./dist/themes/*/*.css",
+    "./themes/*/fonts/*": "./dist/themes/*/fonts/*",
     "./projects/*.css": "./dist/projects/*/*.css",
     "./projects/*": {
       "types": "./dist/projects/*/index.d.ts",
