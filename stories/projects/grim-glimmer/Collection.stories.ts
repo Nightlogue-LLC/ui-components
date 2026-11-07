@@ -16,26 +16,30 @@ function homeScreen(): HTMLElement {
   });
   wordmark.setAttribute('role', 'img');
   wordmark.setAttribute('aria-label', 'Wordmark placeholder');
-  return el('section', {
-    className: 'nl-grim-glimmer-screen nl-grim-glimmer-collection-home',
-  }, [
-    wordmark,
-    el('div', { className: 'sb-gg-heading-group' }, [
-      el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
-      el('h2', {
-        className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
-        text: 'Choose a puzzle',
-      }),
-    ]),
-    createPuzzleCollection(
-      [
-        card('Tents & Trees', 'continue', 1, true),
-        card('Ghosts & Graves', 'coming-soon', 4),
-        card('Placeholder puzzle', 'coming-soon', 5),
-      ],
-      { label: 'Puzzles' },
-    ),
-  ]);
+  return el(
+    'section',
+    {
+      className: 'nl-grim-glimmer-screen nl-grim-glimmer-collection-home',
+    },
+    [
+      wordmark,
+      el('div', { className: 'sb-gg-heading-group' }, [
+        el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
+        el('h2', {
+          className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
+          text: 'Choose a puzzle',
+        }),
+      ]),
+      createPuzzleCollection(
+        [
+          card('Tents & Trees', 'continue', 1, true),
+          card('Ghosts & Graves', 'coming-soon', 4),
+          card('Placeholder puzzle', 'coming-soon', 5),
+        ],
+        { label: 'Puzzles' },
+      ),
+    ],
+  );
 }
 
 function cardStates(): HTMLElement {
