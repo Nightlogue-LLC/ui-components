@@ -78,7 +78,8 @@
 .nl-tactile-tile--draggable.nl-tactile-tile--dragging {
   position: relative;
   z-index: 2;
-  transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px)) scale(1.04);
+  transform: translate(var(--nl-tactile-tile-drag-x, 0px), var(--nl-tactile-tile-drag-y, 0px))
+    scale(1.04);
   transition: none;
 }
 
