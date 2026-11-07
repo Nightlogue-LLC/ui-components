@@ -20,16 +20,16 @@ const symbols = [
 ] as const;
 
 function study(): HTMLElement {
+  const selectedStates = symbols.map((_, i) => [0, 4, 8].includes(i));
   const tiles = symbols.map(([glyph, label], i) => {
-    let selected = [0, 4, 8].includes(i);
     const tile = createTactileTile({
       label,
       glyph,
       caption: label,
-      selected,
+      selected: selectedStates[i],
       onClick: () => {
-        selected = !selected;
-        updateTactileTile(tile, { label, glyph, caption: label, selected });
+        selectedStates[i] = !selectedStates[i];
+        updateTactileTile(tile, { label, glyph, caption: label, selected: selectedStates[i] });
       },
     });
     return createRecessedSlot({ content: tile });
@@ -44,6 +44,7 @@ function study(): HTMLElement {
     label: 'Reset tiles',
     onClick: () => {
       tiles.forEach((slot, i) => {
+        selectedStates[i] = false;
         const tile = slot.querySelector('button');
         const symbol = symbols[i];
         if (tile && symbol) {
