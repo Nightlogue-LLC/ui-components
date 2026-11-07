@@ -4,3 +4,7 @@ export * from './card/index.js';
 export * from './segmented-control/index.js';
 export * from './dialog/index.js';
 export * from './badge/index.js';
+export * from './recessed-slot/index.js';
+export * from './tactile-tile/index.js';
+export * from './editorial-callout/index.js';
+export * from './grain-surface/index.js';
