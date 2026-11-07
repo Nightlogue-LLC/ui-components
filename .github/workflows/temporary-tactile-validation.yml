@@ -1,0 +1,25 @@
+name: Temporary formatting and validation
+on:
+  push:
+    branches:
+      - design/tactile-buttons
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Run Prettier
+        run: npm run format
+      - name: Display formatting patch
+        run: git diff -- src/components/button/button.css src/themes/grim-glimmer/grim-glimmer.css stories/components/actions/Button.stories.ts stories/story-styles.css
+      - name: Run complete check suite on formatted working tree
+        run: npm run check
