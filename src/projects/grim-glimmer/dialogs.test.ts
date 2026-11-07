@@ -142,6 +142,10 @@ describe('success dialog', () => {
     expect(
       dialog.querySelector('.nl-grim-glimmer-success__accent')!.getAttribute('aria-hidden'),
     ).toBe('true');
+    expect(dialog.querySelector('.nl-streak-glow--active')).not.toBeNull();
+    expect(
+      dialog.querySelector('.nl-streak-glow__content .nl-grim-glimmer-success__accent'),
+    ).not.toBeNull();
     expect(names(dialog)).toEqual(['Close', 'Play Again']);
     expect(document.activeElement).toBe(buttons(dialog)[1]);
   });
