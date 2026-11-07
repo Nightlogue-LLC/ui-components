@@ -6,7 +6,15 @@
 //   5. bundle a tiny app with Vite that imports the CSS (checks @import chains inside node_modules)
 // Run `npm run build` first. Needs no network (the package has no runtime dependencies).
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -104,6 +112,8 @@ const specs = [
   '${name}/tokens.css',
   '${name}/components/button.css',
   '${name}/themes/neutral.css',
+  '${name}/themes/grim-glimmer.css',
+  '${name}/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2',
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
@@ -112,32 +122,57 @@ if (typeof lib.createButton !== 'function') throw new Error('createButton missin
   );
   run(process.execPath, ['resolve.mjs'], app);
 
-  // 5. A real bundler pass over the CSS entry points.
-  step('vite build of a consumer app');
-  writeFileSync(
-    join(app, 'index.html'),
-    '<!doctype html><html><body><script type="module" src="./app.ts"></script></body></html>',
-  );
-  writeFileSync(
-    join(app, 'app.ts'),
-    `
-import '${name}/styles.css';
-import '${name}/themes/neutral.css';
+  // 5. Real bundler passes over the CSS entry points. A consumer that imports the grim-glimmer
+  //    theme must receive its fonts as local assets; a neutral-only consumer must receive none.
+  const vite = join(dirname(require.resolve('vite/package.json')), 'bin', 'vite.js');
+  const bundle = (dir, imports, themeName) => {
+    const root = join(work, dir);
+    mkdirSync(root);
+    writeFileSync(
+      join(root, 'index.html'),
+      '<!doctype html><html><body><script type="module" src="./app.ts"></script></body></html>',
+    );
+    writeFileSync(
+      join(root, 'app.ts'),
+      `${imports.map((i) => `import '${name}/${i}';`).join('\n')}
 import { createButton, applyTheme } from '${name}';
-applyTheme(document.body, 'neutral');
+applyTheme(document.body, '${themeName}');
 document.body.append(createButton({ label: 'Smoke' }));
 `,
+    );
+    // Reuse the installed package from the first consumer.
+    symlinkSync(join(app, 'node_modules'), join(root, 'node_modules'));
+    run(process.execPath, [vite, 'build', '--logLevel', 'error'], root);
+    const assets = join(root, 'dist', 'assets');
+    const cssFile = readdirSync(assets).find((f) => f.endsWith('.css'));
+    if (!cssFile) throw new Error('vite build produced no CSS');
+    // Normalise quote style: the minifier may drop quotes in attribute selectors.
+    const css = readFileSync(join(assets, cssFile), 'utf8').replaceAll(/["']/g, '');
+    return { css, fonts: readdirSync(assets).filter((f) => f.endsWith('.woff2')) };
+  };
+
+  step('vite build of a consumer using both themes');
+  const both = bundle(
+    'app-themes',
+    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css'],
+    'grim-glimmer',
   );
-  const vite = join(dirname(require.resolve('vite/package.json')), 'bin', 'vite.js');
-  run(process.execPath, [vite, 'build', '--logLevel', 'error'], app);
-  const assets = join(app, 'dist', 'assets');
-  const cssFile = readdirSync(assets).find((f) => f.endsWith('.css'));
-  if (!cssFile) throw new Error('vite build produced no CSS');
-  // Normalise quote style: the minifier may drop quotes in attribute selectors.
-  const css = readFileSync(join(assets, cssFile), 'utf8').replaceAll(/["']/g, '');
-  for (const needle of ['.nl-button', '--nl-space-1', '[data-nl-theme=neutral]']) {
-    if (!css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
+  for (const needle of [
+    '.nl-button',
+    '--nl-space-1',
+    '[data-nl-theme=neutral]',
+    '[data-nl-theme=grim-glimmer]',
+  ]) {
+    if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
   }
+  if (both.fonts.length !== 6)
+    throw new Error(`expected 6 bundled .woff2 files, got ${both.fonts.length}`);
+  if (/url\(\s*(https?:)?\/\//.test(both.css))
+    throw new Error('bundled CSS references a network URL');
+
+  step('vite build of a neutral-only consumer (no fonts expected)');
+  const neutralOnly = bundle('app-neutral', ['styles.css', 'themes/neutral.css'], 'neutral');
+  if (neutralOnly.fonts.length !== 0) throw new Error('neutral-only consumer received font files');
 
   console.log('Consumer smoke test passed.');
 } finally {

@@ -6,7 +6,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { requiredThemeTokens } from '../src/tokens/contract.js';
+import { optionalThemeTokens, requiredThemeTokens } from '../src/tokens/contract.js';
 
 const src = fileURLToPath(new URL('../src/', import.meta.url));
 const read = (p: string) => readFileSync(join(src, p), 'utf8');
@@ -73,7 +73,7 @@ describe('themes', () => {
 describe('shared components', () => {
   const components = dirs('components');
   const foundation = declared(read('tokens/tokens.css'));
-  const known = new Set<string>([...foundation, ...requiredThemeTokens]);
+  const known = new Set<string>([...foundation, ...requiredThemeTokens, ...optionalThemeTokens]);
   const stylesCss = read('styles.css');
   const componentsIndex = read('components/index.ts');
 
@@ -98,6 +98,13 @@ describe('shared components', () => {
     },
   );
 
+  it.each(components)('%s: reads optional theme hooks only with a fallback', (name) => {
+    const css = stripComments(read(`components/${name}/${name}.css`));
+    // var(--hook) with no comma means "no fallback": would break themes that don't define it.
+    const bare = optionalThemeTokens.filter((t) => new RegExp(`var\\(\\s*${t}\\s*\\)`).test(css));
+    expect(bare).toEqual([]);
+  });
+
   it.each(components)('%s: only styles classes in its own nl-<name> namespace', (name) => {
     const css = read(`components/${name}/${name}.css`);
     const classes = [...stripComments(css).matchAll(/\.([a-z][\w-]*)/g)].map((m) => m[1]!);
@@ -105,6 +112,10 @@ describe('shared components', () => {
       (c) => c !== `nl-${name}` && !c.startsWith(`nl-${name}-`) && !c.startsWith(`nl-${name}_`),
     );
     expect(outside).toEqual([]);
+  });
+
+  it('foundation does not define optional hooks (their fallbacks live at the point of use)', () => {
+    expect(optionalThemeTokens.filter((t) => foundation.has(t))).toEqual([]);
   });
 
   it('foundation tokens do not define theme-contract (color) tokens', () => {

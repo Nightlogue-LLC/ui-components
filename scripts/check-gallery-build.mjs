@@ -23,4 +23,11 @@ if (missing.length > 0) {
   console.error(`Gallery bundle is missing CSS for theme(s): ${missing.join(', ')}`);
   process.exit(1);
 }
+const fonts = readdirSync(assets).filter((f) => f.endsWith('.woff2'));
+if (fonts.length === 0 || /url\(\s*(https?:)?\/\//.test(css)) {
+  console.error(
+    'Gallery bundle must contain its fonts as local files and reference no network URLs',
+  );
+  process.exit(1);
+}
 console.log(`Gallery bundle includes ${themes.length} theme(s): ${themes.join(', ')}`);

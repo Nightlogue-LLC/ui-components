@@ -29,6 +29,7 @@ npm install
 - **Mode**: light/dark (themes opt in via `[data-nl-mode='dark']`).
 - **Viewport**: full width, 768px tablet, or 375px mobile preview width.
 - **Playground**: each story's controls change the live component; clicks etc. appear in the event log.
+- **Stories that manage their own themes** (`scope: 'self'`, e.g. G&G · Foundations) ignore the Theme/Mode toolbar so light and dark can be shown side by side.
 - **States**: a static grid of notable states (e.g. disabled, loading) for the current theme.
 
 The selected story/theme/mode/viewport are kept in the URL hash, so a view can be bookmarked or shared.

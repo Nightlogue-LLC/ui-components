@@ -1,5 +1,6 @@
 import '../src/styles.css';
 import { applyTheme, type ColorMode } from '../src/core/index.js';
+import { el } from './lib/dom.js';
 import './gallery.css';
 import type { Args, Control, Story } from './stories/types.js';
 
@@ -68,18 +69,6 @@ function setState(patch: Partial<State>): void {
 
 // --- DOM helpers -----------------------------------------------------------------------------
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  props: { className?: string; text?: string } = {},
-  children: (Node | string)[] = [],
-): HTMLElementTagNameMap[K] {
-  const node = document.createElement(tag);
-  if (props.className) node.className = props.className;
-  if (props.text !== undefined) node.textContent = props.text;
-  node.append(...children);
-  return node;
-}
-
 function selectField(
   label: string,
   options: readonly { value: string; label: string }[],
@@ -98,9 +87,9 @@ function selectField(
 }
 
 /** A themed, width-constrained container; this is what actually previews a component. */
-function createStage(): HTMLElement {
+function createStage(themed = true): HTMLElement {
   const stage = el('div', { className: `gal-stage gal-stage--${state.viewport}` });
-  applyTheme(stage, state.theme, state.mode);
+  if (themed) applyTheme(stage, state.theme, state.mode);
   return stage;
 }
 
@@ -221,7 +210,9 @@ function renderMain(story: Story | undefined): HTMLElement {
   };
   paintLog();
 
-  const preview = createStage();
+  const themed = story.scope !== 'self';
+  const showLog = story.showLog !== false;
+  const preview = createStage(themed);
   const paintPreview = () =>
     preview.replaceChildren(el('div', { className: 'gal-cell' }, [story.render(args, ctx)]));
   paintPreview();
@@ -235,15 +226,14 @@ function renderMain(story: Story | undefined): HTMLElement {
   main.append(
     el('h2', { text: story.title }),
     el('p', { className: 'gal-desc', text: story.description ?? '' }),
-    el('h3', { text: 'Playground' }),
+    el('h3', { text: story.controls.length > 0 ? 'Playground' : 'Preview' }),
     preview,
-    controls,
-    el('h3', { text: 'Event log' }),
-    log,
   );
+  if (story.controls.length > 0) main.append(controls);
+  if (showLog) main.append(el('h3', { text: 'Event log' }), log);
 
   if (story.states?.length) {
-    const grid = createStage();
+    const grid = createStage(themed);
     const cells = story.states.map(({ label, args: overrides }) =>
       el('div', { className: 'gal-cell gal-cell--state' }, [
         el('span', { className: 'gal-cell__label', text: label }),

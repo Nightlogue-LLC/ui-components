@@ -49,6 +49,10 @@ import { createHealthBar } from '@nightlogue-llc/ui-components/projects/<project
 
 Requirements for the consumer: an ES-module-aware bundler (Vite is fine) and TypeScript `moduleResolution` of `Bundler` or `NodeNext` (the package uses `exports`, not `main`). `npm run package:check` verifies both resolution modes plus a real Vite build.
 
+## Fonts
+
+A theme that bundles fonts (currently `grim-glimmer`) carries them with its CSS. Importing `.../themes/grim-glimmer.css` is enough: your bundler resolves the relative `url()`s and emits the WOFF2 files as local assets (no network, no CDN). Apps that use only the `neutral` theme, or no theme, receive no font files. To preload a font, use its asset path, for example `@nightlogue-llc/ui-components/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2` (`theme-assets/*` maps to the theme folders).
+
 ## Capacitor Android
 
 Nothing special is required: the output is plain JS and CSS. Include `viewport-fit=cover` in your `index.html` viewport meta and use `env(safe-area-inset-*)` in your app shell (the gallery does the same). Confirm your minimum Android System WebView version against the [browser baseline](architecture.md#browser-baseline-capacitor-android-webview).

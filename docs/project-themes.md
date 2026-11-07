@@ -17,6 +17,7 @@ Shared components stay untouched. Replace `<project>` with a short kebab-case na
      color-scheme: light;
      --nl-color-bg: /* ... every token in src/tokens/contract.ts ... */;
      /* optional: override foundation tokens, e.g. --nl-radius-md, --nl-font-family */
+     /* optional hooks (src/tokens/contract.ts): typography roles (--nl-font-family-display / -heading / -label, weights, scale), --nl-shadow-card, --nl-shadow-dialog */
      /* optional: component hooks, e.g. --nl-button-radius */
      background: var(--nl-color-bg);
      color: var(--nl-color-text);
@@ -28,10 +29,19 @@ Shared components stay untouched. Replace `<project>` with a short kebab-case na
    }
    ```
 
-3. `npm test` tells you exactly which contract tokens are missing or which selectors are unscoped.
-4. `npm run dev`: the theme appears in the gallery's Theme menu automatically.
+3. Use **literal values** (hex) for contract colors so the contrast test can read them. Project themes (everything except the `neutral` example) must meet the WCAG AA policy in `gallery/lib/contrast-pairs.ts`: 4.5:1 for text, 3:1 for control boundaries and the focus ring. A worked example with measured results: [grim-glimmer-theme.md](grim-glimmer-theme.md).
+4. `npm test` tells you exactly which contract tokens are missing or which selectors are unscoped.
+5. `npm run dev`: the theme appears in the gallery's Theme menu automatically.
 
-Fonts: add `@font-face` in the theme CSS (or an extra CSS file `@import`ed by it) and ship font files with the theme. For a Capacitor app, prefer fonts bundled with the app over network fonts.
+Fonts are **theme assets**, never shared-library assets:
+
+- Put the WOFF2 files in `src/themes/<project>/fonts/`, **with each family's license** (`OFL-<family>.txt`) and a `README.md` recording provenance and SHA-256 hashes. Declare `@font-face` rules inside the theme CSS with relative `./fonts/...` URLs, `font-display: swap`, and a `unicode-range`. No network URLs, no `@import`.
+- Prefix the family names (the G&G theme uses `GG `) so they cannot clash with another copy of the same font.
+- Map the fonts to the semantic **role tokens** (`--nl-font-family`, `-display`, `-heading`, `-label`, their weights and the size scale) inside the theme scope. Components read the roles, never font names.
+- Load only the weights actually used, and no italics you do not ship. `tests/fonts.test.ts` enforces all of this and checks the files and licenses.
+- For a Capacitor app, the bundler emits the files as local assets; do not use a font CDN.
+
+The worked example is [grim-glimmer-theme.md](grim-glimmer-theme.md#typography).
 
 ## Creating project-specific components
 

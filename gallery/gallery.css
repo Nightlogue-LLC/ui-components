@@ -210,3 +210,240 @@ h3 {
     white-space: nowrap;
   }
 }
+
+/*
+ * Grim & Glimmer foundations story. Panels carry their own [data-nl-theme], so every color here
+ * comes from the theme under review; only layout lives in this file.
+ */
+.gal-gg-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+}
+
+.gal-gg-panel {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+}
+
+.gal-gg-mode {
+  margin: 0 0 0.5rem;
+  font: 0.75rem/1 var(--nl-font-family);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nl-color-text);
+}
+
+.gal-gg-section {
+  margin-top: 1.5rem;
+}
+
+.gal-gg-h {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--nl-color-border);
+  font: 600 0.8rem/1.2 var(--nl-font-family);
+  color: var(--nl-color-text);
+}
+
+.gal-gg-note {
+  display: block;
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.gal-gg-swatches,
+.gal-gg-contrast-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gal-gg-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.gal-gg-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.gal-gg-swatch__chip {
+  display: block;
+  height: 2.25rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+}
+
+.gal-gg-swatch__name {
+  font: 600 0.75rem/1.2 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}
+
+.gal-gg-contrast {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--nl-color-surface-hover);
+  font: 0.85rem/1.3 var(--nl-font-family);
+}
+
+.gal-gg-contrast__sample {
+  display: grid;
+  place-items: center;
+  height: 2rem;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  font: 600 0.9rem/1 var(--nl-font-family);
+}
+
+.gal-gg-contrast__status {
+  font: 600 0.75rem/1 var(--nl-font-family);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gal-gg-boxes {
+  display: grid;
+  gap: 1rem;
+}
+
+.gal-gg-box {
+  padding: 1rem;
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  font: 0.85rem/1.4 var(--nl-font-family);
+}
+
+.gal-gg-box--card {
+  box-shadow: var(--nl-shadow-card, none);
+}
+
+.gal-gg-box--dialog {
+  box-shadow: var(--nl-shadow-dialog, none);
+}
+
+.gal-gg-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* --- Grim & Glimmer typography story ---------------------------------------------------------- */
+/* Role classes consume the SEMANTIC tokens only, exactly as app code is expected to. */
+.gal-ty-face,
+.gal-ty-row {
+  margin: 0.9rem 0 1.1rem;
+}
+
+.gal-ty-face__name,
+.gal-ty-row__level {
+  margin: 0 0 0.25rem;
+  font: 600 0.8rem/1.3 var(--nl-font-family);
+}
+
+.gal-ty-face__role {
+  font-weight: 400;
+}
+
+.gal-ty-spec,
+.gal-ty-alphabet,
+.gal-ty-sample {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.gal-ty-spec--display {
+  font: var(--nl-font-weight-display) var(--nl-font-size-display-lg) / var(--nl-line-height-display)
+    var(--nl-font-family-display);
+}
+
+.gal-ty-spec--heading {
+  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-lg) / var(--nl-line-height-heading)
+    var(--nl-font-family-heading);
+}
+
+.gal-ty-spec--label {
+  font: var(--nl-font-weight-label) 1.125rem / 1.5 var(--nl-font-family-label);
+  letter-spacing: var(--nl-letter-spacing-label);
+}
+
+.gal-ty-spec--ui {
+  font: var(--nl-font-weight-medium) var(--nl-font-size-lg) / 1.4 var(--nl-font-family);
+}
+
+.gal-ty-alphabet {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+  opacity: 0.85;
+}
+
+.gal-ty-status {
+  display: block;
+  margin-top: 0.15rem;
+  font: 0.75rem/1.3 var(--nl-font-family);
+  opacity: 0.8;
+}
+
+.gal-ty-display-lg {
+  font: var(--nl-font-weight-display) var(--nl-font-size-display-lg) / var(--nl-line-height-display)
+    var(--nl-font-family-display);
+}
+
+.gal-ty-display-md {
+  font: var(--nl-font-weight-display) var(--nl-font-size-display-md) / var(--nl-line-height-display)
+    var(--nl-font-family-display);
+}
+
+.gal-ty-heading-lg {
+  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-lg) / var(--nl-line-height-heading)
+    var(--nl-font-family-heading);
+}
+
+.gal-ty-heading-md {
+  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-md) / var(--nl-line-height-heading)
+    var(--nl-font-family-heading);
+}
+
+.gal-ty-heading-sm {
+  font: var(--nl-font-weight-heading) var(--nl-font-size-heading-sm) / var(--nl-line-height-heading)
+    var(--nl-font-family-heading);
+}
+
+.gal-ty-heading-soft {
+  font: var(--nl-font-weight-heading-soft) var(--nl-font-size-heading-sm) /
+    var(--nl-line-height-heading) var(--nl-font-family-heading);
+}
+
+.gal-ty-label {
+  font: var(--nl-font-weight-label) var(--nl-font-size-label) / 1.4 var(--nl-font-family-label);
+  letter-spacing: var(--nl-letter-spacing-label);
+  text-transform: uppercase;
+}
+
+.gal-ty-ui-body {
+  font: 400 var(--nl-font-size-md) / 1.5 var(--nl-font-family);
+}
+
+.gal-ty-ui-strong {
+  font: var(--nl-font-weight-medium) var(--nl-font-size-md) / 1.4 var(--nl-font-family);
+}
+
+.gal-ty-ui-small {
+  font: 400 var(--nl-font-size-sm) / 1.4 var(--nl-font-family);
+}
+
+.gal-ty-ui-numbers {
+  font: var(--nl-font-weight-medium) var(--nl-font-size-lg) / 1.4 var(--nl-font-family);
+  font-variant-numeric: tabular-nums;
+}
