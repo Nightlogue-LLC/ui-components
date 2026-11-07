@@ -1,0 +1,239 @@
+/*
+ * Grim & Glimmer project compositions (see index.ts).
+ *
+ * Rules for this file:
+ *  - every selector contains an `nl-grim-glimmer-` class (it must never restyle shared classes
+ *    on its own; shared components are tuned only through their documented hooks);
+ *  - colors come from the theme contract, never literals, so light/dark and any future theme work;
+ *  - geometry stays sharp: sizes and radii come from tokens (5px radius in this theme).
+ * Load order does not matter: shared-class selectors below are doubled with a project class.
+ */
+
+/* --- Puzzle board (previews, tutorial demo, mock game board) ------------------------------- */
+.nl-grim-glimmer-board {
+  display: grid;
+  grid-template-columns: repeat(var(--nl-grim-glimmer-board-size, 5), minmax(0, 1fr));
+  gap: var(--nl-grim-glimmer-board-gap, var(--nl-space-1));
+  width: 100%;
+}
+
+.nl-grim-glimmer-board--preview {
+  --nl-grim-glimmer-board-gap: 2px;
+}
+
+.nl-grim-glimmer-board__cell {
+  position: relative;
+  box-sizing: border-box;
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  aspect-ratio: 1 / 1;
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: calc(var(--nl-radius-md) * 0.6);
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  font: inherit;
+}
+
+/* Placeholder glyphs: circle = given, triangle = placed, dot = marked. Shapes, not color alone. */
+.nl-grim-glimmer-board__cell--fixed::before,
+.nl-grim-glimmer-board__cell--placed::before,
+.nl-grim-glimmer-board__cell--marked::before {
+  content: '';
+  position: absolute;
+  inset: 27%;
+}
+
+.nl-grim-glimmer-board__cell--fixed::before {
+  border-radius: 50%;
+  background: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-board__cell--placed::before {
+  background: var(--nl-color-accent);
+  clip-path: polygon(50% 6%, 96% 94%, 4% 94%);
+}
+
+.nl-grim-glimmer-board__cell--marked::before {
+  inset: 41%;
+  border-radius: 50%;
+  background: var(--nl-color-border);
+}
+
+.nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell[aria-disabled='true'] {
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .nl-grim-glimmer-board--interactive
+    .nl-grim-glimmer-board__cell:not([aria-disabled='true']):hover {
+    background: var(--nl-color-surface-hover);
+  }
+}
+
+.nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell:focus-visible {
+  z-index: 1;
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: 1px;
+}
+
+/* --- Collection ----------------------------------------------------------------------------- */
+.nl-grim-glimmer-collection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nl-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nl-grim-glimmer-collection__item {
+  margin: 0;
+  padding: 0;
+}
+
+/* Landscape card: ~136px tall, preview ~40% on the left, title + status on the right. */
+.nl-card.nl-grim-glimmer-collection-card {
+  --nl-card-padding: 0;
+
+  display: flex;
+  align-items: stretch;
+  height: var(--nl-grim-glimmer-card-height, 8.5rem);
+  overflow: hidden;
+}
+
+.nl-grim-glimmer-collection-card__preview {
+  display: flex;
+  flex: 0 0 40%;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--nl-space-3);
+  border-right: var(--nl-border-width) solid var(--nl-color-border);
+  background: var(--nl-color-bg);
+}
+
+/* Keep the preview board square and within the pane at any card width. */
+.nl-grim-glimmer-collection-card__preview .nl-grim-glimmer-board {
+  max-width: 6.5rem;
+}
+
+.nl-grim-glimmer-collection-card__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: var(--nl-space-4);
+}
+
+.nl-grim-glimmer-collection-card__title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--nl-font-family-display, var(--nl-font-family));
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.nl-grim-glimmer-collection-card__status {
+  display: block;
+}
+
+/* Coming soon: flat, dashed, quiet preview; no hover, no pointer. Text stays fully legible. */
+.nl-card.nl-grim-glimmer-collection-card--unavailable {
+  border-style: dashed;
+  box-shadow: none;
+  cursor: default;
+}
+
+.nl-grim-glimmer-collection-card--unavailable .nl-grim-glimmer-collection-card__preview {
+  opacity: 0.55;
+  filter: grayscale(1);
+}
+
+/* --- Game screen ---------------------------------------------------------------------------- */
+.nl-grim-glimmer-screen {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nl-space-5);
+  padding-top: max(var(--nl-space-4), env(safe-area-inset-top, 0px));
+  padding-right: max(var(--nl-space-5), env(safe-area-inset-right, 0px));
+  padding-bottom: max(var(--nl-space-5), env(safe-area-inset-bottom, 0px));
+  padding-left: max(var(--nl-space-5), env(safe-area-inset-left, 0px));
+}
+
+.nl-grim-glimmer-game-header {
+  /* 48px targets on mobile, through the icon button's documented hook. */
+  --nl-icon-button-size: 3rem;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--nl-space-3);
+}
+
+.nl-grim-glimmer-game-header__title {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--nl-font-family-display, var(--nl-font-family));
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-grim-glimmer-game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--nl-space-3);
+}
+
+/* --- Dialog content ------------------------------------------------------------------------- */
+.nl-grim-glimmer-tutorial__step {
+  margin: 0 0 var(--nl-space-1);
+  font-size: var(--nl-font-size-sm);
+  font-weight: var(--nl-font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nl-grim-glimmer-tutorial__text,
+.nl-grim-glimmer-confirm__message,
+.nl-grim-glimmer-success__message {
+  margin: 0;
+}
+
+.nl-grim-glimmer-tutorial__demo {
+  margin-top: var(--nl-space-4);
+}
+
+/* About 240px: five 44px+ cells, so the demo fits a 375px phone without scrolling. */
+.nl-grim-glimmer-tutorial__demo .nl-grim-glimmer-board {
+  max-width: 15rem;
+  margin-inline: auto;
+}
+
+/* Quiet celestial accent: one small four-point star. Decorative; no confetti. */
+.nl-grim-glimmer-success__accent {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: var(--nl-space-3);
+  background: var(--nl-color-accent);
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}

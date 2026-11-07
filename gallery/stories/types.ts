@@ -26,6 +26,11 @@ export interface Story<A extends Args = Args> {
    * is only a width-constrained container.
    */
   scope?: 'toolbar' | 'self';
+  /**
+   * Render the preview edge to edge (no stage padding or side borders), so a screen-like story is
+   * as wide as the viewport and shows true phone proportions. Use for full-screen compositions.
+   */
+  bleed?: boolean;
   /** Show the event log section. Defaults to true; turn off for static pages. */
   showLog?: boolean;
   /** Extra static sections (e.g. a size x state matrix), each rendered in its own stage. */

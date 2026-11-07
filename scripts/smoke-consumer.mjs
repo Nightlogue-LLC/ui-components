@@ -60,6 +60,17 @@ import { createCard } from '${name}/components/card';
 import { createSegmentedControl, updateSegmentedControl } from '${name}/components/segmented-control';
 import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseReason } from '${name}/components/dialog';
 import { createBadge } from '${name}/components/badge';
+import {
+  createBoard,
+  createPuzzleCollectionCard,
+  createTutorialDialog,
+  type BoardCellState,
+  type TutorialOutcome,
+} from '${name}/projects/grim-glimmer';
+
+const cellState: BoardCellState = 'fixed';
+const outcome: TutorialOutcome = 'skip';
+void [createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
 
 const reason: DialogCloseReason = 'escape';
 const dialog: HTMLDialogElement = createDialog({ title: 't', onClose: (r) => void r });
@@ -121,6 +132,8 @@ const specs = [
   '${name}/components/badge.css',
   '${name}/components/dialog',
   '${name}/themes/grim-glimmer.css',
+  '${name}/projects/grim-glimmer',
+  '${name}/projects/grim-glimmer.css',
   '${name}/themes/neutral.css',
 ];
 for (const s of specs) import.meta.resolve(s);
@@ -143,6 +156,8 @@ for (const fn of ['createButton','createIconButton','createCard','createSegmente
     `
 import '${name}/styles.css';
 import '${name}/themes/neutral.css';
+import '${name}/themes/grim-glimmer.css';
+import '${name}/projects/grim-glimmer.css';
 import { createButton, applyTheme } from '${name}';
 applyTheme(document.body, 'neutral');
 document.body.append(createButton({ label: 'Smoke' }));
@@ -155,7 +170,13 @@ document.body.append(createButton({ label: 'Smoke' }));
   if (!cssFile) throw new Error('vite build produced no CSS');
   // Normalise quote style: the minifier may drop quotes in attribute selectors.
   const css = readFileSync(join(assets, cssFile), 'utf8').replaceAll(/["']/g, '');
-  for (const needle of ['.nl-button', '--nl-space-1', '[data-nl-theme=neutral]']) {
+  for (const needle of [
+    '.nl-button',
+    '--nl-space-1',
+    '[data-nl-theme=neutral]',
+    '[data-nl-theme=grim-glimmer]',
+    '.nl-grim-glimmer-board',
+  ]) {
     if (!css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
   }
 

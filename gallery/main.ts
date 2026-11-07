@@ -24,6 +24,11 @@ const themes = Object.keys(themeModules)
   .map((m) => m[1]!)
   .sort();
 
+// Project stylesheets (src/projects/<name>/<name>.css) register the same way. Like the themes
+// above, they are only imported because the glob result is kept in a variable and used.
+const projectModules = import.meta.glob('../src/projects/*/*.css', { eager: true });
+document.documentElement.dataset.projects = Object.keys(projectModules).join(',');
+
 const MODES = ['light', 'dark'] as const;
 const VIEWPORTS = {
   full: 'Full width',
@@ -87,8 +92,10 @@ function selectField(
 }
 
 /** A themed, width-constrained container; this is what actually previews a component. */
-function createStage(themed = true): HTMLElement {
-  const stage = el('div', { className: `gal-stage gal-stage--${state.viewport}` });
+function createStage(themed = true, bleed = false): HTMLElement {
+  const stage = el('div', {
+    className: `gal-stage gal-stage--${state.viewport}${bleed ? ' gal-stage--bleed' : ''}`,
+  });
   if (themed) applyTheme(stage, state.theme, state.mode);
   return stage;
 }
@@ -212,7 +219,7 @@ function renderMain(story: Story | undefined): HTMLElement {
 
   const themed = story.scope !== 'self';
   const showLog = story.showLog !== false;
-  const preview = createStage(themed);
+  const preview = createStage(themed, story.bleed);
   const paintPreview = () =>
     preview.replaceChildren(el('div', { className: 'gal-cell' }, [story.render(args, ctx)]));
   paintPreview();
@@ -233,7 +240,7 @@ function renderMain(story: Story | undefined): HTMLElement {
   if (showLog) main.append(el('h3', { text: 'Event log' }), log);
 
   if (story.states?.length) {
-    const grid = createStage(themed);
+    const grid = createStage(themed, story.bleed);
     const cells = story.states.map(({ label, args: overrides }) =>
       el('div', { className: 'gal-cell gal-cell--state' }, [
         el('span', { className: 'gal-cell__label', text: label }),
@@ -244,7 +251,7 @@ function renderMain(story: Story | undefined): HTMLElement {
     main.append(el('h3', { text: 'States' }), grid);
   }
   for (const section of story.sections ?? []) {
-    const stage = createStage(themed);
+    const stage = createStage(themed, story.bleed);
     stage.append(section.render(ctx));
     main.append(el('h3', { text: section.title }), stage);
   }
