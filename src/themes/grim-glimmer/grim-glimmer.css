@@ -4,7 +4,7 @@
  * Mobile-first, contemporary occult-editorial puzzle collection:
  *   light = bright white surfaces, dark type, sparse gold accent
  *   dark  = near-black surfaces, light type, sparse gold accent
- * Sharp, architectural geometry (5px radius, 1px borders, restrained elevation).
+ * Sharp, architectural geometry (5px radius, 1px borders, distinctly raised surfaces).
  *
  * Values are tokens only; no component selectors are overridden here. Contrast is checked by
  * tests/contrast.test.ts (AA: 4.5:1 text, 3:1 control boundaries and focus ring), and the
@@ -137,9 +137,9 @@
   --nl-line-height-heading: 1.25;
   --nl-letter-spacing-label: 0.14em;
 
-  /* Elevation hooks. */
-  --nl-shadow-card: 0 1px 2px rgba(21, 21, 21, 0.06);
-  --nl-shadow-dialog: 0 8px 24px rgba(21, 21, 21, 0.16);
+  /* Two-depth shadows: visible lift without changing component geometry. */
+  --nl-shadow-card: 0 3px 8px rgba(21, 21, 21, 0.13), 0 10px 22px rgba(21, 21, 21, 0.07);
+  --nl-shadow-dialog: 0 12px 26px rgba(21, 21, 21, 0.24), 0 30px 64px rgba(21, 21, 21, 0.22);
 
   background: var(--nl-color-bg);
   color: var(--nl-color-text);
@@ -162,6 +162,7 @@
   --nl-color-disabled-bg: #333336;
   --nl-color-disabled-text: #b5b4b4;
 
-  --nl-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --nl-shadow-dialog: 0 8px 24px rgba(0, 0, 0, 0.6);
+  /* Deep shadows and a quiet top-edge highlight distinguish charcoal from black. */
+  --nl-shadow-card: 0 4px 10px rgba(0, 0, 0, 0.62), 0 12px 24px rgba(0, 0, 0, 0.36), inset 0 1px rgba(255, 255, 255, 0.05);
+  --nl-shadow-dialog: 0 14px 30px rgba(0, 0, 0, 0.8), 0 36px 72px rgba(0, 0, 0, 0.62), inset 0 1px rgba(255, 255, 255, 0.08);
 }
