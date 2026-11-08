@@ -1067,3 +1067,25 @@
   outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
   outline-offset: var(--nl-focus-ring-offset);
 }
+
+/* Settings are a toggle: one persistent icon, animated only when motion is allowed. */
+.nl-grim-glimmer-app-header--settings-open {
+  grid-template-columns: 1fr;
+  justify-items: end;
+}
+
+.nl-grim-glimmer-app-header__settings-toggle svg {
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: rotate(0deg);
+  transform-origin: center;
+}
+
+.nl-grim-glimmer-app-header__settings-toggle[aria-pressed='true'] svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-app-header__settings-toggle svg {
+    transition: none;
+  }
+}
