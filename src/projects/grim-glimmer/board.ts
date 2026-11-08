@@ -5,7 +5,7 @@
  * It has no puzzle rules, generation or solving; those belong to the game app. The glyphs are
  * deliberately generic geometric placeholders (circle / triangle / dot), not final artwork.
  */
-export type BoardCellState = 'empty' | 'fixed' | 'placed' | 'marked';
+export type BoardCellState = 'empty' | 'fixed' | 'placed' | 'marked' | 'tentative' | 'excluded';
 
 /**
  * - preview:     static decoration (hidden from assistive tech), e.g. inside a collection card.
@@ -37,6 +37,8 @@ const DEFAULT_STATE_LABELS: Record<BoardCellState, string> = {
   fixed: 'given piece',
   placed: 'placed piece',
   marked: 'marked',
+  tentative: 'tentative tent',
+  excluded: 'excluded',
 };
 
 interface Config {
@@ -105,7 +107,7 @@ export function updateBoard(root: HTMLElement, props: BoardProps): void {
       `updateBoard: expected ${config.size * config.size} cells, got ${props.cells.length}`,
     );
   }
-  const states: BoardCellState[] = ['empty', 'fixed', 'placed', 'marked'];
+  const states: BoardCellState[] = ['empty', 'fixed', 'placed', 'marked', 'tentative', 'excluded'];
   props.cells.forEach((state, index) => {
     const cell = root.children[index];
     if (!(cell instanceof HTMLElement)) return;
@@ -123,4 +125,64 @@ export function updateBoard(root: HTMLElement, props: BoardProps): void {
       cell.setAttribute('aria-disabled', state === 'fixed' ? 'true' : 'false');
     }
   });
+}
+
+/** Clue counts are supplied by the game, never derived from presentation state. */
+export interface CluedBoardOptions extends BoardOptions {
+  rowClues: readonly number[];
+  columnClues: readonly number[];
+  rowClueLabel?: (row: number, value: number) => string;
+  columnClueLabel?: (column: number, value: number) => string;
+}
+
+/** Engraved board with column counts above and row counts on the left. */
+export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
+  const { size, rowClues, columnClues } = options;
+  const valid = (values: readonly number[]) =>
+    values.length === size && values.every((n) => Number.isInteger(n) && n >= 0 && n <= size);
+  if (!valid(rowClues) || !valid(columnClues)) {
+    throw new Error(
+      'createCluedBoard: clue arrays must match size and contain counts from 0 to size',
+    );
+  }
+  const shell = document.createElement('section');
+  shell.className = 'nl-grim-glimmer-clued-board';
+  shell.style.setProperty('--nl-grim-glimmer-clued-board-size', String(size));
+  if (options.mode === 'preview') shell.setAttribute('aria-hidden', 'true');
+
+  const columns = document.createElement('div');
+  columns.className = 'nl-grim-glimmer-clued-board__columns';
+  columns.setAttribute('aria-label', 'Column clues');
+  columnClues.forEach((value, index) => {
+    const clue = document.createElement('span');
+    clue.className = 'nl-grim-glimmer-clued-board__clue';
+    clue.textContent = String(value);
+    clue.setAttribute(
+      'aria-label',
+      options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`,
+    );
+    columns.append(clue);
+  });
+
+  const rows = document.createElement('div');
+  rows.className = 'nl-grim-glimmer-clued-board__rows';
+  rows.setAttribute('aria-label', 'Row clues');
+  rowClues.forEach((value, index) => {
+    const clue = document.createElement('span');
+    clue.className = 'nl-grim-glimmer-clued-board__clue';
+    clue.textContent = String(value);
+    clue.setAttribute(
+      'aria-label',
+      options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`,
+    );
+    rows.append(clue);
+  });
+
+  const grid = createBoard(options);
+  grid.classList.add('nl-grim-glimmer-board--engraved');
+  const body = document.createElement('div');
+  body.className = 'nl-grim-glimmer-clued-board__body';
+  body.append(rows, grid);
+  shell.append(columns, body);
+  return shell;
 }

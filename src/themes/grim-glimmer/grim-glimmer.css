@@ -103,6 +103,9 @@
   --nl-color-disabled-bg: #e7dfd7;
   --nl-color-disabled-text: #71666f;
 
+  --nl-grim-glimmer-board-inset: rgba(50, 27, 47, 0.2);
+  --nl-grim-glimmer-board-glow: rgba(145, 107, 52, 0.26);
+
   /* Structural values */
   --nl-radius-md: 0.3125rem;
   --nl-border-width: 1px;
@@ -225,6 +228,9 @@
   --nl-color-focus-ring: #f0d29b;
   --nl-color-disabled-bg: #503d4c;
   --nl-color-disabled-text: #c4b2bf;
+
+  --nl-grim-glimmer-board-inset: rgba(15, 5, 14, 0.65);
+  --nl-grim-glimmer-board-glow: rgba(214, 178, 121, 0.34);
 
   /* Recessed and raised surfaces for the dark-mode occult editorial collection. */
   --nl-recessed-slot-background: #1c101c;

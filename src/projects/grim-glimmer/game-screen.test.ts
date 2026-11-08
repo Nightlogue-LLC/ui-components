@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createGameControls,
+  createAppFrameHeader,
+  createCompactGameHeader,
+  createGameMenu,
+  toggleGameMenu,
+  closeGameMenu,
+  createGameDifficulty,
   createGameHeader,
   createGameScreen,
   getGameScreenSlot,
@@ -47,14 +53,176 @@ describe('createGameHeader', () => {
 });
 
 describe('createGameControls', () => {
-  it('offers a New Game button (and no navigation)', () => {
-    const onNewGame = vi.fn();
-    const controls = createGameControls({ onNewGame });
-    const button = controls.querySelector('button')!;
-    expect(button.textContent).toBe('New Game');
-    button.click();
-    expect(onNewGame).toHaveBeenCalledTimes(1);
+  it('starts in Tent mode with an accessible X switch', () => {
+    const changes = vi.fn();
+    const controls = createGameControls({ onModeChange: changes });
+    const [tent, exclude] = [
+      ...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__mode'),
+    ];
+    expect(tent?.getAttribute('aria-pressed')).toBe('true');
+    expect(exclude?.getAttribute('aria-pressed')).toBe('false');
+    exclude!.click();
+    expect(changes).toHaveBeenCalledExactlyOnceWith('exclude');
+    expect(tent?.getAttribute('aria-pressed')).toBe('false');
+    expect(exclude?.getAttribute('aria-pressed')).toBe('true');
+    tent!.click();
+    expect(changes).toHaveBeenLastCalledWith('tent');
+  });
+
+  it('has Hint, Clear and New Game, with no Undo or Redo', () => {
+    const hint = vi.fn();
+    const clear = vi.fn();
+    const newGame = vi.fn();
+    const controls = createGameControls({ onHint: hint, onClear: clear, onNewGame: newGame });
+    const actions = [
+      ...controls.querySelectorAll<HTMLButtonElement>(
+        '.nl-grim-glimmer-game-controls__actions button',
+      ),
+    ];
+    expect(actions.map((button) => button.textContent)).toEqual(['Hint', 'Clear', 'New Game']);
+    actions.forEach((button) => button.click());
+    expect(hint).toHaveBeenCalledOnce();
+    expect(clear).toHaveBeenCalledOnce();
+    expect(newGame).toHaveBeenCalledOnce();
     expect(controls.querySelector('nav')).toBeNull();
+  });
+});
+
+describe('createGameDifficulty', () => {
+  it('renders a native accessible select and forwards difficulty choices', () => {
+    const onChange = vi.fn();
+    const difficulty = createGameDifficulty({
+      label: 'Choose difficulty',
+      value: 'easy',
+      options: [
+        { value: 'easy', label: 'Easy' },
+        { value: 'hard', label: 'Hard' },
+      ],
+      onChange,
+    });
+    const select = difficulty.querySelector('select')!;
+    expect(difficulty.textContent).toContain('Choose difficulty');
+    expect(select.value).toBe('easy');
+    select.value = 'hard';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('hard');
+  });
+
+  it('rejects a difficulty outside the available options', () => {
+    expect(() =>
+      createGameDifficulty({ value: 'unknown', options: [], onChange: vi.fn() }),
+    ).toThrow();
+  });
+});
+
+describe('Two-layer mobile gameplay navigation', () => {
+  it('separates app navigation from a puzzle header with a future hint badge', () => {
+    const back = vi.fn();
+    const settings = vi.fn();
+    const appHeader = createAppFrameHeader({
+      icons: { back: icon(), settings: icon() },
+      onBack: back,
+      onSettings: settings,
+    });
+    expect(appHeader.querySelectorAll('button')).toHaveLength(2);
+    expect(appHeader.getAttribute('aria-label')).toContain('Grim');
+    const [backButton, settingsButton] = [...appHeader.querySelectorAll('button')];
+    backButton!.click();
+    settingsButton!.click();
+    expect(back).toHaveBeenCalledOnce();
+    expect(settings).toHaveBeenCalledOnce();
+
+    const hint = vi.fn();
+    const puzzle = createCompactGameHeader({
+      title: 'Tents & Trees',
+      status: 'Easy · 5×5',
+      freeHints: 3,
+      icons: { hint: icon(), menu: icon() },
+      onHint: hint,
+    });
+    expect(puzzle.querySelector('h1')?.textContent).toBe('Tents & Trees');
+    expect(puzzle.querySelector('.nl-grim-glimmer-game-header__status')?.textContent).toContain(
+      '5×5',
+    );
+    expect(puzzle.querySelector('.nl-grim-glimmer-game-header__hint-badge')?.textContent).toBe('3');
+    puzzle.querySelector<HTMLButtonElement>('[aria-label="Hint (3 free remaining)"]')!.click();
+    expect(hint).toHaveBeenCalledOnce();
+    expect(() =>
+      createCompactGameHeader({
+        title: 'Tents & Trees',
+        status: 'Easy',
+        freeHints: -1,
+        icons: { hint: icon(), menu: icon() },
+      }),
+    ).toThrow(/freeHints/);
+  });
+
+  it('keeps Tent/X and Clear in a single icon-only toolbar, with no Hint or New Game', () => {
+    const clear = vi.fn();
+    const controls = createGameControls({
+      compact: true,
+      showHint: false,
+      showNewGame: false,
+      icons: { tent: icon(), exclude: icon(), clear: icon() },
+      onClear: clear,
+    });
+    expect(controls.querySelector('.nl-grim-glimmer-game-controls--compact')).toBeNull();
+    expect(controls.classList.contains('nl-grim-glimmer-game-controls--compact')).toBe(true);
+    const buttons = [...controls.querySelectorAll('button')];
+    expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Tent',
+      'X',
+      'Clear marks',
+    ]);
+    expect(controls.querySelectorAll('svg')).toHaveLength(3);
+    buttons[2]!.click();
+    expect(clear).toHaveBeenCalledOnce();
+  });
+
+  it('opens and closes a compact staged game menu without changing difficulty before New Game', () => {
+    const deal = vi.fn();
+    const help = vi.fn();
+    const menu = createGameMenu({
+      difficulty: 'easy',
+      options: [
+        { value: 'easy', label: 'Easy', size: 5 },
+        { value: 'medium', label: 'Medium', size: 8 },
+      ],
+      onDeal: deal,
+      onHelp: help,
+    });
+    expect(menu.hidden).toBe(true);
+    toggleGameMenu(menu);
+    expect(menu.hidden).toBe(false);
+    const medium = menu.querySelector<HTMLButtonElement>('[data-value="medium"]')!;
+    medium.click();
+    expect(medium.getAttribute('aria-pressed')).toBe('true');
+    expect(deal).not.toHaveBeenCalled();
+    closeGameMenu(menu);
+    expect(menu.hidden).toBe(true);
+    toggleGameMenu(menu);
+    expect(medium.getAttribute('aria-pressed')).toBe('false');
+    const actions = [
+      ...menu.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-menu__actions button'),
+    ];
+    actions[0]!.click();
+    expect(help).toHaveBeenCalledOnce();
+    toggleGameMenu(menu);
+    medium.click();
+    actions[1]!.click();
+    expect(deal).toHaveBeenCalledExactlyOnceWith('medium');
+  });
+
+  it('places shared app header before the puzzle header without adding a difficulty row', () => {
+    const screen = createGameScreen({
+      appHeader: document.createElement('nav'),
+      header: document.createElement('header'),
+      board: document.createElement('div'),
+      controls: document.createElement('div'),
+    });
+    expect(
+      [...screen.children].slice(0, 4).map((child) => (child as HTMLElement).dataset.slot),
+    ).toEqual(['appHeader', 'header', 'board', 'controls']);
   });
 });
 

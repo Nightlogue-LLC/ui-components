@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createBoard, updateBoard, type BoardCellState } from './board.js';
+import { createBoard, createCluedBoard, updateBoard, type BoardCellState } from './board.js';
 
 const cells = (n: number, fill: BoardCellState = 'empty'): BoardCellState[] =>
   Array<BoardCellState>(n * n).fill(fill);
@@ -89,6 +89,34 @@ describe('createBoard', () => {
   });
 });
 
+describe('createCluedBoard', () => {
+  it('renders column and row counts without changing the inner board contract', () => {
+    const shell = createCluedBoard({
+      label: 'Tents and Trees',
+      size: 2,
+      mode: 'interactive',
+      cells: cells(2),
+      rowClues: [1, 0],
+      columnClues: [0, 1],
+    });
+    const board = shell.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
+    expect(board.children).toHaveLength(4);
+    expect(shell.querySelectorAll('.nl-grim-glimmer-clued-board__clue')).toHaveLength(4);
+    expect(shell.querySelector('.nl-grim-glimmer-clued-board__columns')?.textContent).toBe('01');
+    expect(shell.querySelector('.nl-grim-glimmer-clued-board__rows')?.textContent).toBe('10');
+    updateBoard(board, { cells: ['placed', 'empty', 'fixed', 'marked'] });
+    expect(board.children[0]?.classList.contains('nl-grim-glimmer-board__cell--placed')).toBe(true);
+  });
+
+  it('validates the clue lengths and count bounds', () => {
+    const base = { label: 'Board', size: 2, mode: 'interactive' as const, cells: cells(2) };
+    expect(() => createCluedBoard({ ...base, rowClues: [1], columnClues: [1, 1] })).toThrow(/clue/);
+    expect(() => createCluedBoard({ ...base, rowClues: [1, 1], columnClues: [3, 0] })).toThrow(
+      /clue/,
+    );
+  });
+});
+
 describe('updateBoard', () => {
   it('re-applies states and labels in place, keeping the same elements and focus', () => {
     const board = createBoard({ label: 'b', size: 2, mode: 'interactive', cells: cells(2) });
@@ -106,6 +134,23 @@ describe('updateBoard', () => {
     expect(before[2]!.classList.contains('nl-grim-glimmer-board__cell--empty')).toBe(false);
     expect(before[2]!.getAttribute('aria-label')).toBe('Row 2, column 1: marked');
     board.remove();
+  });
+
+  it('renders tentative and excluded markers with distinct accessible labels', () => {
+    const board = createBoard({
+      label: 'Marks',
+      size: 2,
+      mode: 'interactive',
+      cells: ['tentative', 'excluded', 'placed', 'fixed'],
+    });
+    const [tentative, excluded] = cellEls(board);
+    expect(tentative?.classList.contains('nl-grim-glimmer-board__cell--tentative')).toBe(true);
+    expect(tentative?.getAttribute('aria-label')).toContain('tentative tent');
+    expect(excluded?.classList.contains('nl-grim-glimmer-board__cell--excluded')).toBe(true);
+    expect(excluded?.getAttribute('aria-label')).toContain('excluded');
+    updateBoard(board, { cells: ['placed', 'empty', 'placed', 'fixed'] });
+    expect(tentative?.classList.contains('nl-grim-glimmer-board__cell--tentative')).toBe(false);
+    expect(excluded?.classList.contains('nl-grim-glimmer-board__cell--excluded')).toBe(false);
   });
 
   it('rejects wrong-length arrays and foreign elements', () => {
