@@ -958,6 +958,7 @@
 
 /* App-wide settings screen, beneath the same colored app navigation frame. */
 .nl-grim-glimmer-app-settings {
+  -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
   width: min(100%, 32rem);
   margin-inline: auto;
@@ -1010,6 +1011,14 @@
   display: grid;
   gap: 3px;
   min-width: 0;
+}
+
+.nl-grim-glimmer-app-settings__row:active {
+  background: var(--nl-color-surface-hover);
+}
+
+.nl-grim-glimmer-game-menu {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nl-grim-glimmer-app-settings__row-copy strong {

@@ -1,4 +1,5 @@
 .nl-select {
+  -webkit-tap-highlight-color: transparent;
   position: relative;
   display: inline-block;
   flex: 0 0 auto;
@@ -28,6 +29,11 @@
 
 .nl-select__arrow {
   color: var(--nl-color-accent);
+}
+
+.nl-select__trigger:active,
+.nl-select__option:active {
+  background: var(--nl-color-surface-hover);
 }
 
 .nl-select__list {
