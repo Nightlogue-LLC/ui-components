@@ -48,7 +48,10 @@ try {
     ['pack', '--json', '--ignore-scripts', '--pack-destination', work],
     root,
   );
-  const tarball = join(work, JSON.parse(packOut)[0].filename);
+  // npm may print prepare-script output before its JSON payload when packing from Git.
+  const jsonStart = packOut.indexOf('[\n');
+  if (jsonStart < 0) throw new Error('npm pack returned no JSON manifest');
+  const tarball = join(work, JSON.parse(packOut.slice(jsonStart))[0].filename);
 
   const app = join(work, 'app');
   mkdirSync(app);
