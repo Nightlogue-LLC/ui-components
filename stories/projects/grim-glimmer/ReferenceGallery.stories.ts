@@ -182,6 +182,35 @@ function specimen(palette: Palette): HTMLElement {
   return frame;
 }
 
+/** One visual direction with two modes: plum at night, cream by day. */
+function pairedThemeGallery(): HTMLElement {
+  const root = el('div', { className: 'sb-ref-paired-theme' });
+  const controls = el('div', { className: 'sb-ref-mode-switch' });
+  const canvas = el('div', { className: 'sb-ref-mode-canvas' });
+  const modes = [
+    { label: 'Dark plum', value: 'plum' },
+    { label: 'Light cream', value: 'cream' },
+  ] as const;
+  const renderMode = (mode: 'plum' | 'cream') => {
+    canvas.replaceChildren(specimen(mode));
+    controls.querySelectorAll('button').forEach(button => {
+      const selected = button.dataset.mode === mode;
+      button.setAttribute('aria-pressed', String(selected));
+      button.classList.toggle('is-active', selected);
+    });
+  };
+  modes.forEach(({ label, value }) => {
+    const button = el('button', { text: label });
+    button.type = 'button';
+    button.dataset.mode = value;
+    button.addEventListener('click', () => renderMode(value));
+    controls.append(button);
+  });
+  root.append(controls, canvas);
+  renderMode('plum');
+  return root;
+}
+
 const meta = {
   title: 'Projects/Grim & Glimmer/Reference Gallery',
   tags: ['autodocs'],
@@ -190,24 +219,21 @@ const meta = {
     docs: {
       description: {
         component:
-          'Visual exploration of the earlier generated component sheet. Palette, layout, and four-tab bottom navigation are Storybook-only mock data. This does not alter app navigation, puzzle logic, or approved theme tokens.',
+          'One paired visual theme: dark plum for dark mode and warm cream for light mode. Charcoal is the earlier direction for comparison only. Navigation and puzzle details are Storybook mock data, with no app behavior changes.',
       },
     },
   },
-  render: () => specimen('plum'),
+  render: pairedThemeGallery,
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj;
 
-export const PlumAndCream: Story = { render: () => specimen('plum') };
-export const CreamLight: Story = { render: () => specimen('cream') };
-export const CurrentCharcoal: Story = { render: () => specimen('charcoal') };
-export const PaletteComparison: Story = {
+export const PlumAndCream: Story = { render: pairedThemeGallery };
+export const DarkPlum: Story = { render: () => specimen('plum') };
+export const LightCream: Story = { render: () => specimen('cream') };
+export const CurrentCharcoalComparison: Story = { render: () => specimen('charcoal') };
+export const DarkLightSideBySide: Story = {
   render: () =>
-    el('div', { className: 'sb-ref-comparison' }, [
-      specimen('plum'),
-      specimen('cream'),
-      specimen('charcoal'),
-    ]),
+    el('div', { className: 'sb-ref-comparison' }, [specimen('plum'), specimen('cream')]),
 };
