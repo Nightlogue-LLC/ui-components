@@ -131,13 +131,13 @@
   display: grid;
   grid-template-columns: repeat(var(--nl-grim-glimmer-clued-board-size), minmax(0, 1fr));
   gap: var(--nl-grim-glimmer-board-gap, var(--nl-space-1));
-  margin-right: calc(clamp(19px, 7%, 29px) + var(--nl-space-2));
+  margin-left: calc(clamp(19px, 7%, 29px) + var(--nl-space-2));
   margin-bottom: var(--nl-space-2);
 }
 
 .nl-grim-glimmer-clued-board__body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(19px, 7%, 29px);
+  grid-template-columns: clamp(19px, 7%, 29px) minmax(0, 1fr);
   gap: var(--nl-space-2);
   min-width: 0;
 }
@@ -461,6 +461,213 @@
   }
 }
 
+
+/* Compact mobile layout: fixed-height header + centered board + bottom tools. */
+.nl-grim-glimmer-screen--compact {
+  min-height: 100dvh;
+  max-width: 32rem;
+  margin-inline: auto;
+  gap: 0;
+  padding: 0;
+  background: var(--nl-color-bg);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__header {
+  flex: 0 0 auto;
+  border-bottom: var(--nl-border-width) solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-game-header--compact {
+  --nl-icon-button-size: 2.75rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  height: 3.75rem;
+  padding-inline: max(var(--nl-space-3), env(safe-area-inset-left, 0px));
+}
+
+.nl-grim-glimmer-game-header__status {
+  margin: 0;
+  color: var(--nl-color-accent);
+  font: 600 var(--nl-font-size-sm)/1.25 var(--nl-font-family);
+  letter-spacing: 0.09em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__board {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: clamp(8px, 3vw, 16px);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-clued-board {
+  width: min(100%, 26rem);
+  padding: clamp(6px, 2vw, 12px);
+  border-radius: calc(var(--nl-radius-md) * 3);
+  box-shadow: 0 4px 16px var(--nl-grim-glimmer-board-inset, transparent);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-board--engraved {
+  --nl-grim-glimmer-board-gap: 1px;
+  gap: 1px;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  overflow: hidden;
+  background: var(--nl-color-border);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-board__cell {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-board__cell--placed {
+  box-shadow: inset 0 0 0 1px var(--nl-color-accent);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-clued-board__columns,
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-clued-board__rows {
+  gap: 1px;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-clued-board__clue {
+  font-size: clamp(0.55rem, calc(1.05rem - (var(--nl-grim-glimmer-clued-board-size) - 5) * 0.04rem), 0.9rem);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__controls {
+  flex: 0 0 auto;
+  padding: var(--nl-space-3) max(var(--nl-space-3), env(safe-area-inset-right, 0px))
+    max(var(--nl-space-4), env(safe-area-inset-bottom, 0px));
+  border-top: var(--nl-border-width) solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-game-controls {
+  gap: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-game-controls__mode {
+  min-height: 2.75rem;
+}
+
+/* Dialog itself is the backdrop; its panel slides in from the right. */
+.nl-grim-glimmer-game-menu {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-game-menu::backdrop {
+  background: var(--nl-grim-glimmer-menu-backdrop, rgba(20, 12, 20, 0.5));
+  backdrop-filter: blur(3px);
+}
+
+.nl-grim-glimmer-game-menu__panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nl-space-4);
+  width: min(82vw, 19rem);
+  height: 100%;
+  margin-left: auto;
+  padding: max(var(--nl-space-5), env(safe-area-inset-top, 0px))
+    var(--nl-space-4) max(var(--nl-space-5), env(safe-area-inset-bottom, 0px));
+  border-left: var(--nl-border-width) solid var(--nl-color-border);
+  background: var(--nl-color-bg);
+  box-shadow: var(--nl-shadow-dialog);
+}
+
+.nl-grim-glimmer-game-menu__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--nl-space-3);
+  border-bottom: var(--nl-border-width) solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-game-menu__heading h2 {
+  margin: 0;
+  font: var(--nl-font-weight-heading, 600) var(--nl-font-size-heading-lg, 1.75rem)/
+    1.2 var(--nl-font-family-heading, Georgia);
+}
+
+.nl-grim-glimmer-game-menu__close {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: 50%;
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  font: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.nl-grim-glimmer-game-menu__label {
+  margin: 0;
+  color: var(--nl-color-text);
+  font-size: var(--nl-font-size-sm);
+  font-weight: var(--nl-font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nl-grim-glimmer-game-menu__choices {
+  display: grid;
+  gap: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-game-menu__choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: var(--nl-space-3);
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  font: 500 var(--nl-font-size-sm)/1.25 var(--nl-font-family);
+  cursor: pointer;
+}
+
+.nl-grim-glimmer-game-menu__choice--selected {
+  border-color: var(--nl-color-accent);
+  background: var(--nl-color-surface-hover);
+  color: var(--nl-color-text);
+  font-weight: 600;
+}
+
+.nl-grim-glimmer-game-menu__deal {
+  width: 100%;
+  margin-top: auto;
+}
+
+.nl-grim-glimmer-game-menu__close:focus-visible,
+.nl-grim-glimmer-game-menu__choice:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+
+@media (max-height: 550px) {
+  .nl-grim-glimmer-screen--compact {
+    min-height: 550px;
+  }
+  .nl-grim-glimmer-game-menu__panel {
+    overflow-y: auto;
+  }
+}
 /* --- Dialog content ------------------------------------------------------------------------- */
 .nl-grim-glimmer-tutorial__step {
   margin: 0 0 var(--nl-space-1);
