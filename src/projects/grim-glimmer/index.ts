@@ -20,6 +20,7 @@ export {
 } from './game-screen.js';
 export type {
   GameControlsOptions,
+  GameMarkMode,
   GameDifficultyOption,
   GameDifficultyOptions,
   GameHeaderOptions,
