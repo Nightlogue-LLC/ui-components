@@ -193,7 +193,7 @@ function pairedThemeGallery(): HTMLElement {
   ] as const;
   const renderMode = (mode: 'plum' | 'cream') => {
     canvas.replaceChildren(specimen(mode));
-    controls.querySelectorAll('button').forEach(button => {
+    controls.querySelectorAll('button').forEach((button) => {
       const selected = button.dataset.mode === mode;
       button.setAttribute('aria-pressed', String(selected));
       button.classList.toggle('is-active', selected);
