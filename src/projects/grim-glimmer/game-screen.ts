@@ -40,30 +40,54 @@ export function createGameHeader(options: GameHeaderOptions): HTMLElement {
 /** App-level navigation is independent of the puzzle header and controls. */
 export interface AppFrameHeaderOptions {
   icons: { back: Node; settings: Node };
-  title?: string;
   onBack?: (event: MouseEvent) => void;
   onSettings?: (event: MouseEvent) => void;
+  /** Show an active settings icon, suitable for a toggleable settings view. */
+  settingsOpen?: boolean;
+  /** Hide back navigation when settings is toggled over the current screen. */
+  hideBack?: boolean;
 }
 
 export function createAppFrameHeader(options: AppFrameHeaderOptions): HTMLElement {
   const header = document.createElement('nav');
   header.className = 'nl-grim-glimmer-app-header';
   header.setAttribute('aria-label', 'Grim and Glimmer navigation');
-  const back = createIconButton({
-    label: 'Back to collection',
-    icon: options.icons.back,
-    ...(options.onBack ? { onClick: options.onBack } : {}),
-  });
-  const title = document.createElement('span');
-  title.className = 'nl-grim-glimmer-app-header__title';
-  title.textContent = options.title ?? 'Grim & Glimmer';
+  if (!options.hideBack) {
+    header.append(
+      createIconButton({
+        label: 'Back to collection',
+        icon: options.icons.back,
+        ...(options.onBack ? { onClick: options.onBack } : {}),
+      }),
+    );
+  } else {
+    header.classList.add('nl-grim-glimmer-app-header--settings-open');
+  }
   const settings = createIconButton({
-    label: 'App settings',
+    label: options.settingsOpen ? 'Close app settings' : 'App settings',
     icon: options.icons.settings,
     ...(options.onSettings ? { onClick: options.onSettings } : {}),
   });
-  header.append(back, title, settings);
+  settings.classList.add('nl-grim-glimmer-app-header__settings-toggle');
+  settings.setAttribute('aria-pressed', String(options.settingsOpen ?? false));
+  header.append(settings);
   return header;
+}
+
+/** Toggle the same persistent settings button so its rotation can animate. */
+export function updateAppFrameSettingsOpen(header: HTMLElement, open: boolean): void {
+  if (!header.classList.contains('nl-grim-glimmer-app-header')) {
+    throw new Error('updateAppFrameSettingsOpen: expected an app frame header');
+  }
+  header.classList.toggle('nl-grim-glimmer-app-header--settings-open', open);
+  const back = header.querySelector<HTMLButtonElement>('[aria-label="Back to collection"]');
+  if (back) back.hidden = open;
+  const settings = header.querySelector<HTMLButtonElement>(
+    '.nl-grim-glimmer-app-header__settings-toggle',
+  );
+  if (!settings) throw new Error('updateAppFrameSettingsOpen: missing settings toggle');
+  settings.setAttribute('aria-pressed', String(open));
+  settings.setAttribute('aria-label', open ? 'Close app settings' : 'App settings');
 }
 
 export interface CompactGameHeaderOptions {

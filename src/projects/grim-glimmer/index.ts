@@ -14,6 +14,7 @@ export type { PuzzleCollectionCardOptions, PuzzleStatus } from './collection-car
 export {
   createGameHeader,
   createAppFrameHeader,
+  updateAppFrameSettingsOpen,
   createCompactGameHeader,
   createGameMenu,
   toggleGameMenu,
@@ -46,3 +47,6 @@ export type {
   TutorialDialogOptions,
   TutorialOutcome,
 } from './dialogs.js';
+
+export { createAppSettings } from './app-settings.js';
+export type { AppAppearance, AppSettingsState, AppSettingsOptions } from './app-settings.js';
