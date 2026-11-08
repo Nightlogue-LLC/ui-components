@@ -135,7 +135,7 @@ export interface CluedBoardOptions extends BoardOptions {
   columnClueLabel?: (column: number, value: number) => string;
 }
 
-/** Engraved board with column counts above and row counts on the right. */
+/** Engraved board with column counts above and row counts on the left. */
 export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   const { size, rowClues, columnClues } = options;
   const valid = (values: readonly number[]) =>
@@ -182,7 +182,7 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   grid.classList.add('nl-grim-glimmer-board--engraved');
   const body = document.createElement('div');
   body.className = 'nl-grim-glimmer-clued-board__body';
-  body.append(grid, rows);
+  body.append(rows, grid);
   shell.append(columns, body);
   return shell;
 }
