@@ -38,7 +38,6 @@ function collectionPage(): HTMLElement {
     [
       wordmark,
       el('div', { className: 'sb-gg-heading-group' }, [
-        el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
         el('h1', {
           className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
           text: 'Choose a puzzle',
