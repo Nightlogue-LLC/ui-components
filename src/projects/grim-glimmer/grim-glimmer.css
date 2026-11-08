@@ -953,3 +953,25 @@
     font-size: 1rem;
   }
 }
+
+
+/* V2 mobile refinement: one colored app bar and one divider, then fluid puzzle content. */
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-app-header {
+  grid-template-columns: 2.75rem 2.75rem;
+  justify-content: space-between;
+  background: var(--nl-color-surface-hover);
+  border-bottom: 1px solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__header,
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__controls {
+  border: 0;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__header {
+  background: transparent;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__controls {
+  background: transparent;
+}
