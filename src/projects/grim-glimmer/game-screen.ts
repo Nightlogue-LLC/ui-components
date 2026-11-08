@@ -110,6 +110,8 @@ export interface GameMenuOptions {
   dealLabel?: string;
   helpLabel?: string;
   onHelp?: () => void;
+  /** Optional in-menu rule copy supplied by the app. */
+  helpRules?: readonly string[];
 }
 
 export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
@@ -175,11 +177,24 @@ export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
     label: options.helpLabel ?? 'How to Play',
     variant: 'secondary',
     onClick: () => {
-      dialog.close();
-      options.onHelp?.();
+      const expanded = help.getAttribute('aria-expanded') === 'true';
+      help.setAttribute('aria-expanded', String(!expanded));
+      rules.hidden = expanded;
+      if (!expanded) options.onHelp?.();
     },
   });
   help.classList.add('nl-grim-glimmer-game-menu__help');
+  help.setAttribute('aria-expanded', 'false');
+  const rules = document.createElement('div');
+  rules.id = 'nl-grim-glimmer-menu-rules';
+  rules.className = 'nl-grim-glimmer-game-menu__rules';
+  rules.hidden = true;
+  help.setAttribute('aria-controls', rules.id);
+  for (const rule of options.helpRules ?? []) {
+    const line = document.createElement('p');
+    line.textContent = rule;
+    rules.append(line);
+  }
 
   const deal = createButton({
     label: options.dealLabel ?? 'Deal New Puzzle',
@@ -190,7 +205,7 @@ export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
     },
   });
   deal.classList.add('nl-grim-glimmer-game-menu__deal');
-  panel.append(heading, label, choices, help, deal);
+  panel.append(heading, label, choices, help, rules, deal);
   dialog.append(panel);
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
