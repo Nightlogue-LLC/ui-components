@@ -107,3 +107,9 @@ Optional per-component custom properties let a theme tune a component without ov
 - Unit tests per component (`*.test.ts`) cover defaults, each prop, events, text safety, focus and dismissal. jsdom has no `<dialog>` methods, so dialog tests use a small test-only polyfill that mimics native semantics (`tests/helpers/dialog-polyfill.ts`), plus the no-`showModal` fallback path.
 - `tests/shared-components.test.ts` checks, from source, touch-target sizing, `:focus-visible`, reduced-motion handling, hover gating and brand neutrality.
 - jsdom does not do layout and is not a real browser. Native dialog behavior, real keyboard handling and measured sizes were additionally checked in Chromium with a one-off Playwright script (not part of CI). See the PR description for the list.
+
+## Bottom navigation
+
+`createBottomNav({ label, items, value, onNavigate })` creates a labelled navigation landmark with app-owned icon nodes and visible destination labels. Each item has a unique string value. The current page has `aria-current=page`, an accent label/icon and a small line marker; other destinations have no current marker. The consumer accepts a request with `updateBottomNav(nav, value)`; clicking the current page is a no-op. Native button keyboard behavior is retained. Items remain in place during updates so keyboard focus is preserved.
+
+The bar uses theme tokens, avoids browser tap highlights, pads device safe areas and has 44px minimum targets. It contains no route names, history, storage or project imports. Placement is owned by the surrounding shell. Import from the package root or `components/bottom-nav`; styles ship in `styles.css` and `components/bottom-nav.css`.

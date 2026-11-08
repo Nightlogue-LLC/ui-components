@@ -50,3 +50,6 @@ export type {
 
 export { createAppSettings } from './app-settings.js';
 export type { AppAppearance, AppSettingsState, AppSettingsOptions } from './app-settings.js';
+
+export { createMainScreen, updateMainScreen } from './main-screen.js';
+export type { MainPage, MainScreenOptions } from './main-screen.js';

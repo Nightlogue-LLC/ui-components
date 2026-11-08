@@ -14,7 +14,7 @@ export interface GameHeaderOptions {
   onHelp?: (event: MouseEvent) => void;
 }
 
-/** Back button, short title, help button. 48px touch targets. No bottom navigation anywhere. */
+/** Back button, short title, help button. 48px touch targets. Gameplay has no bottom navigation. */
 export function createGameHeader(options: GameHeaderOptions): HTMLElement {
   const header = document.createElement('header');
   header.className = 'nl-grim-glimmer-game-header';

@@ -1080,3 +1080,48 @@
   width: 100%;
   overflow-y: auto;
 }
+
+/* Main destinations scroll above an anchored bar. Gameplay never mounts this shell. */
+.nl-grim-glimmer-main-screen {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-width: 0;
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-main-screen__page {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.nl-grim-glimmer-main-screen__page[hidden] {
+  display: none;
+}
+
+.nl-grim-glimmer-main-screen__placeholder {
+  display: grid;
+  gap: var(--nl-space-3);
+  padding: max(var(--nl-space-5), env(safe-area-inset-top, 0px)) var(--nl-space-5);
+  font-family: var(--nl-font-family);
+}
+
+.nl-grim-glimmer-main-screen__placeholder h1 {
+  margin: 0;
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-lg, 2rem);
+  font-weight: var(--nl-font-weight-heading, 600);
+}
+
+.nl-grim-glimmer-main-screen__placeholder p {
+  margin: 0;
+  font-size: var(--nl-font-size-sm);
+  line-height: 1.5;
+}

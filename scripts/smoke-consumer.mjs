@@ -69,9 +69,13 @@ import { createSegmentedControl, updateSegmentedControl } from '${name}/componen
 import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseReason } from '${name}/components/dialog';
 import { createBadge } from '${name}/components/badge';
 import { createSelect } from '${name}/components/select';
+import { createBottomNav, updateBottomNav } from '${name}/components/bottom-nav';
+void [createBottomNav, updateBottomNav];
 const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
 void picker;
 import {
+  createMainScreen,
+  updateMainScreen,
   createBoard,
   createPuzzleCollectionCard,
   createTutorialDialog,
@@ -81,7 +85,7 @@ import {
 
 const cellState: BoardCellState = 'fixed';
 const outcome: TutorialOutcome = 'skip';
-void [createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
+void [createMainScreen, updateMainScreen, createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
 
 const reason: DialogCloseReason = 'escape';
 const dialog: HTMLDialogElement = createDialog({ title: 't', onClose: (r) => void r });
@@ -143,6 +147,8 @@ const specs = [
   '${name}/components/badge.css',
   '${name}/components/select',
   '${name}/components/select.css',
+  '${name}/components/bottom-nav',
+  '${name}/components/bottom-nav.css',
   '${name}/components/dialog',
   '${name}/themes/grim-glimmer.css',
   '${name}/projects/grim-glimmer',
@@ -153,7 +159,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
-for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect']) {
+for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect','createBottomNav','updateBottomNav']) {
   if (typeof lib[fn] !== 'function') throw new Error(fn + ' missing');
 }
 `,
