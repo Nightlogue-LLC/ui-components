@@ -136,6 +136,23 @@ describe('updateBoard', () => {
     board.remove();
   });
 
+  it('renders tentative and excluded markers with distinct accessible labels', () => {
+    const board = createBoard({
+      label: 'Marks',
+      size: 2,
+      mode: 'interactive',
+      cells: ['tentative', 'excluded', 'placed', 'fixed'],
+    });
+    const [tentative, excluded] = cellEls(board);
+    expect(tentative?.classList.contains('nl-grim-glimmer-board__cell--tentative')).toBe(true);
+    expect(tentative?.getAttribute('aria-label')).toContain('tentative tent');
+    expect(excluded?.classList.contains('nl-grim-glimmer-board__cell--excluded')).toBe(true);
+    expect(excluded?.getAttribute('aria-label')).toContain('excluded');
+    updateBoard(board, { cells: ['placed', 'empty', 'placed', 'fixed'] });
+    expect(tentative?.classList.contains('nl-grim-glimmer-board__cell--tentative')).toBe(false);
+    expect(excluded?.classList.contains('nl-grim-glimmer-board__cell--excluded')).toBe(false);
+  });
+
   it('rejects wrong-length arrays and foreign elements', () => {
     const board = createBoard({ label: 'b', size: 2, mode: 'preview', cells: cells(2) });
     expect(() => updateBoard(board, { cells: cells(3) })).toThrow();
