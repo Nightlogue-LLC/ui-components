@@ -33,7 +33,17 @@ function demoIcon(name: 'hint' | 'tent' | 'exclude' | 'clear' | 'settings'): SVG
     tent: ['M12 3L3 20h18L12 3z', 'M12 3v17', 'M9 20l3-7 3 7'],
     exclude: ['M5 5l14 14', 'M19 5L5 19'],
     clear: ['M3 7h18', 'M8 7V4h8v3', 'M6 7l1 14h10l1-14', 'M10 11v7', 'M14 11v7'],
-    settings: ['M12 3v3', 'M12 18v3', 'M3 12h3', 'M18 12h3', 'M5.6 5.6l2.1 2.1', 'M16.3 16.3l2.1 2.1', 'M18.4 5.6l-2.1 2.1', 'M7.7 16.3l-2.1 2.1', 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'],
+    settings: [
+      'M12 3v3',
+      'M12 18v3',
+      'M3 12h3',
+      'M18 12h3',
+      'M5.6 5.6l2.1 2.1',
+      'M16.3 16.3l2.1 2.1',
+      'M18.4 5.6l-2.1 2.1',
+      'M7.7 16.3l-2.1 2.1',
+      'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+    ],
   };
   for (const data of paths[name]) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -61,7 +71,9 @@ function gameScreen(): HTMLElement {
     const option = difficulties.find((choice) => choice.value === difficulty) ?? difficulties[0]!;
     const size = option.size;
     let cells = mockBoard(difficulty, generation, size);
-    const clues = Array.from({ length: size }, (_, index) => (index % 4 === 0 ? 1 : index % 4 === 1 ? 0 : 2));
+    const clues = Array.from({ length: size }, (_, index) =>
+      index % 4 === 0 ? 1 : index % 4 === 1 ? 0 : 2,
+    );
     const board = createCluedBoard({
       label: 'Tents and Trees demonstration board',
       size,
@@ -73,7 +85,8 @@ function gameScreen(): HTMLElement {
         const state = cells[index];
         if (state === 'fixed') return;
         if (mode === 'tent') {
-          cells[index] = state === 'tentative' ? 'placed' : state === 'placed' ? 'empty' : 'tentative';
+          cells[index] =
+            state === 'tentative' ? 'placed' : state === 'placed' ? 'empty' : 'tentative';
         } else {
           cells[index] = state === 'excluded' ? 'empty' : 'excluded';
         }
@@ -93,7 +106,8 @@ function gameScreen(): HTMLElement {
       onHelp: () => {
         const label = document.createElement('p');
         label.className = 'sb-grim-gameplay-help';
-        label.textContent = 'Place tents beside trees. Tents cannot touch, including diagonally. Match the row and column counts.';
+        label.textContent =
+          'Place tents beside trees. Tents cannot touch, including diagonally. Match the row and column counts.';
         const old = host.querySelector('.sb-grim-gameplay-help');
         old?.remove();
         host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(label);
@@ -133,7 +147,9 @@ function gameScreen(): HTMLElement {
       icons: { tent: demoIcon('tent'), exclude: demoIcon('exclude'), clear: demoIcon('clear') },
       showHint: false,
       showNewGame: false,
-      onModeChange: (next) => { mode = next; },
+      onModeChange: (next) => {
+        mode = next;
+      },
       onClear: () => {
         cells = cells.map((state) => (state === 'fixed' ? state : 'empty'));
         updateBoard(grid, { cells });

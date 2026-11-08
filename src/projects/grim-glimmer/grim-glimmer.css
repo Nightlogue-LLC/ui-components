@@ -461,7 +461,6 @@
   }
 }
 
-
 /* Compact mobile layout: fixed-height header + centered board + bottom tools. */
 .nl-grim-glimmer-screen--compact {
   min-height: 100dvh;
@@ -534,7 +533,11 @@
 }
 
 .nl-grim-glimmer-screen--compact .nl-grim-glimmer-clued-board__clue {
-  font-size: clamp(0.55rem, calc(1.05rem - (var(--nl-grim-glimmer-clued-board-size) - 5) * 0.04rem), 0.9rem);
+  font-size: clamp(
+    0.55rem,
+    calc(1.05rem - (var(--nl-grim-glimmer-clued-board-size) - 5) * 0.04rem),
+    0.9rem
+  );
 }
 
 .nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__controls {
@@ -581,8 +584,8 @@
   width: min(82vw, 19rem);
   height: 100%;
   margin-left: auto;
-  padding: max(var(--nl-space-5), env(safe-area-inset-top, 0px))
-    var(--nl-space-4) max(var(--nl-space-5), env(safe-area-inset-bottom, 0px));
+  padding: max(var(--nl-space-5), env(safe-area-inset-top, 0px)) var(--nl-space-4)
+    max(var(--nl-space-5), env(safe-area-inset-bottom, 0px));
   border-left: var(--nl-border-width) solid var(--nl-color-border);
   background: var(--nl-color-bg);
   box-shadow: var(--nl-shadow-dialog);
@@ -598,8 +601,8 @@
 
 .nl-grim-glimmer-game-menu__heading h2 {
   margin: 0;
-  font: var(--nl-font-weight-heading, 600) var(--nl-font-size-heading-lg, 1.75rem)/
-    1.2 var(--nl-font-family-heading, Georgia);
+  font: var(--nl-font-weight-heading, 600) var(--nl-font-size-heading-lg, 1.75rem)/1.2
+    var(--nl-font-family-heading, Georgia);
 }
 
 .nl-grim-glimmer-game-menu__close {
@@ -788,7 +791,6 @@
   font-variant-numeric: tabular-nums;
   line-height: 1.4;
 }
-
 
 /* App nav stays separate from puzzle-owned header and marking controls. */
 .nl-grim-glimmer-screen--compact {

@@ -141,14 +141,20 @@ describe('Two-layer mobile gameplay navigation', () => {
       onHint: hint,
     });
     expect(puzzle.querySelector('h1')?.textContent).toBe('Tents & Trees');
-    expect(puzzle.querySelector('.nl-grim-glimmer-game-header__status')?.textContent).toContain('5×5');
+    expect(puzzle.querySelector('.nl-grim-glimmer-game-header__status')?.textContent).toContain(
+      '5×5',
+    );
     expect(puzzle.querySelector('.nl-grim-glimmer-game-header__hint-badge')?.textContent).toBe('3');
     puzzle.querySelector<HTMLButtonElement>('[aria-label="Hint (3 free remaining)"]')!.click();
     expect(hint).toHaveBeenCalledOnce();
-    expect(() => createCompactGameHeader({
-      title: 'Tents & Trees', status: 'Easy', freeHints: -1,
-      icons: { hint: icon(), menu: icon() },
-    })).toThrow(/freeHints/);
+    expect(() =>
+      createCompactGameHeader({
+        title: 'Tents & Trees',
+        status: 'Easy',
+        freeHints: -1,
+        icons: { hint: icon(), menu: icon() },
+      }),
+    ).toThrow(/freeHints/);
   });
 
   it('keeps Tent/X and Clear in a single icon-only toolbar, with no Hint or New Game', () => {
@@ -164,7 +170,9 @@ describe('Two-layer mobile gameplay navigation', () => {
     expect(controls.classList.contains('nl-grim-glimmer-game-controls--compact')).toBe(true);
     const buttons = [...controls.querySelectorAll('button')];
     expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
-      'Tent', 'X', 'Clear marks',
+      'Tent',
+      'X',
+      'Clear marks',
     ]);
     expect(controls.querySelectorAll('svg')).toHaveLength(3);
     buttons[2]!.click();
@@ -176,7 +184,10 @@ describe('Two-layer mobile gameplay navigation', () => {
     const help = vi.fn();
     const menu = createGameMenu({
       difficulty: 'easy',
-      options: [{ value: 'easy', label: 'Easy', size: 5 }, { value: 'medium', label: 'Medium', size: 8 }],
+      options: [
+        { value: 'easy', label: 'Easy', size: 5 },
+        { value: 'medium', label: 'Medium', size: 8 },
+      ],
       onDeal: deal,
       onHelp: help,
     });
@@ -191,7 +202,9 @@ describe('Two-layer mobile gameplay navigation', () => {
     expect(menu.hidden).toBe(true);
     toggleGameMenu(menu);
     expect(medium.getAttribute('aria-pressed')).toBe('false');
-    const actions = [...menu.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-menu__actions button')];
+    const actions = [
+      ...menu.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-menu__actions button'),
+    ];
     actions[0]!.click();
     expect(help).toHaveBeenCalledOnce();
     toggleGameMenu(menu);
@@ -207,8 +220,9 @@ describe('Two-layer mobile gameplay navigation', () => {
       board: document.createElement('div'),
       controls: document.createElement('div'),
     });
-    expect([...screen.children].slice(0, 4).map((child) => (child as HTMLElement).dataset.slot))
-      .toEqual(['appHeader', 'header', 'board', 'controls']);
+    expect(
+      [...screen.children].slice(0, 4).map((child) => (child as HTMLElement).dataset.slot),
+    ).toEqual(['appHeader', 'header', 'board', 'controls']);
   });
 });
 

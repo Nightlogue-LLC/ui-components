@@ -209,23 +209,27 @@ export function createGameMenu(options: GameMenuOptions): HTMLElement {
   const actions = document.createElement('div');
   actions.className = 'nl-grim-glimmer-game-menu__actions';
   if (options.onHelp) {
-    actions.append(createButton({
-      label: options.helpLabel ?? 'How to Play',
-      variant: 'ghost',
+    actions.append(
+      createButton({
+        label: options.helpLabel ?? 'How to Play',
+        variant: 'ghost',
+        onClick: () => {
+          closeGameMenu(menu);
+          options.onHelp?.();
+        },
+      }),
+    );
+  }
+  actions.append(
+    createButton({
+      label: options.dealLabel ?? 'New Game',
+      variant: 'primary',
       onClick: () => {
         closeGameMenu(menu);
-        options.onHelp?.();
+        options.onDeal(selected);
       },
-    }));
-  }
-  actions.append(createButton({
-    label: options.dealLabel ?? 'New Game',
-    variant: 'primary',
-    onClick: () => {
-      closeGameMenu(menu);
-      options.onDeal(selected);
-    },
-  }));
+    }),
+  );
   menu.append(heading, choices, actions);
   menu.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
@@ -329,24 +333,30 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
   const actions = document.createElement('div');
   actions.className = 'nl-grim-glimmer-game-controls__actions';
   if (options.showHint !== false) {
-    actions.append(createButton({
-      label: options.hintLabel ?? 'Hint',
-      variant: 'ghost',
-      ...(options.onHint ? { onClick: options.onHint } : {}),
-    }));
+    actions.append(
+      createButton({
+        label: options.hintLabel ?? 'Hint',
+        variant: 'ghost',
+        ...(options.onHint ? { onClick: options.onHint } : {}),
+      }),
+    );
   }
   if (options.compact && options.icons) {
-    actions.append(createIconButton({
-      label: options.clearLabel ?? 'Clear marks',
-      icon: options.icons.clear,
-      ...(options.onClear ? { onClick: options.onClear } : {}),
-    }));
+    actions.append(
+      createIconButton({
+        label: options.clearLabel ?? 'Clear marks',
+        icon: options.icons.clear,
+        ...(options.onClear ? { onClick: options.onClear } : {}),
+      }),
+    );
   } else {
-    actions.append(createButton({
-      label: options.clearLabel ?? 'Clear',
-      variant: 'ghost',
-      ...(options.onClear ? { onClick: options.onClear } : {}),
-    }));
+    actions.append(
+      createButton({
+        label: options.clearLabel ?? 'Clear',
+        variant: 'ghost',
+        ...(options.onClear ? { onClick: options.onClear } : {}),
+      }),
+    );
   }
   if (options.showNewGame !== false) {
     actions.append(
@@ -388,7 +398,7 @@ export function createGameScreen(parts: GameScreenParts): HTMLElement {
     const box = document.createElement('div');
     box.className = `nl-grim-glimmer-screen__${slot === 'appHeader' ? 'app-header' : slot}`;
     box.dataset.slot = slot;
-    box.append(parts[slot]);
+    box.append(parts[slot]!);
     screen.append(box);
   }
   if (parts.menu) screen.append(parts.menu);
