@@ -43,7 +43,11 @@ const step = (msg) => console.log(`- ${msg}`);
 
 try {
   step('npm pack');
-  const packOut = run('npm', ['pack', '--json', '--ignore-scripts', '--pack-destination', work], root);
+  const packOut = run(
+    'npm',
+    ['pack', '--json', '--ignore-scripts', '--pack-destination', work],
+    root,
+  );
   const tarball = join(work, JSON.parse(packOut)[0].filename);
 
   const app = join(work, 'app');
