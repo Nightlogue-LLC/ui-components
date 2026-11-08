@@ -139,7 +139,9 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   const valid = (values: readonly number[]) =>
     values.length === size && values.every((n) => Number.isInteger(n) && n >= 0 && n <= size);
   if (!valid(rowClues) || !valid(columnClues)) {
-    throw new Error('createCluedBoard: clue arrays must match size and contain counts from 0 to size');
+    throw new Error(
+      'createCluedBoard: clue arrays must match size and contain counts from 0 to size',
+    );
   }
   const shell = document.createElement('section');
   shell.className = 'nl-grim-glimmer-clued-board';
@@ -153,7 +155,10 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
     const clue = document.createElement('span');
     clue.className = 'nl-grim-glimmer-clued-board__clue';
     clue.textContent = String(value);
-    clue.setAttribute('aria-label', options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`);
+    clue.setAttribute(
+      'aria-label',
+      options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`,
+    );
     columns.append(clue);
   });
 
@@ -164,7 +169,10 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
     const clue = document.createElement('span');
     clue.className = 'nl-grim-glimmer-clued-board__clue';
     clue.textContent = String(value);
-    clue.setAttribute('aria-label', options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`);
+    clue.setAttribute(
+      'aria-label',
+      options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`,
+    );
     rows.append(clue);
   });
 

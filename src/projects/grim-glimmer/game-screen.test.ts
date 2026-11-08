@@ -65,7 +65,10 @@ describe('createGameDifficulty', () => {
     const difficulty = createGameDifficulty({
       label: 'Choose difficulty',
       value: 'easy',
-      options: [{ value: 'easy', label: 'Easy' }, { value: 'hard', label: 'Hard' }],
+      options: [
+        { value: 'easy', label: 'Easy' },
+        { value: 'hard', label: 'Hard' },
+      ],
       onChange,
     });
     const select = difficulty.querySelector('select')!;
@@ -77,7 +80,9 @@ describe('createGameDifficulty', () => {
   });
 
   it('rejects a difficulty outside the available options', () => {
-    expect(() => createGameDifficulty({ value: 'unknown', options: [], onChange: vi.fn() })).toThrow();
+    expect(() =>
+      createGameDifficulty({ value: 'unknown', options: [], onChange: vi.fn() }),
+    ).toThrow();
   });
 
   it('adds optional undo and hint controls without creating navigation', () => {

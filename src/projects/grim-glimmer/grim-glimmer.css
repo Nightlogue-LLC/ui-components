@@ -94,7 +94,9 @@
   border: var(--nl-border-width) solid var(--nl-color-border);
   border-radius: calc(var(--nl-radius-md) * 2);
   background: var(--nl-color-surface);
-  box-shadow: inset 0 4px 11px var(--nl-grim-glimmer-board-inset, transparent), var(--nl-shadow-card, none);
+  box-shadow:
+    inset 0 4px 11px var(--nl-grim-glimmer-board-inset, transparent),
+    var(--nl-shadow-card, none);
 }
 
 .nl-grim-glimmer-clued-board__columns {
@@ -134,19 +136,26 @@
 }
 
 .nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell {
-  box-shadow: inset 0 2px 5px var(--nl-grim-glimmer-board-inset, transparent), inset 0 1px var(--nl-color-bg);
+  box-shadow:
+    inset 0 2px 5px var(--nl-grim-glimmer-board-inset, transparent),
+    inset 0 1px var(--nl-color-bg);
 }
 
 .nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell--placed {
   border-color: var(--nl-color-accent);
-  box-shadow: inset 0 1px var(--nl-color-bg), 0 0 8px var(--nl-grim-glimmer-board-glow, transparent);
+  box-shadow:
+    inset 0 1px var(--nl-color-bg),
+    0 0 8px var(--nl-grim-glimmer-board-glow, transparent);
 }
 
 .nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell {
-  transition: transform 150ms var(--nl-easing), box-shadow 150ms var(--nl-easing);
+  transition:
+    transform 150ms var(--nl-easing),
+    box-shadow 150ms var(--nl-easing);
 }
 
-.nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
+.nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved
+  .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
   transform: translateY(1px) scale(0.97);
 }
 
@@ -154,7 +163,8 @@
   .nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell {
     transition: none;
   }
-  .nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
+  .nl-grim-glimmer-board--interactive.nl-grim-glimmer-board--engraved
+    .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
     transform: none;
   }
 }

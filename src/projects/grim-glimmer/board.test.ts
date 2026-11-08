@@ -111,7 +111,9 @@ describe('createCluedBoard', () => {
   it('validates the clue lengths and count bounds', () => {
     const base = { label: 'Board', size: 2, mode: 'interactive' as const, cells: cells(2) };
     expect(() => createCluedBoard({ ...base, rowClues: [1], columnClues: [1, 1] })).toThrow(/clue/);
-    expect(() => createCluedBoard({ ...base, rowClues: [1, 1], columnClues: [3, 0] })).toThrow(/clue/);
+    expect(() => createCluedBoard({ ...base, rowClues: [1, 1], columnClues: [3, 0] })).toThrow(
+      /clue/,
+    );
   });
 });
 

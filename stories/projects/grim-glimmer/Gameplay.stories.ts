@@ -59,7 +59,7 @@ function gameScreen(): HTMLElement {
         updateBoard(grid, { cells });
       },
       onUndo: () => {
-        const last = cells.findLastIndex((state) => state === 'placed');
+        const last = cells.lastIndexOf('placed');
         if (last < 0) return;
         cells[last] = 'empty';
         updateBoard(grid, { cells });

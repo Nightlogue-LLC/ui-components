@@ -88,18 +88,22 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
   const controls = document.createElement('div');
   controls.className = 'nl-grim-glimmer-game-controls';
   if (options.onUndo) {
-    controls.append(createButton({
-      label: options.undoLabel ?? 'Undo',
-      variant: 'ghost',
-      onClick: options.onUndo,
-    }));
+    controls.append(
+      createButton({
+        label: options.undoLabel ?? 'Undo',
+        variant: 'ghost',
+        onClick: options.onUndo,
+      }),
+    );
   }
   if (options.onHint) {
-    controls.append(createButton({
-      label: options.hintLabel ?? 'Hint',
-      variant: 'ghost',
-      onClick: options.onHint,
-    }));
+    controls.append(
+      createButton({
+        label: options.hintLabel ?? 'Hint',
+        variant: 'ghost',
+        onClick: options.onHint,
+      }),
+    );
   }
   controls.append(
     createButton({
