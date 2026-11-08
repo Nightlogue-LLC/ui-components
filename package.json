@@ -62,7 +62,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "package:check": "publint && node scripts/smoke-consumer.mjs",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run package:check && npm run build-storybook"
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run package:check && npm run build-storybook",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
