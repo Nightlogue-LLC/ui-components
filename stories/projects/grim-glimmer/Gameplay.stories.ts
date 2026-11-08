@@ -9,6 +9,7 @@ import {
   createGameHeader,
   createGameScreen,
   type BoardCellState,
+  type GameMarkMode,
 } from '../../../src/projects/grim-glimmer/index.js';
 import { sampleIcon } from '../../lib/icons.js';
 import { DIFFICULTIES, mockBoard } from '../../lib/mock-board.js';
@@ -19,6 +20,7 @@ import { THEME } from './shared.js';
 function gameScreen(): HTMLElement {
   let difficulty = 'easy';
   let generation = 1;
+  let markMode: GameMarkMode = 'tent';
   let cells = mockBoard(difficulty, generation);
   const board = createCluedBoard({
     label: 'Tents and Trees puzzle board',
@@ -29,7 +31,12 @@ function gameScreen(): HTMLElement {
     cells,
     onCellActivate: (index) => {
       if (cells[index] === 'fixed') return;
-      cells[index] = cells[index] === 'empty' ? 'placed' : 'empty';
+      const state = cells[index];
+      if (markMode === 'tent') {
+        cells[index] = state === 'tentative' ? 'placed' : state === 'placed' ? 'empty' : 'tentative';
+      } else {
+        cells[index] = state === 'excluded' ? 'empty' : 'excluded';
+      }
       updateBoard(grid, { cells });
     },
   });
@@ -53,21 +60,25 @@ function gameScreen(): HTMLElement {
     difficulty: dropdown,
     board,
     controls: createGameControls({
+      mode: markMode,
+      onModeChange: (next) => {
+        markMode = next;
+      },
       onNewGame: () => {
         generation++;
         cells = mockBoard(difficulty, generation);
         updateBoard(grid, { cells });
       },
-      onUndo: () => {
-        const last = cells.lastIndexOf('placed');
-        if (last < 0) return;
-        cells[last] = 'empty';
+      onClear: () => {
+        cells = cells.map((state) => state === 'fixed' ? state : 'empty');
         updateBoard(grid, { cells });
       },
       onHint: () => {
+        // Visual-only preview of a suggested tentative cell.
+        // Real hint selection and deductions belong to the game engine.
         const first = cells.indexOf('empty');
         if (first < 0) return;
-        cells[first] = 'marked';
+        cells[first] = 'tentative';
         updateBoard(grid, { cells });
       },
     }),
@@ -83,7 +94,7 @@ const meta = {
     docs: {
       description: {
         component: `
-The game screen is a single column: back, title and help; an accessible **difficulty dropdown**; a single recessed engraved board with **column clues above** and **row clues on the right**; compact Undo, Hint, and New Game actions. All clues are Storybook fixtures. Board state changes demonstrate only visual feedback, not puzzle rules. No bottom navigation on the game screen.
+The game screen is a single column: back, title and help; an accessible **difficulty dropdown**; a single recessed engraved board with **column clues above** and **row clues on the right**; a two-mode Tent/X marking control, plus Hint, Clear and New Game. Tent mode cycles empty → tentative → confirmed → empty; X mode toggles an exclusion mark. All clues are Storybook fixtures. Board state changes are illustrative, not puzzle rules. Hint displays a mock suggestion; actual hint logic remains in the game engine. No bottom navigation on the game screen.
 Icon artwork is app-owned (the samples are generic glyphs).
 
 Game state, board generation, persistence and the rules are the game app's job; see the contracts in
@@ -98,7 +109,7 @@ Game state, board generation, persistence and the rules are the game app's job; 
 export default meta;
 type Story = StoryObj;
 
-/** The full gameplay composition in light and dark. Tap squares, choose difficulty, or use the mock controls. */
+/** The full gameplay composition in light and dark. Tap cells twice to confirm tents, switch to X for exclusions, or try Hint, Clear and New Game. */
 export const GameScreen: Story = {
   render: (_args, context) =>
     compareModes(context, () => gameScreen(), { theme: THEME, bleed: true }),
