@@ -788,3 +788,166 @@
   font-variant-numeric: tabular-nums;
   line-height: 1.4;
 }
+
+
+/* App nav stays separate from puzzle-owned header and marking controls. */
+.nl-grim-glimmer-screen--compact {
+  position: relative;
+}
+
+.nl-grim-glimmer-app-header {
+  --nl-icon-button-size: 2.75rem;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  gap: var(--nl-space-2);
+  align-items: center;
+  height: 3.5rem;
+  padding: 0 var(--nl-space-3);
+  border-bottom: 1px solid var(--nl-color-border);
+  background: var(--nl-color-surface);
+}
+
+.nl-grim-glimmer-app-header__title {
+  overflow: hidden;
+  font: var(--nl-font-weight-heading, 600) 1.125rem/1.2 var(--nl-font-family-display, Georgia);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-grim-glimmer-game-header--compact {
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  min-height: 4.5rem;
+  height: auto;
+  padding: var(--nl-space-2) var(--nl-space-3);
+}
+
+.nl-grim-glimmer-game-header__heading {
+  min-width: 0;
+  text-align: center;
+}
+
+.nl-grim-glimmer-game-header--compact .nl-grim-glimmer-game-header__title {
+  font: var(--nl-font-weight-display, 500) clamp(1.375rem, 5vw, 1.75rem)/1.15
+    var(--nl-font-family-display, Georgia);
+}
+
+.nl-grim-glimmer-game-header__status {
+  margin-top: 2px;
+  font-size: 0.6875rem;
+}
+
+.nl-grim-glimmer-game-header__hint {
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.nl-grim-glimmer-game-header__hint-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding-inline: 3px;
+  border: 1px solid var(--nl-color-bg);
+  border-radius: 999px;
+  background: var(--nl-color-accent);
+  color: var(--nl-color-on-accent);
+  font: 600 0.625rem/1 var(--nl-font-family);
+  pointer-events: none;
+}
+
+.nl-grim-glimmer-game-controls--compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.875rem;
+  align-items: center;
+  gap: var(--nl-space-2);
+  width: min(100%, 28rem);
+  margin-inline: auto;
+}
+
+.nl-grim-glimmer-game-controls--compact .nl-grim-glimmer-game-controls__modes {
+  width: 100%;
+  min-width: 0;
+}
+
+.nl-grim-glimmer-game-controls--compact .nl-grim-glimmer-game-controls__mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+}
+
+.nl-grim-glimmer-game-controls--compact .nl-grim-glimmer-game-controls__mode svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.nl-grim-glimmer-game-controls--compact .nl-grim-glimmer-game-controls__actions {
+  display: flex;
+  width: 2.875rem;
+  min-width: 0;
+}
+
+.nl-grim-glimmer-game-controls--compact .nl-grim-glimmer-game-controls__actions .nl-icon-button {
+  --nl-icon-button-size: 2.75rem;
+}
+
+.nl-grim-glimmer-game-menu {
+  position: absolute;
+  inset: auto var(--nl-space-3) auto auto;
+  top: 8.1rem;
+  z-index: 20;
+  box-sizing: border-box;
+  width: min(15.5rem, calc(100% - 1.5rem));
+  height: auto;
+  max-height: min(65dvh, 30rem);
+  padding: var(--nl-space-3);
+  overflow-y: auto;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+  box-shadow: var(--nl-shadow-dialog);
+}
+
+.nl-grim-glimmer-game-menu[hidden] {
+  display: none;
+}
+
+.nl-grim-glimmer-game-menu__choices {
+  gap: 4px;
+  margin-top: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-game-menu__choice {
+  min-height: 2.75rem;
+  padding: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-game-menu__actions {
+  display: grid;
+  gap: var(--nl-space-2);
+  margin-top: var(--nl-space-3);
+  padding-top: var(--nl-space-3);
+  border-top: 1px solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-game-menu__actions .nl-button {
+  width: 100%;
+}
+
+.nl-grim-glimmer-game-menu__label {
+  margin: 0;
+}
+
+@media (max-width: 350px) {
+  .nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__board {
+    padding: 6px;
+  }
+  .nl-grim-glimmer-app-header__title {
+    font-size: 1rem;
+  }
+}
