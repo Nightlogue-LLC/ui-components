@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import { fn } from 'storybook/test';
 import {
-  createSegmentedControl,
-  updateSegmentedControl,
-} from '../../../src/components/segmented-control/index.js';
-import {
   createBoard,
+  updateBoard,
+  createCluedBoard,
+  createGameDifficulty,
   createGameControls,
   createGameHeader,
   createGameScreen,
@@ -16,15 +15,34 @@ import { DIFFICULTIES, mockBoard } from '../../lib/mock-board.js';
 import { compareModes, stateGrid } from '../../lib/stage.js';
 import { THEME } from './shared.js';
 
-/** Game screen: header, separate difficulty control, board, compact New Game. No bottom tabs. */
+/** Complete mobile gameplay composition. Mock counts and interactions are Storybook-only. */
 function gameScreen(): HTMLElement {
   let difficulty = 'easy';
-  const props = () => ({ label: 'Difficulty', options: DIFFICULTIES, value: difficulty });
-  const control = createSegmentedControl({
-    ...props(),
+  let generation = 1;
+  let cells = mockBoard(difficulty, generation);
+  const board = createCluedBoard({
+    label: 'Tents and Trees puzzle board',
+    size: 5,
+    mode: 'interactive',
+    rowClues: [1, 2, 0, 1, 1],
+    columnClues: [1, 0, 2, 1, 1],
+    cells,
+    onCellActivate: (index) => {
+      if (cells[index] === 'fixed') return;
+      cells[index] = cells[index] === 'empty' ? 'placed' : 'empty';
+      updateBoard(grid, { cells });
+    },
+  });
+  const grid = board.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
+  const dropdown = createGameDifficulty({
+    label: 'Difficulty',
+    value: difficulty,
+    options: DIFFICULTIES,
     onChange: (next) => {
       difficulty = next;
-      updateSegmentedControl(control, props());
+      generation++;
+      cells = mockBoard(difficulty, generation);
+      updateBoard(grid, { cells });
     },
   });
   return createGameScreen({
@@ -32,15 +50,27 @@ function gameScreen(): HTMLElement {
       title: 'Tents & Trees',
       icons: { back: sampleIcon('back'), help: sampleIcon('help') },
     }),
-    difficulty: control,
-    board: createBoard({
-      label: 'Puzzle board',
-      size: 5,
-      mode: 'interactive',
-      cells: mockBoard('easy', 1),
-      onCellActivate: () => undefined,
+    difficulty: dropdown,
+    board,
+    controls: createGameControls({
+      onNewGame: () => {
+        generation++;
+        cells = mockBoard(difficulty, generation);
+        updateBoard(grid, { cells });
+      },
+      onUndo: () => {
+        const last = cells.findLastIndex((state) => state === 'placed');
+        if (last < 0) return;
+        cells[last] = 'empty';
+        updateBoard(grid, { cells });
+      },
+      onHint: () => {
+        const first = cells.indexOf('empty');
+        if (first < 0) return;
+        cells[first] = 'marked';
+        updateBoard(grid, { cells });
+      },
     }),
-    controls: createGameControls(),
   });
 }
 
@@ -53,9 +83,7 @@ const meta = {
     docs: {
       description: {
         component: `
-The game screen is a single column: back, short puzzle title and help; a **separate** difficulty control; the
-board; and a compact New Game below it. 48px icon buttons, 24px side padding plus safe-area insets, and **no
-bottom navigation**. The board here is a mock: it draws whatever cell states it is given and has no puzzle rules.
+The game screen is a single column: back, title and help; an accessible **difficulty dropdown**; a single recessed engraved board with **column clues above** and **row clues on the right**; compact Undo, Hint, and New Game actions. All clues are Storybook fixtures. Board state changes demonstrate only visual feedback, not puzzle rules. No bottom navigation on the game screen.
 Icon artwork is app-owned (the samples are generic glyphs).
 
 Game state, board generation, persistence and the rules are the game app's job; see the contracts in
@@ -70,7 +98,7 @@ Game state, board generation, persistence and the rules are the game app's job; 
 export default meta;
 type Story = StoryObj;
 
-/** The full game screen in light and dark. Tap squares; the difficulty control is a live demo. */
+/** The full gameplay composition in light and dark. Tap squares, choose difficulty, or use the mock controls. */
 export const GameScreen: Story = {
   render: (_args, context) =>
     compareModes(context, () => gameScreen(), { theme: THEME, bleed: true }),
