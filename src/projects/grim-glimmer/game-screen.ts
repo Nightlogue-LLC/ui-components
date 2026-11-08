@@ -73,45 +73,75 @@ export function createGameDifficulty(options: GameDifficultyOptions): HTMLElemen
   return control;
 }
 
+export type GameMarkMode = 'tent' | 'exclude';
+
 export interface GameControlsOptions {
-  /** Default "New Game". */
-  newGameLabel?: string;
+  /** Active marking mode. Tent mode uses tentative, then confirmed, marks in app logic. */
+  mode?: GameMarkMode;
+  onModeChange?: (mode: GameMarkMode) => void;
+  onClear?: (event: MouseEvent) => void;
   onNewGame?: (event: MouseEvent) => void;
-  onUndo?: (event: MouseEvent) => void;
-  onHint?: (event: MouseEvent) => void;
-  undoLabel?: string;
-  hintLabel?: string;
+  /** Visible labels can be localized. */
+  tentLabel?: string;
+  excludeLabel?: string;
+  clearLabel?: string;
+  newGameLabel?: string;
 }
 
-/** Compact controls shown below the board. */
+/**
+ * Compact, two-mode marking toolbar and separate board actions.
+ * Mark semantics are app-owned; this component reports mode requests.
+ */
 export function createGameControls(options: GameControlsOptions = {}): HTMLElement {
   const controls = document.createElement('div');
   controls.className = 'nl-grim-glimmer-game-controls';
-  if (options.onUndo) {
-    controls.append(
-      createButton({
-        label: options.undoLabel ?? 'Undo',
-        variant: 'ghost',
-        onClick: options.onUndo,
-      }),
-    );
+
+  const choices = document.createElement('div');
+  choices.className = 'nl-grim-glimmer-game-controls__modes';
+  choices.setAttribute('role', 'group');
+  choices.setAttribute('aria-label', 'Marking mode');
+
+  const buttons: { mode: GameMarkMode; button: HTMLButtonElement }[] = [];
+  const setMode = (mode: GameMarkMode) => {
+    for (const choice of buttons) {
+      const active = choice.mode === mode;
+      choice.button.classList.toggle('nl-grim-glimmer-game-controls__mode--selected', active);
+      choice.button.setAttribute('aria-pressed', String(active));
+    }
+  };
+
+  for (const [mode, label] of [
+    ['tent', options.tentLabel ?? 'Tent'],
+    ['exclude', options.excludeLabel ?? 'X'],
+  ] as const) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'nl-grim-glimmer-game-controls__mode';
+    button.textContent = label;
+    button.addEventListener('click', () => {
+      setMode(mode);
+      options.onModeChange?.(mode);
+    });
+    choices.append(button);
+    buttons.push({ mode, button });
   }
-  if (options.onHint) {
-    controls.append(
-      createButton({
-        label: options.hintLabel ?? 'Hint',
-        variant: 'ghost',
-        onClick: options.onHint,
-      }),
-    );
-  }
-  controls.append(
+  setMode(options.mode ?? 'tent');
+
+  const actions = document.createElement('div');
+  actions.className = 'nl-grim-glimmer-game-controls__actions';
+  actions.append(
+    createButton({
+      label: options.clearLabel ?? 'Clear',
+      variant: 'ghost',
+      ...(options.onClear ? { onClick: options.onClear } : {}),
+    }),
     createButton({
       label: options.newGameLabel ?? 'New Game',
       variant: 'secondary',
       ...(options.onNewGame ? { onClick: options.onNewGame } : {}),
     }),
   );
+  controls.append(choices, actions);
   return controls;
 }
 
