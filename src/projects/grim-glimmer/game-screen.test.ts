@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   createGameControls,
   createAppFrameHeader,
+  updateAppFrameSettingsOpen,
   createCompactGameHeader,
   createGameMenu,
   toggleGameMenu,
@@ -155,6 +156,25 @@ describe('Two-layer mobile gameplay navigation', () => {
         icons: { hint: icon(), menu: icon() },
       }),
     ).toThrow(/freeHints/);
+  });
+
+  it('toggles the same settings icon and hides Back in the open state', () => {
+    const header = createAppFrameHeader({
+      icons: { back: icon(), settings: icon() },
+    });
+    const toggle = header.querySelector<HTMLButtonElement>(
+      '.nl-grim-glimmer-app-header__settings-toggle',
+    )!;
+    const back = header.querySelector<HTMLButtonElement>('[aria-label="Back to collection"]')!;
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    updateAppFrameSettingsOpen(header, true);
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(toggle.getAttribute('aria-label')).toBe('Close app settings');
+    expect(back.hidden).toBe(true);
+    expect(header.classList.contains('nl-grim-glimmer-app-header--settings-open')).toBe(true);
+    updateAppFrameSettingsOpen(header, false);
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(back.hidden).toBe(false);
   });
 
   it('keeps Tent/X and Clear in a single icon-only toolbar, with no Hint or New Game', () => {
