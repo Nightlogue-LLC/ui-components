@@ -1,0 +1,21 @@
+name: Git dependency preflight
+on:
+  push:
+    branches:
+      - fix/git-dependency-build
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run Prettier formatter
+        run: npm run format
+      - name: Require committed formatting
+        run: git diff --exit-code
+      - name: Run library checks
+        run: npm run check
