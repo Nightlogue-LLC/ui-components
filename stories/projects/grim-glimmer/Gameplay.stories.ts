@@ -6,7 +6,10 @@ import {
   createCluedBoard,
   createGameControls,
   createCompactGameHeader,
+  createAppFrameHeader,
   createGameMenu,
+  toggleGameMenu,
+  closeGameMenu,
   createGameScreen,
   type BoardCellState,
   type GameMarkMode,
@@ -16,7 +19,31 @@ import { mockBoard } from '../../lib/mock-board.js';
 import { compareModes, stateGrid } from '../../lib/stage.js';
 import { THEME } from './shared.js';
 
-/** Compact, mobile-first Storybook composition with app-owned mock state. */
+/** Simple icon assets for this visual fixture. Production artwork belongs to the game app. */
+function demoIcon(name: 'hint' | 'tent' | 'exclude' | 'clear' | 'settings'): SVGSVGElement {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.8');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  const paths: Record<typeof name, string[]> = {
+    hint: ['M9 18h6', 'M10 22h4', 'M9 14a7 7 0 1 1 6 0l-1 2H10z'],
+    tent: ['M12 3L3 20h18L12 3z', 'M12 3v17', 'M9 20l3-7 3 7'],
+    exclude: ['M5 5l14 14', 'M19 5L5 19'],
+    clear: ['M3 7h18', 'M8 7V4h8v3', 'M6 7l1 14h10l1-14', 'M10 11v7', 'M14 11v7'],
+    settings: ['M12 3v3', 'M12 18v3', 'M3 12h3', 'M18 12h3', 'M5.6 5.6l2.1 2.1', 'M16.3 16.3l2.1 2.1', 'M18.4 5.6l-2.1 2.1', 'M7.7 16.3l-2.1 2.1', 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'],
+  };
+  for (const data of paths[name]) {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', data);
+    svg.append(path);
+  }
+  return svg;
+}
+
+/** Two distinct nav layers and a mobile-first puzzle, using mock state only. */
 function gameScreen(): HTMLElement {
   const difficulties = [
     { value: 'easy', label: 'Easy', size: 5 },
@@ -60,16 +87,17 @@ function gameScreen(): HTMLElement {
       cells[index] = 'tentative';
       updateBoard(grid, { cells });
     };
-
     const menu = createGameMenu({
       difficulty,
       options: difficulties,
-      helpRules: [
-        'Place one tent next to each tree, horizontally or vertically.',
-        'Tents cannot touch, including diagonally.',
-        'Row and column numbers show how many tents belong in each line.',
-        'Tent mode: tap once for tentative, twice for confirmed. X mode marks exclusions.',
-      ],
+      onHelp: () => {
+        const label = document.createElement('p');
+        label.className = 'sb-grim-gameplay-help';
+        label.textContent = 'Place tents beside trees. Tents cannot touch, including diagonally. Match the row and column counts.';
+        const old = host.querySelector('.sb-grim-gameplay-help');
+        old?.remove();
+        host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(label);
+      },
       onDeal: (next) => {
         difficulty = next;
         generation++;
@@ -78,13 +106,31 @@ function gameScreen(): HTMLElement {
       },
     });
     const header = createCompactGameHeader({
+      title: 'Tents & Trees',
       status: `${option.label} · ${size}×${size}`,
-      icons: { hint: sampleIcon('help'), menu: sampleIcon('menu') },
+      icons: { hint: demoIcon('hint'), menu: sampleIcon('menu') },
       onHint: applyHint,
-      onMenu: () => menu.showModal(),
+      onMenu: () => toggleGameMenu(menu),
+    });
+    const appHeader = createAppFrameHeader({
+      icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
+      onBack: () => {
+        const note = document.createElement('p');
+        note.className = 'sb-grim-gameplay-help';
+        note.textContent = 'Back to collection is handled by the host app.';
+        host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(note);
+      },
+      onSettings: () => {
+        const note = document.createElement('p');
+        note.className = 'sb-grim-gameplay-help';
+        note.textContent = 'App settings are a separate shared navigation screen.';
+        host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(note);
+      },
     });
     const controls = createGameControls({
       mode,
+      compact: true,
+      icons: { tent: demoIcon('tent'), exclude: demoIcon('exclude'), clear: demoIcon('clear') },
       showHint: false,
       showNewGame: false,
       onModeChange: (next) => { mode = next; },
@@ -93,7 +139,13 @@ function gameScreen(): HTMLElement {
         updateBoard(grid, { cells });
       },
     });
-    const screen = createGameScreen({ header, board, controls, menu });
+    const screen = createGameScreen({ appHeader, header, board, controls, menu });
+    screen.addEventListener('click', (event) => {
+      if (menu.hidden || !(event.target instanceof Node)) return;
+      if (menu.contains(event.target)) return;
+      if (header.contains(event.target)) return;
+      closeGameMenu(menu);
+    });
     host.replaceChildren(screen);
   }
 
@@ -110,7 +162,7 @@ const meta = {
     docs: {
       description: {
         component: `
-The compact game screen has **Hint at top-left**, a centered difficulty/size status, and the **Game Menu at top-right**. The board is centered, with **column clues above and row clues at left**. The two-mode Tent/X selector and Clear stay anchored below the board. The slide-over menu contains difficulty choices, an expandable How to Play section, and **Deal New Puzzle** at its foot. Tent mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
+The shared app frame owns Back to Collection and App Settings. Below the divider, the puzzle header has **Hint at top-left**, the **Tents & Trees title and difficulty/size**, and a small **Game Menu popover at top-right**. The board is centered, with **column clues above and row clues at left**. A single bottom row holds the Tent/X **icon selector** at left and the Clear icon at right. The small menu holds difficulty, How to Play, and New Game. Tent mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
 Icon artwork is app-owned (the samples are generic glyphs).
 
 Game state, board generation, persistence and the rules are the game app's job; see the contracts in
@@ -125,7 +177,7 @@ Game state, board generation, persistence and the rules are the game app's job; 
 export default meta;
 type Story = StoryObj;
 
-/** The full gameplay composition in light and dark. Use Tent and X below the board, Hint at top-left, and the menu at top-right for help, difficulty and a new puzzle. */
+/** Two-level navigation in both color modes. App controls above the divider, puzzle title and Hint below, compact icon toolbar and small game menu. */
 export const GameScreen: Story = {
   render: (_args, context) =>
     compareModes(context, () => gameScreen(), { theme: THEME, bleed: true }),
