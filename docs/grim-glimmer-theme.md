@@ -18,20 +18,20 @@ applyTheme(document.documentElement, 'grim-glimmer', 'dark'); // 'dark' = plum, 
 
 ## Approved semantic palette
 
-| Token | Light (cream) | Dark (plum) |
-| --- | --- | --- |
-| Background | `#FAF5EC` | `#261624` |
-| Surface | `#FFFDF9` | `#382536` |
-| Hover surface | `#EEE7DE` | `#4B3348` |
-| Text | `#211720` | `#F6E9DA` |
-| Border | `#827369` | `#A99AA4` |
-| Accent | `#916B34` | `#D6B279` |
-| Accent hover | `#805D2B` | `#E3C796` |
-| Accent active | `#6F4F23` | `#C39A60` |
-| Text on accent | `#FFFFFF` | `#261624` |
-| Focus ring | `#80602F` | `#F0D29B` |
-| Disabled surface | `#E7DFD7` | `#503D4C` |
-| Disabled text | `#71666F` | `#C4B2BF` |
+| Token            | Light (cream) | Dark (plum) |
+| ---------------- | ------------- | ----------- |
+| Background       | `#FAF5EC`     | `#261624`   |
+| Surface          | `#FFFDF9`     | `#382536`   |
+| Hover surface    | `#EEE7DE`     | `#4B3348`   |
+| Text             | `#211720`     | `#F6E9DA`   |
+| Border           | `#827369`     | `#A99AA4`   |
+| Accent           | `#916B34`     | `#D6B279`   |
+| Accent hover     | `#805D2B`     | `#E3C796`   |
+| Accent active    | `#6F4F23`     | `#C39A60`   |
+| Text on accent   | `#FFFFFF`     | `#261624`   |
+| Focus ring       | `#80602F`     | `#F0D29B`   |
+| Disabled surface | `#E7DFD7`     | `#503D4C`   |
+| Disabled text    | `#71666F`     | `#C4B2BF`   |
 
 The light-mode action gold and the semantic borders are deliberately adjusted from the illustrative reference colors. The token contract enforces **4.5:1 for functional text** and **3:1 for control outlines, accent fills and focus indicators** on the relevant backgrounds, via `tests/contrast.test.ts`.
 
