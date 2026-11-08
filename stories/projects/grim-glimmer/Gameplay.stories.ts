@@ -20,6 +20,8 @@ import { sampleIcon } from '../../lib/icons.js';
 import { mockBoard } from '../../lib/mock-board.js';
 import { compareModes, stateGrid } from '../../lib/stage.js';
 import { THEME } from './shared.js';
+import { withBoardGlyphs } from './board-glyphs.js';
+import { el } from '../../lib/dom.js';
 
 /** Simple icon assets for this visual fixture. Production artwork belongs to the game app. */
 function demoIcon(name: 'hint' | 'tent' | 'exclude' | 'clear' | 'settings'): SVGSVGElement {
@@ -68,6 +70,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
 
   const host = document.createElement('div');
   host.className = 'sb-grim-gameplay-host';
+  withBoardGlyphs(host);
 
   function render(): void {
     const option = difficulties.find((choice) => choice.value === difficulty) ?? difficulties[0]!;
@@ -256,4 +259,75 @@ export const BoardModes: StoryObj<{ onCellActivate: (index: number) => void }> =
       })),
     ),
   parameters: { nlStage: 'default' },
+};
+
+/** Every cell state on the clued board, with the spire (given) and four-point star (placed) artwork. */
+export const BoardGlyphs: Story = {
+  render: (_args, context) =>
+    compareModes(
+      context,
+      () => {
+        const cells: BoardCellState[] = [
+          'fixed',
+          'empty',
+          'placed',
+          'empty',
+          'fixed',
+          'empty',
+          'tentative',
+          'empty',
+          'marked',
+          'empty',
+          'placed',
+          'empty',
+          'fixed',
+          'empty',
+          'excluded',
+          'empty',
+          'marked',
+          'empty',
+          'placed',
+          'empty',
+          'fixed',
+          'empty',
+          'tentative',
+          'empty',
+          'fixed',
+        ];
+        const keyItem = (state: BoardCellState, word: string) => {
+          const swatch = createBoard({ label: word, size: 1, mode: 'preview', cells: [state] });
+          swatch.classList.add('sb-glyph-key__swatch');
+          return el('li', { className: 'sb-glyph-key__item' }, [swatch, word]);
+        };
+        const wrap = withBoardGlyphs(el('div'));
+        wrap.append(
+          el('ul', { className: 'sb-glyph-key' }, [
+            keyItem('fixed', 'Given (spire)'),
+            keyItem('placed', 'Placed (star)'),
+            keyItem('tentative', 'Tentative (faded star)'),
+            keyItem('marked', 'Marked'),
+            keyItem('excluded', 'Excluded'),
+          ]),
+          createCluedBoard({
+            label: 'Board glyph artwork, all cell states',
+            size: 5,
+            mode: 'readonly',
+            cells,
+            rowClues: [1, 0, 2, 1, 1],
+            columnClues: [1, 0, 2, 0, 1],
+          }),
+        );
+        return wrap;
+      },
+      { theme: THEME },
+    ),
+  parameters: {
+    nlStage: 'self',
+    docs: {
+      description: {
+        story:
+          'Story-only artwork: the spire marks a given piece and the four-point star a placed one (faded while tentative). Marked and excluded keep their simple shapes. The library board itself still ships generic placeholder glyphs; the game app owns the final artwork.',
+      },
+    },
+  },
 };

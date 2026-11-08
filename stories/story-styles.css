@@ -614,3 +614,57 @@
   height: calc(100vh - 2.5rem);
   height: calc(100svh - 2.5rem);
 }
+
+/* Board glyph artwork (story-only; see stories/projects/grim-glimmer/board-glyphs.ts).
+   Replaces the placeholder circle / triangle with the spire and four-point star images. */
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--fixed::before,
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--placed::before,
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--tentative::before {
+  inset: 10%;
+  border: 0;
+  border-radius: 0;
+  clip-path: none;
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 1;
+}
+
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--fixed::before {
+  background-image: var(--sb-glyph-fixed);
+}
+
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--placed::before,
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--tentative::before {
+  inset: 16%;
+  background-image: var(--sb-glyph-placed);
+}
+
+/* Tentative = the same star, faded (a shape and an opacity change, not color alone). */
+.sb-grim-glyphs .nl-grim-glimmer-board__cell--tentative::before {
+  opacity: 0.45;
+}
+
+/* Glyph key shown beside the board in the BoardGlyphs story. */
+.sb-glyph-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nl-space-3);
+  margin: 0 0 var(--nl-space-4);
+  padding: 0;
+  list-style: none;
+  color: var(--nl-color-text);
+  font-size: 0.8125rem;
+}
+
+.sb-glyph-key__item {
+  display: flex;
+  align-items: center;
+  gap: var(--nl-space-2);
+}
+
+.sb-glyph-key__swatch {
+  width: 2.5rem;
+  flex: none;
+}
