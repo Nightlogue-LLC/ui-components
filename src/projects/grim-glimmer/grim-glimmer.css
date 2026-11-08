@@ -572,7 +572,7 @@
 }
 
 .nl-grim-glimmer-game-menu::backdrop {
-  background: var(--nl-grim-glimmer-menu-backdrop, rgba(20, 12, 20, 0.5));
+  background: var(--nl-grim-glimmer-menu-backdrop, transparent);
   backdrop-filter: blur(3px);
 }
 
