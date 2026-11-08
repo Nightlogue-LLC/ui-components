@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import {
   createAppFrameHeader,
+  updateAppFrameSettingsOpen,
   createAppSettings,
   type AppSettingsState,
 } from '../../../src/projects/grim-glimmer/index.js';
@@ -34,9 +35,22 @@ function settingsScreen(): HTMLElement {
     autoFill: false,
     animations: true,
   };
+  let open = true;
   const navigation = createAppFrameHeader({
     icons: { back: sampleIcon('back'), settings: settingsIcon() },
+    settingsOpen: true,
+    hideBack: true,
+    onSettings: () => {
+      open = !open;
+      updateAppFrameSettingsOpen(navigation, open);
+      settings.hidden = !open;
+      closedHint.hidden = open;
+    },
   });
+  const closedHint = document.createElement('p');
+  closedHint.className = 'nl-grim-glimmer-app-settings__intro';
+  closedHint.textContent = 'Settings closed. Tap the settings icon to reopen.';
+  closedHint.hidden = true;
   const settings = createAppSettings({
     state: initial,
     onChange: (value) => {
@@ -44,7 +58,7 @@ function settingsScreen(): HTMLElement {
       host.dataset.appearance = value.appearance;
     },
   });
-  host.append(navigation, settings);
+  host.append(navigation, settings, closedHint);
   return host;
 }
 
