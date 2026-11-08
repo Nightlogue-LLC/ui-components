@@ -80,11 +80,13 @@ export interface GameControlsOptions {
   mode?: GameMarkMode;
   onModeChange?: (mode: GameMarkMode) => void;
   onClear?: (event: MouseEvent) => void;
+  onHint?: (event: MouseEvent) => void;
   onNewGame?: (event: MouseEvent) => void;
   /** Visible labels can be localized. */
   tentLabel?: string;
   excludeLabel?: string;
   clearLabel?: string;
+  hintLabel?: string;
   newGameLabel?: string;
 }
 
@@ -130,6 +132,11 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
   const actions = document.createElement('div');
   actions.className = 'nl-grim-glimmer-game-controls__actions';
   actions.append(
+    createButton({
+      label: options.hintLabel ?? 'Hint',
+      variant: 'ghost',
+      ...(options.onHint ? { onClick: options.onHint } : {}),
+    }),
     createButton({
       label: options.clearLabel ?? 'Clear',
       variant: 'ghost',
