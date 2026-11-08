@@ -40,7 +40,6 @@ export function createGameHeader(options: GameHeaderOptions): HTMLElement {
 /** App-level navigation is independent of the puzzle header and controls. */
 export interface AppFrameHeaderOptions {
   icons: { back: Node; settings: Node };
-  title?: string;
   onBack?: (event: MouseEvent) => void;
   onSettings?: (event: MouseEvent) => void;
 }
@@ -54,15 +53,12 @@ export function createAppFrameHeader(options: AppFrameHeaderOptions): HTMLElemen
     icon: options.icons.back,
     ...(options.onBack ? { onClick: options.onBack } : {}),
   });
-  const title = document.createElement('span');
-  title.className = 'nl-grim-glimmer-app-header__title';
-  title.textContent = options.title ?? 'Grim & Glimmer';
   const settings = createIconButton({
     label: 'App settings',
     icon: options.icons.settings,
     ...(options.onSettings ? { onClick: options.onSettings } : {}),
   });
-  header.append(back, title, settings);
+  header.append(back, settings);
   return header;
 }
 
