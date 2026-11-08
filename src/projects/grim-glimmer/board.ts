@@ -5,7 +5,7 @@
  * It has no puzzle rules, generation or solving; those belong to the game app. The glyphs are
  * deliberately generic geometric placeholders (circle / triangle / dot), not final artwork.
  */
-export type BoardCellState = 'empty' | 'fixed' | 'placed' | 'marked';
+export type BoardCellState = 'empty' | 'fixed' | 'placed' | 'marked' | 'tentative' | 'excluded';
 
 /**
  * - preview:     static decoration (hidden from assistive tech), e.g. inside a collection card.
@@ -37,6 +37,8 @@ const DEFAULT_STATE_LABELS: Record<BoardCellState, string> = {
   fixed: 'given piece',
   placed: 'placed piece',
   marked: 'marked',
+  tentative: 'tentative tent',
+  excluded: 'excluded',
 };
 
 interface Config {
@@ -105,7 +107,7 @@ export function updateBoard(root: HTMLElement, props: BoardProps): void {
       `updateBoard: expected ${config.size * config.size} cells, got ${props.cells.length}`,
     );
   }
-  const states: BoardCellState[] = ['empty', 'fixed', 'placed', 'marked'];
+  const states: BoardCellState[] = ['empty', 'fixed', 'placed', 'marked', 'tentative', 'excluded'];
   props.cells.forEach((state, index) => {
     const cell = root.children[index];
     if (!(cell instanceof HTMLElement)) return;
