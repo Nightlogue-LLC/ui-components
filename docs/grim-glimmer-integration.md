@@ -72,7 +72,7 @@ The **Projects / Grim & Glimmer / Dialogs / Modal flow** story simulates these r
 
 Clearly marked as such in the stories and code comments; none is final artwork:
 
-- Board glyphs (circle / triangle / dot) and the preview boards in collection cards. The Gameplay stories (**Game screen**, **Master 15x15**, **Board glyphs**) render the board with story-only spire (given) and four-point star (placed) artwork from `stories/projects/grim-glimmer/assets/`; the library board itself still ships the generic placeholders.
+- Board glyphs (circle / triangle / dot) and the preview boards in collection cards. The Gameplay stories (**Game screen**, **Master 15x15**, **Board glyphs**) render the board with story-only spire (given; light and dark versions) and eight-point star (placed) artwork from `stories/projects/grim-glimmer/assets/`; the library board itself still ships the generic placeholders.
 - The four-point star in the success dialog.
 - The sample icons (chevron, help) in the stories; real icons are supplied by the app as DOM nodes.
 - All sample copy, and the "Placeholder puzzle A/B" cards.

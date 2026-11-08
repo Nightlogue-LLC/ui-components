@@ -616,7 +616,16 @@
 }
 
 /* Board glyph artwork (story-only; see stories/projects/grim-glimmer/board-glyphs.ts).
-   Replaces the placeholder circle / triangle with the spire and four-point star images. */
+   Replaces the placeholder circle / triangle with the spire and eight-point star images. The spire has a plum (light mode) and a cream
+   (dark mode) version; the star is gold in both. Mode comes from [data-nl-mode] on the stage. */
+.sb-grim-glyphs {
+  --sb-glyph-fixed: var(--sb-glyph-fixed-light);
+}
+
+[data-nl-mode='dark'] .sb-grim-glyphs {
+  --sb-glyph-fixed: var(--sb-glyph-fixed-dark);
+}
+
 .sb-grim-glyphs .nl-grim-glimmer-board__cell--fixed::before,
 .sb-grim-glyphs .nl-grim-glimmer-board__cell--placed::before,
 .sb-grim-glyphs .nl-grim-glimmer-board__cell--tentative::before {

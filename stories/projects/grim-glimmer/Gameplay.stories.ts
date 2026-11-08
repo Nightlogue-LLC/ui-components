@@ -261,7 +261,7 @@ export const BoardModes: StoryObj<{ onCellActivate: (index: number) => void }> =
   parameters: { nlStage: 'default' },
 };
 
-/** Every cell state on the clued board, with the spire (given) and four-point star (placed) artwork. */
+/** Every cell state on the clued board, with the spire (given) and eight-point star (placed) artwork. */
 export const BoardGlyphs: Story = {
   render: (_args, context) =>
     compareModes(
@@ -326,7 +326,7 @@ export const BoardGlyphs: Story = {
     docs: {
       description: {
         story:
-          'Story-only artwork: the spire marks a given piece and the four-point star a placed one (faded while tentative). Marked and excluded keep their simple shapes. The library board itself still ships generic placeholder glyphs; the game app owns the final artwork.',
+          'Story-only artwork: the spire marks a given piece (plum in light mode, cream in dark mode) and the eight-point star a placed one (faded while tentative). Marked and excluded keep their simple shapes. The library board itself still ships generic placeholder glyphs; the game app owns the final artwork.',
       },
     },
   },
