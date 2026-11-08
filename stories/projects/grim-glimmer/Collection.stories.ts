@@ -33,7 +33,7 @@ The navigation is compact and icon-only, with accessible destination names.
 import { createPuzzleCollection, createPuzzleCollectionCard } from '@nightlogue-llc/ui-components/projects/grim-glimmer';
 
 list.append(createPuzzleCollection([
-  createPuzzleCollectionCard({ title: 'Tents & Trees', status: 'continue', preview, onOpen: open }),
+  createPuzzleCollectionCard({ title: 'Stars & Spires', status: 'continue', preview, onOpen: open }),
 ], { label: 'Puzzles' }));
 \`\`\`
 
