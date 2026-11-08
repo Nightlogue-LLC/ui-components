@@ -3,6 +3,7 @@ import { createButton } from '../../../src/components/button/index.js';
 import { createEditorialCallout } from '../../../src/components/editorial-callout/index.js';
 import { createGrainSurface } from '../../../src/components/grain-surface/index.js';
 import { createRecessedSlot } from '../../../src/components/recessed-slot/index.js';
+import { tryBrowserVibration } from '../../../src/components/tactile-tile/browser-vibration.js';
 import {
   createTactileTile,
   updateTactileTile,
@@ -23,6 +24,9 @@ const symbols = [
 ] as const;
 
 function study(): HTMLElement {
+  const hapticsStatus = el('p', { className: 'sb-occult-study__hint' });
+  hapticsStatus.setAttribute('role', 'status');
+  hapticsStatus.setAttribute('aria-live', 'polite');
   const selectedStates = symbols.map((_, i) => [0, 4, 8].includes(i));
   const tiles = symbols.map(([glyph, label], i) => {
     const tile = createTactileTile({
@@ -30,6 +34,13 @@ function study(): HTMLElement {
       glyph,
       caption: `${['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][i]}. ${label.toUpperCase()}`,
       selected: selectedStates[i],
+      onPressFeedback: () => {
+        if (!tryBrowserVibration()) {
+          hapticsStatus.textContent = 'Vibration unavailable in this browser or embedded preview';
+        } else {
+          hapticsStatus.textContent = '';
+        }
+      },
       onClick: () => {
         selectedStates[i] = !selectedStates[i];
         updateTactileTile(tile, {
@@ -79,6 +90,7 @@ function study(): HTMLElement {
     grid,
     callout,
     button,
+    hapticsStatus,
   ]);
   const canvas = createGrainSurface({ content: panel });
   canvas.classList.add('sb-occult-study__canvas');
