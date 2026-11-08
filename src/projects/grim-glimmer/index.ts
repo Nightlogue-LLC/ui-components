@@ -14,6 +14,7 @@ export type { PuzzleCollectionCardOptions, PuzzleStatus } from './collection-car
 export {
   createGameHeader,
   createAppFrameHeader,
+  updateAppFrameSettingsOpen,
   createCompactGameHeader,
   createGameMenu,
   toggleGameMenu,
