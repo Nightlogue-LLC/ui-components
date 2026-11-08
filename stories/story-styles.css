@@ -600,3 +600,9 @@
     min-height: 590px;
   }
 }
+
+/* The comparison label occupies 40px; keep the demo's bottom bar inside the viewport. */
+.sb-grim-main-screen {
+  height: calc(100vh - 2.5rem);
+  height: calc(100svh - 2.5rem);
+}

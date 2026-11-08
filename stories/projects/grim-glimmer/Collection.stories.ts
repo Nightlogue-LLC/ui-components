@@ -3,44 +3,7 @@ import { createPuzzleCollection } from '../../../src/projects/grim-glimmer/index
 import { el } from '../../lib/dom.js';
 import { compareModes } from '../../lib/stage.js';
 import { THEME, card, sampleCards } from './shared.js';
-
-/**
- * Home: one column of equally sized landscape cards. The app's wordmark is artwork owned by the
- * app, so these stories only reserve a labelled slot for it and never typesets it. Only
- * Tents & Trees is playable; Ghosts & Graves and the placeholder are Coming Soon.
- */
-function homeScreen(): HTMLElement {
-  const wordmark = el('div', {
-    className: 'sb-gg-wordmark-slot',
-    text: 'Wordmark artwork (app-owned)',
-  });
-  wordmark.setAttribute('role', 'img');
-  wordmark.setAttribute('aria-label', 'Wordmark placeholder');
-  return el(
-    'section',
-    {
-      className: 'nl-grim-glimmer-screen nl-grim-glimmer-collection-home',
-    },
-    [
-      wordmark,
-      el('div', { className: 'sb-gg-heading-group' }, [
-        el('p', { className: 'nl-grim-glimmer-eyebrow', text: 'Collection' }),
-        el('h2', {
-          className: 'nl-grim-glimmer-heading nl-grim-glimmer-heading--lg',
-          text: 'Choose a puzzle',
-        }),
-      ]),
-      createPuzzleCollection(
-        [
-          card('Tents & Trees', 'continue', 1, true),
-          card('Ghosts & Graves', 'coming-soon', 4),
-          card('Placeholder puzzle', 'coming-soon', 5),
-        ],
-        { label: 'Puzzles' },
-      ),
-    ],
-  );
-}
+import { mainScreenDemo } from './main-screen-demo.js';
 
 function cardStates(): HTMLElement {
   return el('div', { className: 'sb-gg-states' }, [
@@ -62,8 +25,8 @@ const meta = {
 The home collection: one column of compact landscape cards (120px tall), static preview on the left
 (~35%), smaller puzzle title and restrained status on the right. The home heading and eyebrow
 use a reduced mobile-first type scale independent of other screens. **Play** and **Continue** are native buttons;
-**Coming Soon** is a static, visibly unavailable card that is not actionable (no tab stop). There is no bottom
-navigation and no game-details route. The wordmark is app-owned artwork, so these stories only reserve a
+**Coming Soon** is a static, visibly unavailable card that is not actionable (no tab stop). The three-item bottom navigation switches between Collection, Achievements and Settings.
+There is no Journal destination or game-details route. Gameplay retains its separate header. The wordmark is app-owned artwork, so these stories only reserve a
 labelled slot for it.
 
 \`\`\`ts
@@ -89,7 +52,7 @@ type Story = StoryObj;
 export const HomeScreen: Story = {
   parameters: { nlStage: 'self' },
   render: (_args, context) =>
-    compareModes(context, () => homeScreen(), { theme: THEME, bleed: true }),
+    compareModes(context, () => mainScreenDemo('collection'), { theme: THEME, bleed: true }),
 };
 
 /** Play, Continue and Coming Soon side by side. */

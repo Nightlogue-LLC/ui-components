@@ -9,3 +9,4 @@ export * from './tactile-tile/index.js';
 export * from './editorial-callout/index.js';
 export * from './grain-surface/index.js';
 export * from './select/index.js';
+export * from './bottom-nav/index.js';

@@ -37,7 +37,7 @@ The light-mode action gold and the semantic borders are deliberately adjusted fr
 
 The existing tactile Button, TactileTile, RecessedSlot and EditorialCallout use palette-specific gradients, shadows and gold selection states. Geometry and accessibility behaviors remain unchanged. Neutral/shared themes remain untouched.
 
-The reference gallery's proposed four-item bottom navigation is **mock UI only**. Shipping navigation decisions and the game-board clue gutters will be addressed separately from this palette implementation.
+The reference gallery's four-item bottom navigation is an earlier visual study. The approved main shell now uses Collection, Achievements and Settings; Journal is excluded. Gameplay keeps its separate header with no bottom bar. Clue gutters are available through createCluedBoard.
 
 ## Typography
 

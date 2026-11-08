@@ -8,6 +8,7 @@ import {
 import { sampleIcon } from '../../lib/icons.js';
 import { compareModes } from '../../lib/stage.js';
 import { THEME } from './shared.js';
+import { mainScreenDemo } from './main-screen-demo.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 function settingsIcon(): SVGSVGElement {
@@ -82,5 +83,11 @@ export default meta;
 type Story = StoryObj;
 
 export const SettingsScreen: Story = {
+  render: (_args, context) =>
+    compareModes(context, () => mainScreenDemo('settings'), { theme: THEME, bleed: true }),
+};
+
+/** The separate gameplay overlay still uses its persistent rotating Settings icon. */
+export const GameplaySettingsToggle: Story = {
   render: (_args, context) => compareModes(context, settingsScreen, { theme: THEME, bleed: true }),
 };
