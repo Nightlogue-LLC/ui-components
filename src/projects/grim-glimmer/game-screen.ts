@@ -37,21 +37,21 @@ export function createGameHeader(options: GameHeaderOptions): HTMLElement {
   return header;
 }
 
-/** Minimal gameplay header: Help · difficulty/size status · Menu. No puzzle title. */
+/** Minimal gameplay header: Hint · difficulty/size status · Menu. No puzzle title. */
 export interface CompactGameHeaderOptions {
   status: string;
-  icons: { help: Node; menu: Node };
-  onHelp?: (event: MouseEvent) => void;
+  icons: { hint: Node; menu: Node };
+  onHint?: (event: MouseEvent) => void;
   onMenu?: (event: MouseEvent) => void;
 }
 
 export function createCompactGameHeader(options: CompactGameHeaderOptions): HTMLElement {
   const header = document.createElement('header');
   header.className = 'nl-grim-glimmer-game-header nl-grim-glimmer-game-header--compact';
-  const help = createIconButton({
-    label: 'Help and rules',
-    icon: options.icons.help,
-    ...(options.onHelp ? { onClick: options.onHelp } : {}),
+  const hint = createIconButton({
+    label: 'Hint',
+    icon: options.icons.hint,
+    ...(options.onHint ? { onClick: options.onHint } : {}),
   });
   const status = document.createElement('p');
   status.className = 'nl-grim-glimmer-game-header__status';
@@ -61,7 +61,7 @@ export function createCompactGameHeader(options: CompactGameHeaderOptions): HTML
     icon: options.icons.menu,
     ...(options.onMenu ? { onClick: options.onMenu } : {}),
   });
-  header.append(help, status, menu);
+  header.append(hint, status, menu);
   return header;
 }
 
@@ -108,6 +108,8 @@ export interface GameMenuOptions {
   onDeal: (difficulty: string) => void;
   title?: string;
   dealLabel?: string;
+  helpLabel?: string;
+  onHelp?: () => void;
 }
 
 export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
@@ -169,6 +171,16 @@ export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
     node.setAttribute('aria-pressed', String(active));
   });
 
+  const help = createButton({
+    label: options.helpLabel ?? 'How to Play',
+    variant: 'secondary',
+    onClick: () => {
+      dialog.close();
+      options.onHelp?.();
+    },
+  });
+  help.classList.add('nl-grim-glimmer-game-menu__help');
+
   const deal = createButton({
     label: options.dealLabel ?? 'Deal New Puzzle',
     variant: 'primary',
@@ -178,7 +190,7 @@ export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
     },
   });
   deal.classList.add('nl-grim-glimmer-game-menu__deal');
-  panel.append(heading, label, choices, deal);
+  panel.append(heading, label, choices, help, deal);
   dialog.append(panel);
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
@@ -212,6 +224,8 @@ export interface GameControlsOptions {
   newGameLabel?: string;
   /** Compact gameplay puts New Game in its menu instead of the bottom toolbar. */
   showNewGame?: boolean;
+  /** Compact gameplay places Hint in its header instead of the toolbar. */
+  showHint?: boolean;
 }
 
 /**
@@ -255,12 +269,14 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
 
   const actions = document.createElement('div');
   actions.className = 'nl-grim-glimmer-game-controls__actions';
-  actions.append(
-    createButton({
+  if (options.showHint !== false) {
+    actions.append(createButton({
       label: options.hintLabel ?? 'Hint',
       variant: 'ghost',
       ...(options.onHint ? { onClick: options.onHint } : {}),
-    }),
+    }));
+  }
+  actions.append(
     createButton({
       label: options.clearLabel ?? 'Clear',
       variant: 'ghost',
