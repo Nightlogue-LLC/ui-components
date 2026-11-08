@@ -143,7 +143,7 @@ const LEVELS = [
     id: 'display-md',
     cls: 'nl-grim-glimmer-puzzle-title',
     level: 'Display medium',
-    text: 'Tents & Trees',
+    text: 'Stars & Spires',
     tokens: 'display · --nl-font-size-display-md',
   },
   {

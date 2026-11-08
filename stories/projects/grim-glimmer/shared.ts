@@ -44,7 +44,7 @@ export function card(
 
 /** Sample puzzle cards: real names, plus deliberately long titles to test wrapping and clipping. */
 export const SAMPLE_CARDS: readonly { title: string; status: PuzzleStatus }[] = [
-  { title: 'Tents & Trees', status: 'continue' },
+  { title: 'Stars & Spires', status: 'continue' },
   { title: 'Ghosts & Graves', status: 'play' },
   { title: 'Ghosts & Graves', status: 'coming-soon' },
   { title: 'The Cartographer’s Midnight Orchard', status: 'coming-soon' },

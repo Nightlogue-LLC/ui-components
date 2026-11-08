@@ -77,7 +77,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
       index % 4 === 0 ? 1 : index % 4 === 1 ? 0 : 2,
     );
     const board = createCluedBoard({
-      label: 'Tents and Trees demonstration board',
+      label: 'Stars and Spires demonstration board',
       size,
       mode: 'interactive',
       cells,
@@ -109,7 +109,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         const label = document.createElement('p');
         label.className = 'sb-grim-gameplay-help';
         label.textContent =
-          'Place tents beside trees. Tents cannot touch, including diagonally. Match the row and column counts.';
+          'Place stars beside spires. Stars cannot touch, including diagonally. Match the row and column counts.';
         const old = host.querySelector('.sb-grim-gameplay-help');
         old?.remove();
         host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(label);
@@ -122,7 +122,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
       },
     });
     const header = createCompactGameHeader({
-      title: 'Tents & Trees',
+      title: 'Stars & Spires',
       status: `${option.label} · ${size}×${size}`,
       icons: { hint: demoIcon('hint'), menu: sampleIcon('menu') },
       onHint: applyHint,
@@ -202,8 +202,8 @@ const meta = {
     docs: {
       description: {
         component: `
-The colored app frame owns Back to Collection and App Settings, with no app name. It is the only horizontal divider; the puzzle header, board and controls flow together. Below the divider, the puzzle header has **Hint at top-left**, the **Tents & Trees title and difficulty/size**, and a small **Game Menu popover at top-right**. The board is centered, with **column clues above and row clues at left**. A single bottom row holds the Tent/X **icon selector** at left and the Clear icon at right. The small menu holds difficulty, How to Play, and New Game. Tent mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
-Icon artwork is app-owned (the samples are generic glyphs).
+The colored app frame owns Back to Collection and App Settings, with no app name. It is the only horizontal divider; the puzzle header, board and controls flow together. Below the divider, the puzzle header has **Hint at top-left**, the **Stars & Spires title and difficulty/size**, and a small **Game Menu popover at top-right**. The board is centered, with **column clues above and row clues at left**. A single bottom row holds the Star/X **icon selector** at left and the Clear icon at right. The small menu holds difficulty, How to Play, and New Game. Star mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
+Icon artwork is app-owned (the samples are generic placeholders; approved Stars & Spires PNGs are pending asset import).
 
 Game state, board generation, persistence and the rules are the game app's job; see the contracts in
 \`docs/grim-glimmer-integration.md\` and try the simulation in **Dialogs / Modal flow**.
