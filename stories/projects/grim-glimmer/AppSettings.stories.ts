@@ -1,0 +1,68 @@
+import type { Meta, StoryObj } from '@storybook/html-vite';
+import { createAppFrameHeader, createAppSettings, type AppSettingsState } from '../../../src/projects/grim-glimmer/index.js';
+import { sampleIcon } from '../../lib/icons.js';
+import { compareModes } from '../../lib/stage.js';
+import { THEME } from './shared.js';
+
+const NS = 'http://www.w3.org/2000/svg';
+function settingsIcon(): SVGSVGElement {
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.8');
+  const circle = document.createElementNS(NS, 'circle');
+  circle.setAttribute('cx', '12');
+  circle.setAttribute('cy', '12');
+  circle.setAttribute('r', '4');
+  svg.append(circle);
+  return svg;
+}
+
+function settingsScreen(): HTMLElement {
+  const host = document.createElement('div');
+  host.className = 'sb-grim-gameplay-host';
+  host.style.maxWidth = '32rem';
+  const initial: AppSettingsState = {
+    appearance: 'system',
+    haptics: true,
+    sound: true,
+    autoFill: false,
+    animations: true,
+  };
+  const navigation = createAppFrameHeader({
+    icons: { back: sampleIcon('back'), settings: settingsIcon() },
+  });
+  const settings = createAppSettings({
+    state: initial,
+    onChange: (value) => {
+      // Visual controls update locally. Persistence and platform integrations are app-owned.
+      host.dataset.appearance = value.appearance;
+    },
+  });
+  host.append(navigation, settings);
+  return host;
+}
+
+const meta = {
+  title: 'Projects/Grim & Glimmer/App Settings',
+  tags: ['autodocs'],
+  parameters: {
+    nlTheme: THEME,
+    nlStage: 'self',
+    docs: {
+      description: {
+        component: 'Mock app-wide settings for appearance, haptics, sound, auto-fill assistance and animations. The controls are interactive, but nothing is persisted or connected to platform APIs. The same top app bar is used by gameplay.',
+      },
+    },
+  },
+  render: () => settingsScreen(),
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj;
+
+export const SettingsScreen: Story = {
+  render: (_args, context) =>
+    compareModes(context, settingsScreen, { theme: THEME, bleed: true }),
+};
