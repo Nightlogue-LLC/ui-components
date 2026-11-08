@@ -1,3 +1,5 @@
+import { createSelect } from '../../components/select/index.js';
+
 /** App-wide visual preferences. Persistence and device feature integrations stay app-owned. */
 export type AppAppearance = 'system' | 'light' | 'dark';
 export interface AppSettingsState {
@@ -39,7 +41,7 @@ export function createAppSettings(options: AppSettingsOptions): HTMLElement {
   };
 
   const appearance = section('Appearance');
-  const appearanceRow = document.createElement('label');
+  const appearanceRow = document.createElement('div');
   appearanceRow.className = 'nl-grim-glimmer-app-settings__row';
   const appearanceLabel = document.createElement('span');
   appearanceLabel.className = 'nl-grim-glimmer-app-settings__row-copy';
@@ -48,22 +50,16 @@ export function createAppSettings(options: AppSettingsOptions): HTMLElement {
   const appearanceHint = document.createElement('small');
   appearanceHint.textContent = 'System, warm cream, or deep plum';
   appearanceLabel.append(appearanceTitle, appearanceHint);
-  const select = document.createElement('select');
-  select.setAttribute('aria-label', 'Color theme');
-  for (const [value, label] of [
-    ['system', 'System'],
-    ['light', 'Light'],
-    ['dark', 'Dark'],
-  ] as const) {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = label;
-    select.append(option);
-  }
-  select.value = state.appearance;
-  select.addEventListener('change', () =>
-    emit({ ...state, appearance: select.value as AppAppearance }),
-  );
+  const select = createSelect({
+    label: 'Color theme',
+    value: state.appearance,
+    options: [
+      { value: 'system', label: 'System' },
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' },
+    ],
+    onChange: (appearance) => emit({ ...state, appearance: appearance as AppAppearance }),
+  });
   appearanceRow.append(appearanceLabel, select);
   appearance.append(appearanceRow);
 

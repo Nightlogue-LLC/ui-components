@@ -1,3 +1,4 @@
+import { createSelect } from '../../components/select/index.js';
 import { createButton } from '../../components/button/index.js';
 import { createIconButton } from '../../components/icon-button/index.js';
 
@@ -152,26 +153,22 @@ export interface GameDifficultyOptions {
   onChange: (value: string) => void;
 }
 
-/** Native accessible dropdown for selecting difficulty. The consumer owns the chosen value. */
+/** Themed in-app difficulty picker. The consumer owns the chosen value. */
 export function createGameDifficulty(options: GameDifficultyOptions): HTMLElement {
   if (!options.options.some((entry) => entry.value === options.value)) {
     throw new Error('createGameDifficulty: selected value must match an option');
   }
-  const control = document.createElement('label');
+  const control = document.createElement('div');
   control.className = 'nl-grim-glimmer-game-difficulty';
   const label = document.createElement('span');
   label.className = 'nl-grim-glimmer-game-difficulty__label';
   label.textContent = options.label ?? 'Difficulty';
-  const select = document.createElement('select');
-  select.className = 'nl-grim-glimmer-game-difficulty__select';
-  for (const item of options.options) {
-    const option = document.createElement('option');
-    option.value = item.value;
-    option.textContent = item.label;
-    select.append(option);
-  }
-  select.value = options.value;
-  select.addEventListener('change', () => options.onChange(select.value));
+  const select = createSelect({
+    label: options.label ?? 'Difficulty',
+    value: options.value,
+    options: options.options,
+    onChange: options.onChange,
+  });
   control.append(label, select);
   return control;
 }

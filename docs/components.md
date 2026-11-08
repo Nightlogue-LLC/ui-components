@@ -71,6 +71,16 @@ openDialog(dialog);
 - Fallback when `showModal` is missing: opens via the `open` attribute, styled as a fixed overlay, Escape handled by a temporary document listener. No focus trap or `inert` in that path. The supported Android WebView baseline has native support.
 - The page behind is not scroll-locked; the dialog body scrolls (for large text) and contains its own overscroll.
 
+## Select
+
+`createSelect({ label, value, options, onChange? })` renders an in-app popover rather than a platform picker. Import it from the package root or `components/select`; CSS is included in `styles.css` or available at `components/select.css`.
+
+- Options use unique string values and text labels; the initial value must match an option.
+- The named trigger exposes the current value, `aria-expanded`, and its named listbox. The selected option has a checkmark and `aria-selected`.
+- Click/Enter/Space commits a choice and reports a changed value once. Arrow keys, Home/End and initial-letter search move focus without committing. Escape cancels and returns focus. Tab leaves the control; outside pointer or focus dismisses it.
+- The list stays within the theme scope, aligns to the trigger's end edge, and opens above when space below is limited. Use it in a container that allows the popup to be visible; a clipping scroll ancestor can clip it.
+- Selection updates locally; recreate the control when externally replacing its value/options. Open-only document listeners are removed on dismissal, screen hiding, or removal.
+
 ## Badge
 
 `createBadge({ label, tone? })` / `updateBadge(el, props)`. Tones `neutral | accent | muted`. A compact, non-interactive `span` set in the **editorial label** typography role (a theme that defines it, like Grim & Glimmer, gets its label face; otherwise the UI font); the text carries the meaning and tone is emphasis only. Do not put interactive elements inside it.

@@ -71,7 +71,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Mock app-wide settings for appearance, haptics, sound, auto-fill assistance and animations. The controls are interactive, but nothing is persisted or connected to platform APIs. The same top app bar is used by gameplay.',
+          'Mock app-wide settings for appearance, haptics, sound, auto-fill assistance and animations. The controls are interactive, but nothing is persisted or connected to platform APIs. Appearance opens a themed in-app list; no phone-native picker is used. The settings icon stays in its fixed header position when toggled. The same top app bar is used by gameplay.',
       },
     },
   },
