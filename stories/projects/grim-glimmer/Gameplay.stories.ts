@@ -64,7 +64,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
   ];
   let difficulty = initialDifficulty;
   let generation = 1;
-  let mode: GameMarkMode = 'tent'; // Engine marking state retained for compatibility
+  let mode: GameMarkMode = 'tent';
 
   const host = document.createElement('div');
   host.className = 'sb-grim-gameplay-host';
