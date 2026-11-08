@@ -34,6 +34,8 @@ const NEXT: Record<BoardCellState, BoardCellState> = {
   placed: 'marked',
   marked: 'empty',
   fixed: 'fixed',
+  tentative: 'placed',
+  excluded: 'empty',
 };
 
 /**
