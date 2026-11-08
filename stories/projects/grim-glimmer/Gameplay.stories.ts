@@ -7,6 +7,7 @@ import {
   createGameControls,
   createCompactGameHeader,
   createAppFrameHeader,
+  updateAppFrameSettingsOpen,
   createAppSettings,
   createGameMenu,
   toggleGameMenu,
@@ -127,6 +128,8 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
       onHint: applyHint,
       onMenu: () => toggleGameMenu(menu),
     });
+    let settingsOpen = false;
+    let screen: HTMLElement;
     const appHeader = createAppFrameHeader({
       icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
       onBack: () => {
@@ -136,25 +139,19 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(note);
       },
       onSettings: () => {
-        const settingsNav = createAppFrameHeader({
-          icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
-          hideBack: true,
-          settingsOpen: true,
-          onSettings: () => host.replaceChildren(screen),
-        });
-        const settings = createAppSettings({
-          state: {
-            appearance: 'system',
-            haptics: true,
-            sound: true,
-            autoFill: false,
-            animations: true,
-          },
-        });
-        const settingsView = document.createElement('section');
-        settingsView.className = 'nl-grim-glimmer-screen nl-grim-glimmer-screen--compact';
-        settingsView.append(settingsNav, settings);
-        host.replaceChildren(settingsView);
+        settingsOpen = !settingsOpen;
+        updateAppFrameSettingsOpen(appHeader, settingsOpen);
+        for (const slot of ['header', 'board', 'controls'] as const) {
+          const element = screen.querySelector<HTMLElement>(
+            `[data-slot="${slot}"]`,
+          );
+          if (element) element.hidden = settingsOpen;
+        }
+        const settingsSlot = screen.querySelector<HTMLElement>(
+          '.nl-grim-glimmer-screen__settings',
+        );
+        if (settingsSlot) settingsSlot.hidden = !settingsOpen;
+        if (settingsOpen) closeGameMenu(menu);
       },
     });
     const controls = createGameControls({
@@ -171,7 +168,22 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         updateBoard(grid, { cells });
       },
     });
-    const screen = createGameScreen({ appHeader, header, board, controls, menu });
+    screen = createGameScreen({ appHeader, header, board, controls, menu });
+    const settingsSlot = document.createElement('div');
+    settingsSlot.className = 'nl-grim-glimmer-screen__settings';
+    settingsSlot.hidden = true;
+    settingsSlot.append(
+      createAppSettings({
+        state: {
+          appearance: 'system',
+          haptics: true,
+          sound: true,
+          autoFill: false,
+          animations: true,
+        },
+      }),
+    );
+    screen.append(settingsSlot);
     screen.addEventListener('click', (event) => {
       if (menu.hidden || !(event.target instanceof Node)) return;
       if (menu.contains(event.target)) return;
