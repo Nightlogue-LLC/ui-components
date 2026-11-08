@@ -54,13 +54,13 @@ function demoIcon(name: 'hint' | 'tent' | 'exclude' | 'clear' | 'settings'): SVG
 }
 
 /** Two distinct nav layers and a mobile-first puzzle, using mock state only. */
-function gameScreen(): HTMLElement {
+function gameScreen(initialDifficulty = 'easy'): HTMLElement {
   const difficulties = [
     { value: 'easy', label: 'Easy', size: 5 },
     { value: 'medium', label: 'Medium', size: 8 },
     { value: 'master', label: 'Master', size: 15 },
   ];
-  let difficulty = 'easy';
+  let difficulty = initialDifficulty;
   let generation = 1;
   let mode: GameMarkMode = 'tent';
 
@@ -178,7 +178,7 @@ const meta = {
     docs: {
       description: {
         component: `
-The shared app frame owns Back to Collection and App Settings. Below the divider, the puzzle header has **Hint at top-left**, the **Tents & Trees title and difficulty/size**, and a small **Game Menu popover at top-right**. The board is centered, with **column clues above and row clues at left**. A single bottom row holds the Tent/X **icon selector** at left and the Clear icon at right. The small menu holds difficulty, How to Play, and New Game. Tent mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
+The colored app frame owns Back to Collection and App Settings, with no app name. It is the only horizontal divider; the puzzle header, board and controls flow together. Below the divider, the puzzle header has **Hint at top-left**, the **Tents & Trees title and difficulty/size**, and a small **Game Menu popover at top-right**. The board is centered, with **column clues above and row clues at left**. A single bottom row holds the Tent/X **icon selector** at left and the Clear icon at right. The small menu holds difficulty, How to Play, and New Game. Tent mode cycles empty → tentative → confirmed → empty; X toggles exclusion. The sample board and hints are visual fixtures, not game rules. No bottom nav appears on the game screen.
 Icon artwork is app-owned (the samples are generic glyphs).
 
 Game state, board generation, persistence and the rules are the game app's job; see the contracts in
@@ -197,6 +197,12 @@ type Story = StoryObj;
 export const GameScreen: Story = {
   render: (_args, context) =>
     compareModes(context, () => gameScreen(), { theme: THEME, bleed: true }),
+};
+
+/** Dedicated dense-board mock, so Master can be reviewed without using the game menu. */
+export const Master15x15: Story = {
+  render: (_args, context) =>
+    compareModes(context, () => gameScreen('master'), { theme: THEME, bleed: true }),
 };
 
 const sample = (): BoardCellState[] => {
