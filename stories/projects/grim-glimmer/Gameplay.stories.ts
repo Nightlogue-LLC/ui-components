@@ -129,7 +129,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
       onMenu: () => toggleGameMenu(menu),
     });
     let settingsOpen = false;
-    let screen: HTMLElement;
+    // The header callback executes only after screen has been constructed.
     const appHeader = createAppFrameHeader({
       icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
       onBack: () => {
@@ -142,14 +142,10 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         settingsOpen = !settingsOpen;
         updateAppFrameSettingsOpen(appHeader, settingsOpen);
         for (const slot of ['header', 'board', 'controls'] as const) {
-          const element = screen.querySelector<HTMLElement>(
-            `[data-slot="${slot}"]`,
-          );
+          const element = screen.querySelector<HTMLElement>(`[data-slot="${slot}"]`);
           if (element) element.hidden = settingsOpen;
         }
-        const settingsSlot = screen.querySelector<HTMLElement>(
-          '.nl-grim-glimmer-screen__settings',
-        );
+        const settingsSlot = screen.querySelector<HTMLElement>('.nl-grim-glimmer-screen__settings');
         if (settingsSlot) settingsSlot.hidden = !settingsOpen;
         if (settingsOpen) closeGameMenu(menu);
       },
@@ -168,7 +164,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         updateBoard(grid, { cells });
       },
     });
-    screen = createGameScreen({ appHeader, header, board, controls, menu });
+    const screen = createGameScreen({ appHeader, header, board, controls, menu });
     const settingsSlot = document.createElement('div');
     settingsSlot.className = 'nl-grim-glimmer-screen__settings';
     settingsSlot.hidden = true;

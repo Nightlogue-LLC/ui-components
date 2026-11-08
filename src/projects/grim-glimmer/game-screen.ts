@@ -53,11 +53,13 @@ export function createAppFrameHeader(options: AppFrameHeaderOptions): HTMLElemen
   header.className = 'nl-grim-glimmer-app-header';
   header.setAttribute('aria-label', 'Grim and Glimmer navigation');
   if (!options.hideBack) {
-    header.append(createIconButton({
-      label: 'Back to collection',
-      icon: options.icons.back,
-      ...(options.onBack ? { onClick: options.onBack } : {}),
-    }));
+    header.append(
+      createIconButton({
+        label: 'Back to collection',
+        icon: options.icons.back,
+        ...(options.onBack ? { onClick: options.onBack } : {}),
+      }),
+    );
   } else {
     header.classList.add('nl-grim-glimmer-app-header--settings-open');
   }
