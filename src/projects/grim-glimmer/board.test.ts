@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createBoard, updateBoard, type BoardCellState } from './board.js';
+import { createBoard, createCluedBoard, updateBoard, type BoardCellState } from './board.js';
 
 const cells = (n: number, fill: BoardCellState = 'empty'): BoardCellState[] =>
   Array<BoardCellState>(n * n).fill(fill);
@@ -86,6 +86,32 @@ describe('createBoard', () => {
     cellEls(board)[0]!.click();
     expect(onCellActivate).not.toHaveBeenCalled();
     board.remove();
+  });
+});
+
+describe('createCluedBoard', () => {
+  it('renders column and row counts without changing the inner board contract', () => {
+    const shell = createCluedBoard({
+      label: 'Tents and Trees',
+      size: 2,
+      mode: 'interactive',
+      cells: cells(2),
+      rowClues: [1, 0],
+      columnClues: [0, 1],
+    });
+    const board = shell.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
+    expect(board.children).toHaveLength(4);
+    expect(shell.querySelectorAll('.nl-grim-glimmer-clued-board__clue')).toHaveLength(4);
+    expect(shell.querySelector('.nl-grim-glimmer-clued-board__columns')?.textContent).toBe('01');
+    expect(shell.querySelector('.nl-grim-glimmer-clued-board__rows')?.textContent).toBe('10');
+    updateBoard(board, { cells: ['placed', 'empty', 'fixed', 'marked'] });
+    expect(board.children[0]?.classList.contains('nl-grim-glimmer-board__cell--placed')).toBe(true);
+  });
+
+  it('validates the clue lengths and count bounds', () => {
+    const base = { label: 'Board', size: 2, mode: 'interactive' as const, cells: cells(2) };
+    expect(() => createCluedBoard({ ...base, rowClues: [1], columnClues: [1, 1] })).toThrow(/clue/);
+    expect(() => createCluedBoard({ ...base, rowClues: [1, 1], columnClues: [3, 0] })).toThrow(/clue/);
   });
 });
 

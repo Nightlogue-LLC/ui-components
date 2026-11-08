@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createGameControls,
+  createGameDifficulty,
   createGameHeader,
   createGameScreen,
   getGameScreenSlot,
@@ -54,6 +55,41 @@ describe('createGameControls', () => {
     expect(button.textContent).toBe('New Game');
     button.click();
     expect(onNewGame).toHaveBeenCalledTimes(1);
+    expect(controls.querySelector('nav')).toBeNull();
+  });
+});
+
+describe('createGameDifficulty', () => {
+  it('renders a native accessible select and forwards difficulty choices', () => {
+    const onChange = vi.fn();
+    const difficulty = createGameDifficulty({
+      label: 'Choose difficulty',
+      value: 'easy',
+      options: [{ value: 'easy', label: 'Easy' }, { value: 'hard', label: 'Hard' }],
+      onChange,
+    });
+    const select = difficulty.querySelector('select')!;
+    expect(difficulty.textContent).toContain('Choose difficulty');
+    expect(select.value).toBe('easy');
+    select.value = 'hard';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('hard');
+  });
+
+  it('rejects a difficulty outside the available options', () => {
+    expect(() => createGameDifficulty({ value: 'unknown', options: [], onChange: vi.fn() })).toThrow();
+  });
+
+  it('adds optional undo and hint controls without creating navigation', () => {
+    const undo = vi.fn();
+    const hint = vi.fn();
+    const controls = createGameControls({ onUndo: undo, onHint: hint });
+    const buttons = [...controls.querySelectorAll('button')];
+    expect(buttons.map((b) => b.textContent)).toEqual(['Undo', 'Hint', 'New Game']);
+    buttons[0]!.click();
+    buttons[1]!.click();
+    expect(undo).toHaveBeenCalledTimes(1);
+    expect(hint).toHaveBeenCalledTimes(1);
     expect(controls.querySelector('nav')).toBeNull();
   });
 });
