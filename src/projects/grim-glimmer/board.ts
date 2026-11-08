@@ -124,3 +124,55 @@ export function updateBoard(root: HTMLElement, props: BoardProps): void {
     }
   });
 }
+
+/** Clue counts are supplied by the game, never derived from presentation state. */
+export interface CluedBoardOptions extends BoardOptions {
+  rowClues: readonly number[];
+  columnClues: readonly number[];
+  rowClueLabel?: (row: number, value: number) => string;
+  columnClueLabel?: (column: number, value: number) => string;
+}
+
+/** Engraved board with column counts above and row counts on the right. */
+export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
+  const { size, rowClues, columnClues } = options;
+  const valid = (values: readonly number[]) =>
+    values.length === size && values.every((n) => Number.isInteger(n) && n >= 0 && n <= size);
+  if (!valid(rowClues) || !valid(columnClues)) {
+    throw new Error('createCluedBoard: clue arrays must match size and contain counts from 0 to size');
+  }
+  const shell = document.createElement('section');
+  shell.className = 'nl-grim-glimmer-clued-board';
+  shell.style.setProperty('--nl-grim-glimmer-clued-board-size', String(size));
+  if (options.mode === 'preview') shell.setAttribute('aria-hidden', 'true');
+
+  const columns = document.createElement('div');
+  columns.className = 'nl-grim-glimmer-clued-board__columns';
+  columns.setAttribute('aria-label', 'Column clues');
+  columnClues.forEach((value, index) => {
+    const clue = document.createElement('span');
+    clue.className = 'nl-grim-glimmer-clued-board__clue';
+    clue.textContent = String(value);
+    clue.setAttribute('aria-label', options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`);
+    columns.append(clue);
+  });
+
+  const rows = document.createElement('div');
+  rows.className = 'nl-grim-glimmer-clued-board__rows';
+  rows.setAttribute('aria-label', 'Row clues');
+  rowClues.forEach((value, index) => {
+    const clue = document.createElement('span');
+    clue.className = 'nl-grim-glimmer-clued-board__clue';
+    clue.textContent = String(value);
+    clue.setAttribute('aria-label', options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`);
+    rows.append(clue);
+  });
+
+  const grid = createBoard(options);
+  grid.classList.add('nl-grim-glimmer-board--engraved');
+  const body = document.createElement('div');
+  body.className = 'nl-grim-glimmer-clued-board__body';
+  body.append(grid, rows);
+  shell.append(columns, body);
+  return shell;
+}
