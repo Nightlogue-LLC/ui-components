@@ -210,6 +210,8 @@ export interface GameControlsOptions {
   clearLabel?: string;
   hintLabel?: string;
   newGameLabel?: string;
+  /** Compact gameplay puts New Game in its menu instead of the bottom toolbar. */
+  showNewGame?: boolean;
 }
 
 /**
@@ -264,12 +266,16 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
       variant: 'ghost',
       ...(options.onClear ? { onClick: options.onClear } : {}),
     }),
-    createButton({
-      label: options.newGameLabel ?? 'New Game',
-      variant: 'secondary',
-      ...(options.onNewGame ? { onClick: options.onNewGame } : {}),
-    }),
   );
+  if (options.showNewGame !== false) {
+    actions.append(
+      createButton({
+        label: options.newGameLabel ?? 'New Game',
+        variant: 'secondary',
+        ...(options.onNewGame ? { onClick: options.onNewGame } : {}),
+      }),
+    );
+  }
   controls.append(choices, actions);
   return controls;
 }
