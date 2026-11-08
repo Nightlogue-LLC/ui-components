@@ -45,7 +45,7 @@ function collectionPage(): HTMLElement {
       ]),
       createPuzzleCollection(
         [
-          card('Tents & Trees', 'continue', 1, true),
+          card('Stars & Spires', 'continue', 1, true),
           card('Ghosts & Graves', 'coming-soon', 4),
           card('Placeholder puzzle', 'coming-soon', 5),
         ],
