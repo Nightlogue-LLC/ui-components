@@ -13,6 +13,11 @@ export { createPuzzleCollectionCard, createPuzzleCollection } from './collection
 export type { PuzzleCollectionCardOptions, PuzzleStatus } from './collection-card.js';
 export {
   createGameHeader,
+  createAppFrameHeader,
+  createCompactGameHeader,
+  createGameMenu,
+  toggleGameMenu,
+  closeGameMenu,
   createGameDifficulty,
   createGameControls,
   createGameScreen,
@@ -20,6 +25,9 @@ export {
 } from './game-screen.js';
 export type {
   GameControlsOptions,
+  AppFrameHeaderOptions,
+  CompactGameHeaderOptions,
+  GameMenuOptions,
   GameMarkMode,
   GameDifficultyOption,
   GameDifficultyOptions,
