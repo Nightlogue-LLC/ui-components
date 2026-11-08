@@ -225,8 +225,9 @@ export function createGameMenu(options: GameMenuOptions): HTMLElement {
       label: options.dealLabel ?? 'New Game',
       variant: 'primary',
       onClick: () => {
+        const next = selected;
         closeGameMenu(menu);
-        options.onDeal(selected);
+        options.onDeal(next);
       },
     }),
   );
