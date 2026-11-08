@@ -72,6 +72,22 @@ export function createAppFrameHeader(options: AppFrameHeaderOptions): HTMLElemen
   return header;
 }
 
+/** Toggle the same persistent settings button so its rotation can animate. */
+export function updateAppFrameSettingsOpen(header: HTMLElement, open: boolean): void {
+  if (!header.classList.contains('nl-grim-glimmer-app-header')) {
+    throw new Error('updateAppFrameSettingsOpen: expected an app frame header');
+  }
+  header.classList.toggle('nl-grim-glimmer-app-header--settings-open', open);
+  const back = header.querySelector<HTMLButtonElement>('[aria-label="Back to collection"]');
+  if (back) back.hidden = open;
+  const settings = header.querySelector<HTMLButtonElement>(
+    '.nl-grim-glimmer-app-header__settings-toggle',
+  );
+  if (!settings) throw new Error('updateAppFrameSettingsOpen: missing settings toggle');
+  settings.setAttribute('aria-pressed', String(open));
+  settings.setAttribute('aria-label', open ? 'Close app settings' : 'App settings');
+}
+
 export interface CompactGameHeaderOptions {
   title: string;
   status: string;
