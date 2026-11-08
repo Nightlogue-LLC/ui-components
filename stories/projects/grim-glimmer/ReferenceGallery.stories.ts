@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import { el } from '../../lib/dom.js';
+import '../../reference-gallery.css';
 
 type Palette = 'plum' | 'cream' | 'charcoal';
 const marks = ['','▲','','','','▲','','','','','','','','▲','','','','','','','','▲','','',''];
