@@ -7,6 +7,7 @@ import {
   createGameControls,
   createCompactGameHeader,
   createAppFrameHeader,
+  createAppSettings,
   createGameMenu,
   toggleGameMenu,
   closeGameMenu,
@@ -135,10 +136,23 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
         host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(note);
       },
       onSettings: () => {
-        const note = document.createElement('p');
-        note.className = 'sb-grim-gameplay-help';
-        note.textContent = 'App settings are a separate shared navigation screen.';
-        host.querySelector('.nl-grim-glimmer-screen__board')?.prepend(note);
+        const settingsNav = createAppFrameHeader({
+          icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
+          onBack: () => render(),
+        });
+        const settings = createAppSettings({
+          state: {
+            appearance: 'system',
+            haptics: true,
+            sound: true,
+            autoFill: false,
+            animations: true,
+          },
+        });
+        const settingsView = document.createElement('section');
+        settingsView.className = 'nl-grim-glimmer-screen nl-grim-glimmer-screen--compact';
+        settingsView.append(settingsNav, settings);
+        host.replaceChildren(settingsView);
       },
     });
     const controls = createGameControls({
