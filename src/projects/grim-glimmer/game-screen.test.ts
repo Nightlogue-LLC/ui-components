@@ -48,13 +48,31 @@ describe('createGameHeader', () => {
 });
 
 describe('createGameControls', () => {
-  it('offers a New Game button (and no navigation)', () => {
-    const onNewGame = vi.fn();
-    const controls = createGameControls({ onNewGame });
-    const button = controls.querySelector('button')!;
-    expect(button.textContent).toBe('New Game');
-    button.click();
-    expect(onNewGame).toHaveBeenCalledTimes(1);
+  it('starts in Tent mode with an accessible X switch', () => {
+    const changes = vi.fn();
+    const controls = createGameControls({ onModeChange: changes });
+    const [tent, exclude] = [...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__mode')];
+    expect(tent?.getAttribute('aria-pressed')).toBe('true');
+    expect(exclude?.getAttribute('aria-pressed')).toBe('false');
+    exclude!.click();
+    expect(changes).toHaveBeenCalledExactlyOnceWith('exclude');
+    expect(tent?.getAttribute('aria-pressed')).toBe('false');
+    expect(exclude?.getAttribute('aria-pressed')).toBe('true');
+    tent!.click();
+    expect(changes).toHaveBeenLastCalledWith('tent');
+  });
+
+  it('has Hint, Clear and New Game, with no Undo or Redo', () => {
+    const hint = vi.fn();
+    const clear = vi.fn();
+    const newGame = vi.fn();
+    const controls = createGameControls({ onHint: hint, onClear: clear, onNewGame: newGame });
+    const actions = [...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__actions button')];
+    expect(actions.map((button) => button.textContent)).toEqual(['Hint', 'Clear', 'New Game']);
+    actions.forEach((button) => button.click());
+    expect(hint).toHaveBeenCalledOnce();
+    expect(clear).toHaveBeenCalledOnce();
+    expect(newGame).toHaveBeenCalledOnce();
     expect(controls.querySelector('nav')).toBeNull();
   });
 });
@@ -85,18 +103,7 @@ describe('createGameDifficulty', () => {
     ).toThrow();
   });
 
-  it('adds optional undo and hint controls without creating navigation', () => {
-    const undo = vi.fn();
-    const hint = vi.fn();
-    const controls = createGameControls({ onUndo: undo, onHint: hint });
-    const buttons = [...controls.querySelectorAll('button')];
-    expect(buttons.map((b) => b.textContent)).toEqual(['Undo', 'Hint', 'New Game']);
-    buttons[0]!.click();
-    buttons[1]!.click();
-    expect(undo).toHaveBeenCalledTimes(1);
-    expect(hint).toHaveBeenCalledTimes(1);
-    expect(controls.querySelector('nav')).toBeNull();
-  });
+
 });
 
 describe('createGameScreen', () => {
