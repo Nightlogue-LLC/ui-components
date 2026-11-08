@@ -26,8 +26,8 @@ The home collection: one column of compact landscape cards (120px tall), static 
 (~35%), smaller puzzle title and restrained status on the right. The home heading and eyebrow
 use a reduced mobile-first type scale independent of other screens. **Play** and **Continue** are native buttons;
 **Coming Soon** is a static, visibly unavailable card that is not actionable (no tab stop). The three-item bottom navigation switches between Collection, Achievements and Settings.
-There is no Journal destination or game-details route. Gameplay retains its separate header. The wordmark is app-owned artwork, so these stories only reserve a
-labelled slot for it.
+There is no Journal destination or game-details route. Gameplay retains its separate header. The collection uses the supplied, approved horizontal wordmarks in matching light and dark variants.
+The navigation is compact and icon-only, with accessible destination names.
 
 \`\`\`ts
 import { createPuzzleCollection, createPuzzleCollectionCard } from '@nightlogue-llc/ui-components/projects/grim-glimmer';

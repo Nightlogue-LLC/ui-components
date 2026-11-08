@@ -9,6 +9,8 @@ export interface BottomNavOptions {
   label: string;
   items: readonly BottomNavItem[];
   value: string;
+  /** Hide visible labels, retaining accessible destination names. */
+  iconOnly?: boolean;
   /** Navigation request only. The consumer accepts with updateBottomNav(). */
   onNavigate: (value: string) => void;
 }
@@ -28,12 +30,15 @@ export function createBottomNav(options: BottomNavOptions): HTMLElement {
   }
   const nav = document.createElement('nav');
   nav.className = 'nl-bottom-nav';
+  if (options.iconOnly) nav.classList.add('nl-bottom-nav--icon-only');
   nav.setAttribute('aria-label', options.label);
   nav.style.setProperty('--nl-bottom-nav-count', String(options.items.length));
   const entries = new Map<string, HTMLButtonElement>();
   for (const item of options.items) {
     const button = document.createElement('button');
     button.type = 'button';
+    button.setAttribute('aria-label', item.label);
+    if (options.iconOnly) button.title = item.label;
     button.className = 'nl-bottom-nav__item';
     const icon = document.createElement('span');
     icon.className = 'nl-bottom-nav__icon';

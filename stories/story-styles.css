@@ -216,15 +216,23 @@
   color: var(--nl-color-text);
 }
 
-/* Reserved slot for the app's wordmark artwork. The catalog never typesets the wordmark. */
-.sb-gg-wordmark-slot {
-  display: grid;
-  place-items: center;
-  min-height: 3.5rem;
-  border: 1px dashed var(--nl-color-border);
-  border-radius: var(--nl-radius-md);
-  font: 0.75rem/1.3 var(--nl-font-family);
-  opacity: 0.8;
+.sb-gg-wordmark {
+  width: 100%;
+  padding-block: 0.75rem;
+}
+.sb-gg-wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sb-gg-wordmark .sb-gg-wordmark__dark {
+  display: none;
+}
+[data-nl-mode='dark'] .sb-gg-wordmark .sb-gg-wordmark__light {
+  display: none;
+}
+[data-nl-mode='dark'] .sb-gg-wordmark .sb-gg-wordmark__dark {
+  display: block;
 }
 
 .sb-gg-heading-group {

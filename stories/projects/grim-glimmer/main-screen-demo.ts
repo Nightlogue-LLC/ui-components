@@ -8,18 +8,28 @@ import {
 import { el } from '../../lib/dom.js';
 import { card } from './shared.js';
 
-/**
- * Home: one column of equally sized landscape cards. The app's wordmark is artwork owned by the
- * app, so these stories only reserve a labelled slot for it and never typesets it. Only
- * Tents & Trees is playable; Ghosts & Graves and the placeholder are Coming Soon.
- */
+/** Approved app-owned artwork, displayed without its transparent canvas margins. */
 function collectionPage(): HTMLElement {
-  const wordmark = el('div', {
-    className: 'sb-gg-wordmark-slot',
-    text: 'Wordmark artwork (app-owned)',
-  });
+  const wordmark = el('div', { className: 'sb-gg-wordmark' });
   wordmark.setAttribute('role', 'img');
-  wordmark.setAttribute('aria-label', 'Wordmark placeholder');
+  wordmark.setAttribute('aria-label', 'Grim & Glimmer — Puzzle Collection');
+  for (const mode of ['light', 'dark']) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '237 949 1533 247');
+    svg.setAttribute('class', `sb-gg-wordmark__${mode}`);
+    svg.setAttribute('aria-hidden', 'true');
+    const image = document.createElementNS(svg.namespaceURI, 'image');
+    image.setAttribute('width', '2000');
+    image.setAttribute('height', '2000');
+    image.setAttribute(
+      'href',
+      mode === 'light'
+        ? new URL('./assets/wordmark-light.png', import.meta.url).href
+        : new URL('./assets/wordmark-dark.png', import.meta.url).href,
+    );
+    svg.append(image);
+    wordmark.append(svg);
+  }
   return el(
     'section',
     {

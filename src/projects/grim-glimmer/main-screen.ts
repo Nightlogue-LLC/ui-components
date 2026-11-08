@@ -42,6 +42,7 @@ export function createMainScreen(options: MainScreenOptions): HTMLElement {
   const nav = createBottomNav({
     label: options.navigationLabel ?? 'Main navigation',
     value,
+    iconOnly: true,
     items: order.map((page) => ({ value: page, label: labels[page], icon: options.icons[page] })),
     onNavigate: (page) => options.onNavigate(page as MainPage),
   });

@@ -37,6 +37,20 @@ describe('bottom navigation', () => {
     nav.remove();
   });
 
+  it('keeps accessible destination names in icon-only mode', () => {
+    const nav = createBottomNav({
+      label: 'Main',
+      items: items(),
+      value: 'collection',
+      iconOnly: true,
+      onNavigate: vi.fn(),
+    });
+    expect(nav.classList.contains('nl-bottom-nav--icon-only')).toBe(true);
+    expect(
+      [...nav.querySelectorAll('button')].map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['collection', 'achievements', 'settings']);
+  });
+
   it('rejects invalid destinations without losing the current page', () => {
     const nav = createBottomNav({
       label: 'Main',
