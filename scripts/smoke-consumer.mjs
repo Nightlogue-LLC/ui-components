@@ -68,6 +68,9 @@ import { createCard } from '${name}/components/card';
 import { createSegmentedControl, updateSegmentedControl } from '${name}/components/segmented-control';
 import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseReason } from '${name}/components/dialog';
 import { createBadge } from '${name}/components/badge';
+import { createSelect } from '${name}/components/select';
+const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
+void picker;
 import {
   createBoard,
   createPuzzleCollectionCard,
@@ -138,6 +141,8 @@ const specs = [
   '${name}/components/segmented-control.css',
   '${name}/components/dialog.css',
   '${name}/components/badge.css',
+  '${name}/components/select',
+  '${name}/components/select.css',
   '${name}/components/dialog',
   '${name}/themes/grim-glimmer.css',
   '${name}/projects/grim-glimmer',
@@ -148,7 +153,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
-for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge']) {
+for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect']) {
   if (typeof lib[fn] !== 'function') throw new Error(fn + ' missing');
 }
 `,

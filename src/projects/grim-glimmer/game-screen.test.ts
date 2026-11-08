@@ -90,7 +90,7 @@ describe('createGameControls', () => {
 });
 
 describe('createGameDifficulty', () => {
-  it('renders a native accessible select and forwards difficulty choices', () => {
+  it('uses an in-app picker and forwards committed difficulty choices', () => {
     const onChange = vi.fn();
     const difficulty = createGameDifficulty({
       label: 'Choose difficulty',
@@ -101,11 +101,13 @@ describe('createGameDifficulty', () => {
       ],
       onChange,
     });
-    const select = difficulty.querySelector('select')!;
+    document.body.append(difficulty);
+    const select = difficulty.querySelector<HTMLButtonElement>('.nl-select__trigger')!;
+    expect(difficulty.querySelector('select')).toBeNull();
     expect(difficulty.textContent).toContain('Choose difficulty');
-    expect(select.value).toBe('easy');
-    select.value = 'hard';
-    select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(select.getAttribute('aria-label')).toBe('Choose difficulty: Easy');
+    select.click();
+    difficulty.querySelectorAll<HTMLElement>('[role="option"]')[1]!.click();
     expect(onChange).toHaveBeenCalledExactlyOnceWith('hard');
   });
 
