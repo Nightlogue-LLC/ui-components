@@ -326,3 +326,39 @@
   outline: 2px solid var(--ref-gold);
   outline-offset: 2px;
 }
+
+/* Storybook mode selector. Plum and cream are paired modes, not competing themes. */
+.sb-ref-paired-theme {
+  width: min(100%, 440px);
+  min-width: 0;
+  margin-inline: auto;
+}
+.sb-ref-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #bfa680;
+  border-radius: 7px;
+  background: #f3e9da;
+}
+.sb-ref-mode-switch button {
+  min-width: 0;
+  padding: 10px 4px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: #392537;
+  font: 600 12px/1.3 Inter, sans-serif;
+  cursor: pointer;
+}
+.sb-ref-mode-switch button.is-active {
+  border-color: #ba9868;
+  background: linear-gradient(180deg, #442943, #261624);
+  box-shadow: 0 3px 7px rgba(38, 22, 36, 0.25);
+  color: #f6e9da;
+}
+.sb-ref-mode-switch button:focus-visible {
+  outline: 2px solid #916b34;
+  outline-offset: 2px;
+}
