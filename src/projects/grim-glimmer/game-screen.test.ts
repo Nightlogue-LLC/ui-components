@@ -51,7 +51,9 @@ describe('createGameControls', () => {
   it('starts in Tent mode with an accessible X switch', () => {
     const changes = vi.fn();
     const controls = createGameControls({ onModeChange: changes });
-    const [tent, exclude] = [...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__mode')];
+    const [tent, exclude] = [
+      ...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__mode'),
+    ];
     expect(tent?.getAttribute('aria-pressed')).toBe('true');
     expect(exclude?.getAttribute('aria-pressed')).toBe('false');
     exclude!.click();
@@ -67,7 +69,11 @@ describe('createGameControls', () => {
     const clear = vi.fn();
     const newGame = vi.fn();
     const controls = createGameControls({ onHint: hint, onClear: clear, onNewGame: newGame });
-    const actions = [...controls.querySelectorAll<HTMLButtonElement>('.nl-grim-glimmer-game-controls__actions button')];
+    const actions = [
+      ...controls.querySelectorAll<HTMLButtonElement>(
+        '.nl-grim-glimmer-game-controls__actions button',
+      ),
+    ];
     expect(actions.map((button) => button.textContent)).toEqual(['Hint', 'Clear', 'New Game']);
     actions.forEach((button) => button.click());
     expect(hint).toHaveBeenCalledOnce();
@@ -102,8 +108,6 @@ describe('createGameDifficulty', () => {
       createGameDifficulty({ value: 'unknown', options: [], onChange: vi.fn() }),
     ).toThrow();
   });
-
-
 });
 
 describe('createGameScreen', () => {

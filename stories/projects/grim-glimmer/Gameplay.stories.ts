@@ -33,7 +33,8 @@ function gameScreen(): HTMLElement {
       if (cells[index] === 'fixed') return;
       const state = cells[index];
       if (markMode === 'tent') {
-        cells[index] = state === 'tentative' ? 'placed' : state === 'placed' ? 'empty' : 'tentative';
+        cells[index] =
+          state === 'tentative' ? 'placed' : state === 'placed' ? 'empty' : 'tentative';
       } else {
         cells[index] = state === 'excluded' ? 'empty' : 'excluded';
       }
@@ -70,7 +71,7 @@ function gameScreen(): HTMLElement {
         updateBoard(grid, { cells });
       },
       onClear: () => {
-        cells = cells.map((state) => state === 'fixed' ? state : 'empty');
+        cells = cells.map((state) => (state === 'fixed' ? state : 'empty'));
         updateBoard(grid, { cells });
       },
       onHint: () => {
