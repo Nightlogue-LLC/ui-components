@@ -50,23 +50,49 @@ export function createAppSettings(options: AppSettingsOptions): HTMLElement {
   appearanceLabel.append(appearanceTitle, appearanceHint);
   const select = document.createElement('select');
   select.setAttribute('aria-label', 'Color theme');
-  for (const [value, label] of [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']] as const) {
+  for (const [value, label] of [
+    ['system', 'System'],
+    ['light', 'Light'],
+    ['dark', 'Dark'],
+  ] as const) {
     const option = document.createElement('option');
     option.value = value;
     option.textContent = label;
     select.append(option);
   }
   select.value = state.appearance;
-  select.addEventListener('change', () => emit({ ...state, appearance: select.value as AppAppearance }));
+  select.addEventListener('change', () =>
+    emit({ ...state, appearance: select.value as AppAppearance }),
+  );
   appearanceRow.append(appearanceLabel, select);
   appearance.append(appearanceRow);
 
   const preferences = section('Gameplay & feedback');
-  const items: { key: 'haptics' | 'sound' | 'autoFill' | 'animations'; label: string; description: string }[] = [
-    { key: 'haptics', label: 'Haptic feedback', description: 'Feel a subtle tap when making marks' },
-    { key: 'sound', label: 'Sound effects', description: 'Sounds for interactions and puzzle progress' },
-    { key: 'autoFill', label: 'Auto-fill assistance', description: 'Mark obvious exclusions automatically when supported' },
-    { key: 'animations', label: 'Animations', description: 'Gentle transitions and tactile motion' },
+  const items: {
+    key: 'haptics' | 'sound' | 'autoFill' | 'animations';
+    label: string;
+    description: string;
+  }[] = [
+    {
+      key: 'haptics',
+      label: 'Haptic feedback',
+      description: 'Feel a subtle tap when making marks',
+    },
+    {
+      key: 'sound',
+      label: 'Sound effects',
+      description: 'Sounds for interactions and puzzle progress',
+    },
+    {
+      key: 'autoFill',
+      label: 'Auto-fill assistance',
+      description: 'Mark obvious exclusions automatically when supported',
+    },
+    {
+      key: 'animations',
+      label: 'Animations',
+      description: 'Gentle transitions and tactile motion',
+    },
   ];
   for (const item of items) {
     const row = document.createElement('label');

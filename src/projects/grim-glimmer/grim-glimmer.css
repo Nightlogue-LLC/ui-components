@@ -954,7 +954,6 @@
   }
 }
 
-
 /* V2 mobile refinement: one colored app bar and one divider, then fluid puzzle content. */
 .nl-grim-glimmer-screen--compact .nl-grim-glimmer-app-header {
   grid-template-columns: 2.75rem 2.75rem;

@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
-import { createAppFrameHeader, createAppSettings, type AppSettingsState } from '../../../src/projects/grim-glimmer/index.js';
+import {
+  createAppFrameHeader,
+  createAppSettings,
+  type AppSettingsState,
+} from '../../../src/projects/grim-glimmer/index.js';
 import { sampleIcon } from '../../lib/icons.js';
 import { compareModes } from '../../lib/stage.js';
 import { THEME } from './shared.js';
@@ -52,7 +56,8 @@ const meta = {
     nlStage: 'self',
     docs: {
       description: {
-        component: 'Mock app-wide settings for appearance, haptics, sound, auto-fill assistance and animations. The controls are interactive, but nothing is persisted or connected to platform APIs. The same top app bar is used by gameplay.',
+        component:
+          'Mock app-wide settings for appearance, haptics, sound, auto-fill assistance and animations. The controls are interactive, but nothing is persisted or connected to platform APIs. The same top app bar is used by gameplay.',
       },
     },
   },
@@ -63,6 +68,5 @@ export default meta;
 type Story = StoryObj;
 
 export const SettingsScreen: Story = {
-  render: (_args, context) =>
-    compareModes(context, settingsScreen, { theme: THEME, bleed: true }),
+  render: (_args, context) => compareModes(context, settingsScreen, { theme: THEME, bleed: true }),
 };
