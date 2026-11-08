@@ -138,7 +138,9 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
       onSettings: () => {
         const settingsNav = createAppFrameHeader({
           icons: { back: sampleIcon('back'), settings: demoIcon('settings') },
-          onBack: () => render(),
+          hideBack: true,
+          settingsOpen: true,
+          onSettings: () => host.replaceChildren(screen),
         });
         const settings = createAppSettings({
           state: {
