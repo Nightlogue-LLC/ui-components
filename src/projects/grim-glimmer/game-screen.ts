@@ -37,6 +37,34 @@ export function createGameHeader(options: GameHeaderOptions): HTMLElement {
   return header;
 }
 
+/** Minimal gameplay header: Help · difficulty/size status · Menu. No puzzle title. */
+export interface CompactGameHeaderOptions {
+  status: string;
+  icons: { help: Node; menu: Node };
+  onHelp?: (event: MouseEvent) => void;
+  onMenu?: (event: MouseEvent) => void;
+}
+
+export function createCompactGameHeader(options: CompactGameHeaderOptions): HTMLElement {
+  const header = document.createElement('header');
+  header.className = 'nl-grim-glimmer-game-header nl-grim-glimmer-game-header--compact';
+  const help = createIconButton({
+    label: 'Help and rules',
+    icon: options.icons.help,
+    ...(options.onHelp ? { onClick: options.onHelp } : {}),
+  });
+  const status = document.createElement('p');
+  status.className = 'nl-grim-glimmer-game-header__status';
+  status.textContent = options.status;
+  const menu = createIconButton({
+    label: 'Game menu',
+    icon: options.icons.menu,
+    ...(options.onMenu ? { onClick: options.onMenu } : {}),
+  });
+  header.append(help, status, menu);
+  return header;
+}
+
 export interface GameDifficultyOption {
   value: string;
   label: string;
@@ -71,6 +99,100 @@ export function createGameDifficulty(options: GameDifficultyOptions): HTMLElemen
   select.addEventListener('change', () => options.onChange(select.value));
   control.append(label, select);
   return control;
+}
+
+/** Difficulty choice is staged in the menu until Deal New Puzzle is pressed. */
+export interface GameMenuOptions {
+  difficulty: string;
+  options: readonly (GameDifficultyOption & { size: number })[];
+  onDeal: (difficulty: string) => void;
+  title?: string;
+  dealLabel?: string;
+}
+
+export function createGameMenu(options: GameMenuOptions): HTMLDialogElement {
+  if (!options.options.some((option) => option.value === options.difficulty)) {
+    throw new Error('createGameMenu: difficulty must match an option');
+  }
+  const dialog = document.createElement('dialog');
+  dialog.className = 'nl-grim-glimmer-game-menu';
+  dialog.setAttribute('aria-label', options.title ?? 'Game Menu');
+  const panel = document.createElement('div');
+  panel.className = 'nl-grim-glimmer-game-menu__panel';
+
+  const heading = document.createElement('div');
+  heading.className = 'nl-grim-glimmer-game-menu__heading';
+  const title = document.createElement('h2');
+  title.textContent = options.title ?? 'Game Menu';
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'nl-grim-glimmer-game-menu__close';
+  close.setAttribute('aria-label', 'Close game menu');
+  close.textContent = '×';
+  close.addEventListener('click', () => dialog.close());
+  heading.append(title, close);
+
+  const label = document.createElement('p');
+  label.className = 'nl-grim-glimmer-game-menu__label';
+  label.textContent = 'Select difficulty';
+
+  const choices = document.createElement('div');
+  choices.className = 'nl-grim-glimmer-game-menu__choices';
+  choices.setAttribute('role', 'group');
+  choices.setAttribute('aria-label', 'Difficulty options');
+  let selected = options.difficulty;
+  const nodes: HTMLButtonElement[] = [];
+  options.options.forEach((option) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'nl-grim-glimmer-game-menu__choice';
+    button.dataset.value = option.value;
+    const name = document.createElement('span');
+    name.textContent = option.label;
+    const size = document.createElement('span');
+    size.textContent = `${option.size} × ${option.size}`;
+    button.append(name, size);
+    button.addEventListener('click', () => {
+      selected = option.value;
+      nodes.forEach((node) => {
+        const active = node.dataset.value === selected;
+        node.classList.toggle('nl-grim-glimmer-game-menu__choice--selected', active);
+        node.setAttribute('aria-pressed', String(active));
+      });
+    });
+    choices.append(button);
+    nodes.push(button);
+  });
+  nodes.forEach((node) => {
+    const active = node.dataset.value === selected;
+    node.classList.toggle('nl-grim-glimmer-game-menu__choice--selected', active);
+    node.setAttribute('aria-pressed', String(active));
+  });
+
+  const deal = createButton({
+    label: options.dealLabel ?? 'Deal New Puzzle',
+    variant: 'primary',
+    onClick: () => {
+      dialog.close();
+      options.onDeal(selected);
+    },
+  });
+  deal.classList.add('nl-grim-glimmer-game-menu__deal');
+  panel.append(heading, label, choices, deal);
+  dialog.append(panel);
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', () => {
+    // A cancelled menu must not retain a staged difficulty choice.
+    selected = options.difficulty;
+    nodes.forEach((node) => {
+      const active = node.dataset.value === selected;
+      node.classList.toggle('nl-grim-glimmer-game-menu__choice--selected', active);
+      node.setAttribute('aria-pressed', String(active));
+    });
+  });
+  return dialog;
 }
 
 export type GameMarkMode = 'tent' | 'exclude';
@@ -154,10 +276,12 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
 
 export interface GameScreenParts {
   header: Node;
-  /** Compact difficulty dropdown, kept separate from the header. */
-  difficulty: Node;
+  /** Legacy difficulty slot; compact gameplay moves difficulty into the menu. */
+  difficulty?: Node;
   board: Node;
   controls: Node;
+  /** Optional slide-over menu attached to this screen. */
+  menu?: Node;
 }
 
 export type GameScreenSlot = keyof GameScreenParts;
@@ -169,13 +293,16 @@ export type GameScreenSlot = keyof GameScreenParts;
 export function createGameScreen(parts: GameScreenParts): HTMLElement {
   const screen = document.createElement('section');
   screen.className = 'nl-grim-glimmer-screen';
+  if (!parts.difficulty) screen.classList.add('nl-grim-glimmer-screen--compact');
   for (const slot of ['header', 'difficulty', 'board', 'controls'] as const) {
+    if (slot === 'difficulty' && !parts.difficulty) continue;
     const box = document.createElement('div');
     box.className = `nl-grim-glimmer-screen__${slot}`;
     box.dataset.slot = slot;
     box.append(parts[slot]);
     screen.append(box);
   }
+  if (parts.menu) screen.append(parts.menu);
   return screen;
 }
 
