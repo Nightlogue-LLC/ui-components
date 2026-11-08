@@ -37,16 +37,70 @@ export function createGameHeader(options: GameHeaderOptions): HTMLElement {
   return header;
 }
 
+export interface GameDifficultyOption {
+  value: string;
+  label: string;
+}
+
+export interface GameDifficultyOptions {
+  label?: string;
+  value: string;
+  options: readonly GameDifficultyOption[];
+  onChange: (value: string) => void;
+}
+
+/** Native accessible dropdown for selecting difficulty. The consumer owns the chosen value. */
+export function createGameDifficulty(options: GameDifficultyOptions): HTMLElement {
+  if (!options.options.some((entry) => entry.value === options.value)) {
+    throw new Error('createGameDifficulty: selected value must match an option');
+  }
+  const control = document.createElement('label');
+  control.className = 'nl-grim-glimmer-game-difficulty';
+  const label = document.createElement('span');
+  label.className = 'nl-grim-glimmer-game-difficulty__label';
+  label.textContent = options.label ?? 'Difficulty';
+  const select = document.createElement('select');
+  select.className = 'nl-grim-glimmer-game-difficulty__select';
+  for (const item of options.options) {
+    const option = document.createElement('option');
+    option.value = item.value;
+    option.textContent = item.label;
+    select.append(option);
+  }
+  select.value = options.value;
+  select.addEventListener('change', () => options.onChange(select.value));
+  control.append(label, select);
+  return control;
+}
+
 export interface GameControlsOptions {
   /** Default "New Game". */
   newGameLabel?: string;
   onNewGame?: (event: MouseEvent) => void;
+  onUndo?: (event: MouseEvent) => void;
+  onHint?: (event: MouseEvent) => void;
+  undoLabel?: string;
+  hintLabel?: string;
 }
 
 /** Compact controls shown below the board. */
 export function createGameControls(options: GameControlsOptions = {}): HTMLElement {
   const controls = document.createElement('div');
   controls.className = 'nl-grim-glimmer-game-controls';
+  if (options.onUndo) {
+    controls.append(createButton({
+      label: options.undoLabel ?? 'Undo',
+      variant: 'ghost',
+      onClick: options.onUndo,
+    }));
+  }
+  if (options.onHint) {
+    controls.append(createButton({
+      label: options.hintLabel ?? 'Hint',
+      variant: 'ghost',
+      onClick: options.onHint,
+    }));
+  }
   controls.append(
     createButton({
       label: options.newGameLabel ?? 'New Game',
@@ -59,7 +113,7 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
 
 export interface GameScreenParts {
   header: Node;
-  /** The difficulty selector (a shared SegmentedControl), kept visually separate from the header. */
+  /** Compact difficulty dropdown, kept separate from the header. */
   difficulty: Node;
   board: Node;
   controls: Node;
