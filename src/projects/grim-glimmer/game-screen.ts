@@ -106,6 +106,7 @@ export interface GameMenuOptions {
   difficulty: string;
   options: readonly (GameDifficultyOption & { size: number })[];
   onDeal: (difficulty: string) => void;
+  onHelp?: () => void;
   title?: string;
   dealLabel?: string;
   helpLabel?: string;
