@@ -1089,3 +1089,16 @@
     transition: none;
   }
 }
+
+/* Explicitly honor hidden settings and game slots over their display rules. */
+.nl-grim-glimmer-screen--compact [data-slot][hidden],
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__settings[hidden],
+.nl-grim-glimmer-app-header .nl-icon-button[hidden] {
+  display: none;
+}
+
+.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__settings {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow-y: auto;
+}
