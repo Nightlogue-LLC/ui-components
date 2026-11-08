@@ -85,7 +85,7 @@ function buildFlow(
 
   const screen = createGameScreen({
     header: createGameHeader({
-      title: 'Tents & Trees',
+      title: 'Stars & Spires',
       icons: { back: sampleIcon('back'), help: sampleIcon('help') },
       onBack: () => log('back: board and progress retained (the app persists them)'),
       onHelp: () => openTutorial('help'),
@@ -236,7 +236,7 @@ Dialog**.
 **Modal flow** is a working simulation of the sequencing the game app must implement: first-visit tutorial over an
 Easy board, confirmation before replacing an *unfinished* board (not a solved one), solve → success → Close
 (read-only solved board) or Play Again, and a difficulty control that stays put until the app accepts. It is
-**not** Tents & Trees and not production state management.
+**not** Stars & Spires and not production state management.
 `,
       },
     },

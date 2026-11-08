@@ -146,7 +146,7 @@ function specimen(palette: Palette): HTMLElement {
     heading,
     el('section', { className: 'sb-ref-section' }, [
       el('h3', { text: 'Collection' }),
-      card('Tents & Trees', 'A logic puzzle of perfect pairings', 0),
+      card('Stars & Spires', 'A logic puzzle of perfect pairings', 0),
       card('Number Search', 'Find hidden sequences', 1),
       card('Bridges', 'Connect the islands', 2),
     ]),
@@ -173,7 +173,7 @@ function specimen(palette: Palette): HTMLElement {
       el('div', { className: 'sb-ref-success' }, [
         el('div', { className: 'sb-ref-success__icon', text: '✧　♕　✧' }),
         el('h4', { text: 'Puzzle Solved!' }),
-        el('p', { text: 'You completed Tents & Trees in 4:18.' }),
+        el('p', { text: 'You completed Stars & Spires in 4:18.' }),
         buttons(),
       ]),
     ]),
