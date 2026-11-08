@@ -1,0 +1,21 @@
+name: Temporary dual navigation validation
+on:
+  push:
+    branches:
+      - design/gameplay-board-and-controls-v2
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run format
+      - name: Show exact formatter updates
+        run: git diff -- src/projects/grim-glimmer stories/projects/grim-glimmer/Gameplay.stories.ts
+      - run: npm run check
