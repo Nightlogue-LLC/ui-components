@@ -19,5 +19,17 @@ export function parseThemeModes(css: string): Record<ModeName, TokenValues> {
       target[name!] = value!.trim();
     }
   }
-  return { light, dark: { ...light, ...darkOverrides } };
+  const resolve = (values: TokenValues): TokenValues => {
+    const result = { ...values };
+    for (let pass = 0; pass < 10; pass++) {
+      for (const [key, value] of Object.entries(result)) {
+        result[key] = value.replace(
+          /var\((--[\w-]+)\)/g,
+          (match, token: string) => result[token] ?? match,
+        );
+      }
+    }
+    return result;
+  };
+  return { light: resolve(light), dark: resolve({ ...light, ...darkOverrides }) };
 }
