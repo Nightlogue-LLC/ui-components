@@ -1,3 +1,5 @@
+import { applyTheme } from '../../../src/core/index.js';
+import { moonlitGlyph } from '../grim-glimmer-v3/moonlit.js';
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import { el } from '../../lib/dom.js';
 import '../../reference-gallery.css';
@@ -236,4 +238,53 @@ export const CurrentCharcoalComparison: Story = { render: () => specimen('charco
 export const DarkLightSideBySide: Story = {
   render: () =>
     el('div', { className: 'sb-ref-comparison' }, [specimen('plum'), specimen('cream')]),
+};
+
+function moonlitGallery(mode: 'light' | 'dark'): HTMLElement {
+  const root = specimen(mode === 'dark' ? 'plum' : 'cream');
+  applyTheme(root, 'moonlit-oxblood', mode);
+  root.classList.add('sb-moonlit');
+  root
+    .querySelector('.sb-ref-masthead h2')!
+    .replaceChildren(
+      'Grim ',
+      el('span', { className: 'sb-moonlit-accent', text: '&' }),
+      ' Glimmer',
+    );
+  root.querySelector('.sb-ref-masthead p')!.textContent = 'MOONLIT OXBLOOD · ' + mode;
+  root.querySelectorAll('.sb-ref-board').forEach((board) => {
+    board.querySelectorAll('.sb-ref-board__square').forEach((cell, i) => {
+      cell.replaceChildren(
+        ...(cell.textContent
+          ? [moonlitGlyph('spire')]
+          : [0, 8].includes(i)
+            ? [moonlitGlyph('star')]
+            : i === 12
+              ? [moonlitGlyph('maybe')]
+              : i === 15
+                ? [moonlitGlyph('exclusion')]
+                : []),
+      );
+    });
+    board.querySelector('.sb-ref-board__clue')?.classList.add('sb-moonlit-error');
+  });
+  return root;
+}
+export const MoonlitOxblood: Story = {
+  name: 'Moonlit Oxblood · Light Dark Comparison',
+  render: () =>
+    el('div', { className: 'sb-ref-comparison' }, [
+      moonlitGallery('light'),
+      moonlitGallery('dark'),
+    ]),
+};
+export const MoonlitOxbloodComparison: Story = {
+  name: 'Moonlit Oxblood versus Plum & Cream',
+  render: () =>
+    el('div', { className: 'sb-ref-comparison' }, [
+      specimen('cream'),
+      moonlitGallery('light'),
+      specimen('plum'),
+      moonlitGallery('dark'),
+    ]),
 };

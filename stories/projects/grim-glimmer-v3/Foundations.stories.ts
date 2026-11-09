@@ -13,3 +13,12 @@ export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },
   render: (_, context) => compareModes(context, () => specimen('all'), { theme }),
 };
+
+import {
+  MoonlitOxblood as moonlit,
+  MoonlitOxbloodComparison as comparison,
+  MoonlitContrast as audit,
+} from '../grim-glimmer/MoonlitStories.js';
+export const MoonlitOxblood = moonlit;
+export const MoonlitOxbloodComparison = comparison;
+export const MoonlitContrast = audit;

@@ -1,0 +1,80 @@
+.sb-moonlit-accent {
+  color: var(--nl-color-accent);
+}
+.sb-moonlit-muted {
+  color: var(--nl-moonlit-text-muted);
+}
+.sb-moonlit-error {
+  border-bottom: 2px solid var(--nl-grim-glimmer-v3-error);
+  background: transparent;
+}
+.sb-moonlit-glyph {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: var(--nl-moonlit-star);
+  mask: var(--glyph) center / contain no-repeat;
+}
+.sb-moonlit-glyph[data-glyph='spire'] {
+  background: var(--nl-moonlit-spire);
+}
+.sb-moonlit-glyph[data-glyph='maybe'],
+.sb-moonlit-glyph[data-glyph='exclusion'] {
+  opacity: 0.5;
+}
+.sb-moonlit-glyph[data-glyph='exclusion'] {
+  mask: none;
+  background: transparent;
+  color: var(--nl-moonlit-star);
+  font-size: 32px;
+  line-height: 1;
+}
+.sb-ref-frame.sb-moonlit {
+  --ref-bg: var(--nl-color-bg);
+  --ref-panel: var(--nl-color-surface);
+  --ref-ink: var(--nl-color-text);
+  --ref-muted: var(--nl-moonlit-text-muted);
+  --ref-gold: var(--nl-color-accent);
+  --ref-line: var(--nl-grim-glimmer-v3-hairline);
+  background: var(--nl-color-bg);
+  box-shadow: none;
+}
+.sb-ref-frame.sb-moonlit *,
+.sb-ref-frame.sb-moonlit *::before {
+  box-shadow: none;
+  background-image: none;
+}
+.sb-moonlit .sb-ref-action,
+.sb-moonlit .sb-ref-difficulty button {
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  border-color: var(--nl-color-border);
+}
+.sb-moonlit .sb-ref-action--0 {
+  background: var(--nl-color-text);
+  color: var(--nl-color-bg);
+  border-color: var(--nl-color-text);
+}
+.sb-moonlit .sb-ref-difficulty .is-active {
+  border-color: var(--nl-color-accent);
+  color: var(--nl-color-accent);
+}
+.sb-moonlit .sb-ref-section h3,
+.sb-moonlit .sb-ref-masthead p {
+  color: var(--nl-grim-glimmer-v3-label);
+}
+.sb-moonlit .sb-ref-board__square {
+  background: var(--nl-color-surface);
+}
+.sb-moonlit .sb-ref-board__clue {
+  color: var(--nl-color-text);
+}
+.sb-moonlit .sb-ref-board__square .sb-moonlit-glyph {
+  width: 80%;
+  height: 80%;
+}
+.sb-moonlit .sb-ref-bottom-nav__tab.is-active {
+  color: var(--nl-color-accent);
+  border-color: var(--nl-color-accent);
+  background: var(--nl-color-surface);
+}
