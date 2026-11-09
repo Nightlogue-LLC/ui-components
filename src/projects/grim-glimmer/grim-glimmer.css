@@ -685,6 +685,82 @@
   margin-inline: auto;
 }
 
+/* Guided tutorial: local practice, immediate outlines and delayed glow. */
+.nl-grim-glimmer-guided-tutorial .nl-dialog__body {
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-guided-tutorial__heading {
+  margin: 0 0 var(--nl-space-4);
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-md, 1.375rem);
+  font-weight: var(--nl-font-weight-heading, 400);
+}
+
+.nl-grim-glimmer-guided-tutorial__visual {
+  margin-block: var(--nl-space-4);
+}
+
+.nl-grim-glimmer-guided-tutorial__instruction {
+  min-height: 4.2em;
+  margin: var(--nl-space-4) 0 0;
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-grim-glimmer-board__cell {
+  border: var(--nl-border-width) solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-grim-glimmer-board__cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.nl-grim-glimmer-guided-tutorial__highlight {
+  --nl-grim-glimmer-tutorial-highlight: var(--nl-color-accent);
+
+  outline: 2px solid var(--nl-grim-glimmer-tutorial-highlight);
+  outline-offset: -3px;
+  animation: nl-grim-glimmer-tutorial-glow 2.6s ease-in-out
+    var(--nl-grim-glimmer-tutorial-glow-delay, 0ms) infinite;
+}
+
+/* A quiet glow around the tile; the outline and glyph stay fully legible and stationary. */
+@keyframes nl-grim-glimmer-tutorial-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: drop-shadow(
+      0 0 4px color-mix(in srgb, var(--nl-grim-glimmer-tutorial-highlight) 35%, transparent)
+    );
+  }
+}
+
+.nl-grim-glimmer-guided-tutorial__highlight[data-highlight-tone='error'] {
+  --nl-grim-glimmer-tutorial-highlight: var(--nl-grim-glimmer-tutorial-error, var(--nl-color-text));
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions {
+  flex-wrap: nowrap;
+  gap: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions > :first-child {
+  margin-right: auto;
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions > [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-guided-tutorial__highlight {
+    animation: none;
+  }
+}
+
 /* Quiet celestial accent: one small four-point star. Decorative; no confetti. */
 .nl-grim-glimmer-success__accent {
   display: block;

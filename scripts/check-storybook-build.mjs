@@ -59,6 +59,7 @@ const REQUIRED_STORIES = [
   'projects-grim-glimmer-gameplay--game-screen',
   'projects-grim-glimmer-gameplay--board-glyphs',
   'projects-grim-glimmer-dialogs--tutorial',
+  'projects-grim-glimmer-dialogs--guided-tutorial',
   'projects-grim-glimmer-dialogs--success',
   'projects-grim-glimmer-dialogs--discard-confirmation',
   'projects-grim-glimmer-dialogs--modal-flow',

@@ -14,6 +14,7 @@ import {
   createGameScreen,
   createSuccessDialog,
   createTutorialDialog,
+  createGuidedTutorialDialog,
   getGameScreenSlot,
   updateBoard,
   type BoardCellState,
@@ -28,6 +29,8 @@ import {
   createTutorialDialog as makeTutorial,
 } from '../../../src/projects/grim-glimmer/index.js';
 import { THEME } from './shared.js';
+import { withBoardGlyphs } from './board-glyphs.js';
+import { TUTORIAL_LESSONS } from './tutorial-lessons.js';
 
 const NEXT: Record<BoardCellState, BoardCellState> = {
   empty: 'placed',
@@ -269,6 +272,45 @@ export const Tutorial: StoryObj<TutorialArgs> = {
     ),
   play: openIt('Open tutorial'),
 };
+
+/** Iteration concept for app issue #18. Uses the existing modal, with local tracked practice. */
+export const GuidedTutorial: StoryObj<TutorialArgs & { glowDelay: number; initialLesson: number }> =
+  {
+    args: { onDone: fn(), glowDelay: 0, initialLesson: 0 },
+    argTypes: {
+      glowDelay: {
+        control: { type: 'range', min: 0, max: 1500, step: 50 },
+        description: 'Pause in milliseconds before the glow begins. Outlines appear immediately.',
+      },
+      initialLesson: {
+        control: { type: 'select' },
+        options: TUTORIAL_LESSONS.map((_, i) => i),
+        description: 'Open at a lesson (0–7) for visual review. Reopen after changing.',
+      },
+      onDone: { action: 'guided tutorial done', table: { category: 'events' } },
+    },
+    parameters: {
+      docs: {
+        description: {
+          story:
+            'Stars & Spires tutorial concept. Immediate gold guidance with delayed glow, three tracked taps (tentative → confirmed → empty), red rule examples, Back/Skip/Begin. Switch the Mode toolbar to review both themes. Practice is isolated from gameplay. The existing Tutorial and Modal flow stories remain as the integration baseline.',
+        },
+      },
+    },
+    render: (args) =>
+      withBoardGlyphs(
+        opener('Open guided tutorial', () =>
+          createGuidedTutorialDialog({
+            title: 'How to play',
+            lessons: TUTORIAL_LESSONS,
+            glowDelay: args.glowDelay,
+            initialLesson: args.initialLesson,
+            onDone: args.onDone,
+          }),
+        ),
+      ),
+    play: openIt('Open guided tutorial'),
+  };
 
 interface SuccessArgs {
   onPlayAgain: () => void;
