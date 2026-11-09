@@ -50,6 +50,7 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
   const root = el('div', { className: 'sb-onyx-screen' });
   applyTheme(root, theme, mode);
   if (theme.startsWith('onyx')) root.classList.add('sb-onyx');
+  if (theme === 'moonlit-oxblood') root.classList.add('sb-onyx', 'sb-moonlit');
   root.style.setProperty(
     '--sb-onyx-star',
     `url("${new URL('../grim-glimmer/assets/glyph-star.png', import.meta.url).href}")`,

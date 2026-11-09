@@ -78,3 +78,28 @@
   border-color: var(--nl-color-accent);
   background: var(--nl-color-surface);
 }
+
+/* Reuse screen compositions with Moonlit's own palette roles. */
+.sb-onyx.sb-moonlit {
+  --nl-onyx-muted: var(--nl-moonlit-text-muted);
+  --nl-onyx-hairline: var(--nl-grim-glimmer-v3-hairline);
+  --nl-onyx-star: var(--nl-moonlit-star);
+  --nl-onyx-spire: var(--nl-moonlit-spire);
+}
+.sb-onyx.sb-moonlit [aria-pressed='true'],
+.sb-onyx.sb-moonlit [aria-checked='true'],
+.sb-onyx.sb-moonlit [aria-current='page'] {
+  border-color: var(--nl-color-accent) !important;
+}
+.sb-onyx.sb-moonlit .nl-grim-glimmer-board__cell--tentative::before,
+.sb-onyx.sb-moonlit .nl-grim-glimmer-board__cell--excluded::before,
+.sb-onyx.sb-moonlit .nl-grim-glimmer-board__cell--excluded::after {
+  opacity: 0.5;
+}
+.sb-onyx.sb-moonlit .nl-grim-glimmer-board__cell--excluded::before,
+.sb-onyx.sb-moonlit .nl-grim-glimmer-board__cell--excluded::after {
+  background: var(--nl-moonlit-star);
+}
+.sb-onyx.sb-moonlit .sb-onyx-error {
+  border-color: var(--nl-grim-glimmer-v3-error);
+}

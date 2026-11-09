@@ -39,3 +39,10 @@ communicates a required boundary should use the proposed stronger opacity.
 This update is part of Phase 1 in PR #25. No default swap or app change.
 The gallery retains its existing mock layout; this is a palette comparison, not completed
 navigation or gameplay work. Native behavior and later visual phases remain separate.
+
+## Current direction
+
+Moonlit Oxblood is the selected V3 preview direction again. Foundations and current/proposed
+comparisons use it by default. All five screen compositions have dedicated light/dark stories
+under Editorial V3 → Moonlit Oxblood. Onyx & Crimson remains a comparison only.
+The application theme is unchanged until integration. Existing alpha contrast findings remain open.

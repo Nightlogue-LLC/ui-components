@@ -11,10 +11,10 @@ const meta = {
       'div',
       { className: 'sb-compare' },
       (['light', 'dark'] as const).flatMap((mode) =>
-        ['grim-glimmer', 'grim-glimmer-v3'].map((theme) => {
-          const proposed = theme.endsWith('v3');
+        ['grim-glimmer', 'moonlit-oxblood'].map((theme) => {
+          const proposed = theme === 'moonlit-oxblood';
           const pane = el('section', { className: 'sb-compare__pane' }, [
-            el('h2', { text: (proposed ? 'Proposed V3' : 'Current') + ' · ' + mode }),
+            el('h2', { text: (proposed ? 'Moonlit Oxblood' : 'Current') + ' · ' + mode }),
             proposed
               ? specimen('buttons')
               : el('div', { className: 'sb-row' }, [
