@@ -26,6 +26,6 @@ describe('editorial foundations', () => {
     }
     const off = createIcon('sound', { off: true, label: 'Sound off' });
     expect(off.getAttribute('aria-label')).toBe('Sound off');
-    expect(off.querySelectorAll('path')).toHaveLength(2);
+    expect(off.dataset.nlIcon).toBe('soundOff');
   });
 });

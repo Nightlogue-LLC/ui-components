@@ -48,7 +48,7 @@ export function createAppSettings(options: AppSettingsOptions): HTMLElement {
   const appearanceTitle = document.createElement('strong');
   appearanceTitle.textContent = 'Color theme';
   const appearanceHint = document.createElement('small');
-  appearanceHint.textContent = 'System, warm cream, or deep plum';
+  appearanceHint.textContent = 'System, Light, or Dark';
   appearanceLabel.append(appearanceTitle, appearanceHint);
   const select = createSelect({
     label: 'Color theme',

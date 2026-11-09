@@ -56,3 +56,6 @@ export type { AppAppearance, AppSettingsState, AppSettingsOptions } from './app-
 
 export { createMainScreen, updateMainScreen } from './main-screen.js';
 export type { MainPage, MainScreenOptions } from './main-screen.js';
+
+export { createGameMenuSheet } from './menu-sheet.js';
+export type { GameMenuSheet, GameMenuSheetOptions } from './menu-sheet.js';

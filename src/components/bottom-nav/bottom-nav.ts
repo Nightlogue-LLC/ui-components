@@ -1,3 +1,4 @@
+import { updateIconWeight } from '../icon/index.js';
 export interface BottomNavItem {
   value: string;
   label: string;
@@ -66,5 +67,8 @@ export function updateBottomNav(nav: HTMLElement, value: string): void {
   for (const [destination, button] of entries) {
     if (destination === value) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
+    button
+      .querySelectorAll<SVGSVGElement>('svg[data-nl-icon]')
+      .forEach((icon) => updateIconWeight(icon, destination === value ? 'fill' : 'light'));
   }
 }

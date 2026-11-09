@@ -49,3 +49,25 @@ tests/           architecture tests (theme contract, scoping, import boundaries)
 | [docs/grim-glimmer-integration.md](docs/grim-glimmer-integration.md) | Grim & Glimmer compositions and the contracts the game app must implement |
 | [docs/consuming.md](docs/consuming.md)                               | Using the library from another repository (incl. Vite/Capacitor)          |
 | [docs/distribution.md](docs/distribution.md)                         | Recommended packaging, versioning, and release strategy                   |
+
+## Shared UI icons
+
+Use `createIcon(name)` from `@nightlogue-llc/ui-components/components/icon`.
+The single map is `src/components/icon/icon-map.ts`. Only that file imports SVGs from
+`@phosphor-icons/core` (MIT, pinned 2.1.1). Defaults are Light and 24px; pass
+`{ weight: 'fill' }` for a selected state. BottomNav changes Light/Fill automatically.
+Do not import Phosphor or copy paths into components, stories, or consuming apps.
+
+To add or swap a symbol, edit its semantic entry in the map and add explicit Light/Fill
+asset imports there. Run `npm run check`. The build embeds only those SVGs into the
+packed package and includes Phosphor's MIT notice; consumers need no SVG loader.
+No wildcard imports, full catalog runtime, or external icon requests are used.
+
+`createIcon('sound', { off: true })` uses speaker-slash. Music and haptics off states
+use the Icon component's slash overlay. Decorative icons are hidden from assistive
+technology; label their containing button, or pass `{ label: 'Description' }` for a
+standalone image. Stars & Spires marks use `createPuzzleGlyph`, never Phosphor.
+
+Review **Components / Icons / Light Dark Comparison** and
+**Projects / Grim & Glimmer / GameHeader / Closed Light Dark Comparison** or
+**Open Light Dark Comparison** for the shared menu interaction.

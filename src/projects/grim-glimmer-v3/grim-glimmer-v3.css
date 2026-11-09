@@ -44,16 +44,6 @@
 .nl-grim-glimmer-v3-foundations .nl-button:disabled {
   opacity: 0.4;
 }
-.nl-grim-glimmer-v3-icon {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex-shrink: 0;
-}
 .nl-grim-glimmer-v3-toggle {
   display: flex;
   align-items: center;

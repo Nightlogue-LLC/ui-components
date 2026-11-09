@@ -7,6 +7,8 @@ import {
   createGameControls,
   createGameScreen,
   createGameMenu,
+  createAppFrameHeader,
+  createGameMenuSheet,
   createAppSettings,
   createSuccessDialog,
   type BoardCellState,
@@ -86,25 +88,38 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
     const menu = createGameMenu({
       difficulty: 'easy',
       options: [{ value: 'easy', label: 'Easy', size: 6 }],
-      onDeal: () => undefined,
-      onHelp: () => undefined,
+      onDeal: () => sheet.close(),
+      onHelp: () => sheet.close(),
     });
     menu.hidden = kind !== 'Game Menu';
-    menu.classList.add('sb-screen-fixture__sheet');
+
     const header = createCompactGameHeader({
       title: 'Stars & Spires',
       status: 'EASY · 6×6',
       icons: { hint: createIcon('hint'), menu: createIcon('menu') },
-      onMenu: () => {
-        menu.hidden = !menu.hidden;
-      },
     });
     const controls = createGameControls({
       tentLabel: 'Star',
       excludeLabel: 'Exclude',
       showNewGame: false,
     });
-    root.append(createGameScreen({ header, board: board(), controls, menu }));
+    const appHeader = createAppFrameHeader({
+      icons: { back: createIcon('back'), settings: createIcon('settings') },
+    });
+    const game = createGameScreen({ appHeader, header, board: board(), controls });
+    const sheet = createGameMenuSheet({
+      trigger: header.querySelector<HTMLButtonElement>(
+        '.nl-grim-glimmer-game-header__menu-toggle',
+      )!,
+      content: menu,
+      history: false,
+    });
+    game.append(sheet.element);
+    root.append(game);
+    if (kind === 'Game Menu')
+      queueMicrotask(() => {
+        if (game.isConnected) sheet.open();
+      });
     if (kind === 'Puzzle Complete') {
       const dialog = createSuccessDialog({
         title: 'Puzzle Complete',

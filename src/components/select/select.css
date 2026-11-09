@@ -80,8 +80,8 @@
   color: var(--nl-color-accent);
 }
 
-.nl-select__option[aria-selected='true']::after {
-  content: '✓';
+.nl-select__option:not([aria-selected='true']) .nl-select__check {
+  visibility: hidden;
 }
 
 @media (hover: hover) {

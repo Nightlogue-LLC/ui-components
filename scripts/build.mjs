@@ -4,7 +4,7 @@
 //      the assets those stylesheets reference (theme font files, .woff2) and their OFL licenses
 // CSS is shipped as plain, readable CSS files rather than being bundled into JS.
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,5 +37,22 @@ function copyCss(dir) {
   }
 }
 copyCss(src);
+const mapFile = join(dist, 'components/icon/icon-map.js');
+const assetRequire = createRequire(join(root, 'package.json'));
+const embedded = readFileSync(mapFile, 'utf8').replace(
+  /import (\w+) from ["'](@phosphor-icons\/core\/assets\/[^"']+\.svg)\?raw["'];/g,
+  (_, binding, specifier) =>
+    `const ${binding} = ${JSON.stringify(readFileSync(assetRequire.resolve(specifier), 'utf8'))};`,
+);
+writeFileSync(mapFile, embedded);
+copyFileSync(
+  join(
+    dirname(
+      dirname(dirname(assetRequire.resolve('@phosphor-icons/core/assets/light/x-light.svg'))),
+    ),
+    'LICENSE',
+  ),
+  join(dist, 'components/icon/LICENSE-phosphor.txt'),
+);
 
 console.log(`Built dist/ (copied ${copied} CSS, font and license files)`);

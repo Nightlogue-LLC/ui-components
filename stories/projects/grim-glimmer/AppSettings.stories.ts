@@ -1,3 +1,4 @@
+import { createIcon } from '../../../src/components/icon/index.js';
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import {
   createAppFrameHeader,
@@ -9,21 +10,6 @@ import { sampleIcon } from '../../lib/icons.js';
 import { compareModes } from '../../lib/stage.js';
 import { THEME } from './shared.js';
 import { mainScreenDemo } from './main-screen-demo.js';
-
-const NS = 'http://www.w3.org/2000/svg';
-function settingsIcon(): SVGSVGElement {
-  const svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('fill', 'none');
-  svg.setAttribute('stroke', 'currentColor');
-  svg.setAttribute('stroke-width', '1.8');
-  const circle = document.createElementNS(NS, 'circle');
-  circle.setAttribute('cx', '12');
-  circle.setAttribute('cy', '12');
-  circle.setAttribute('r', '4');
-  svg.append(circle);
-  return svg;
-}
 
 function settingsScreen(): HTMLElement {
   const host = document.createElement('div');
@@ -38,7 +24,7 @@ function settingsScreen(): HTMLElement {
   };
   let open = true;
   const navigation = createAppFrameHeader({
-    icons: { back: sampleIcon('back'), settings: settingsIcon() },
+    icons: { back: sampleIcon('back'), settings: createIcon('settings') },
     settingsOpen: true,
     hideBack: true,
     onSettings: () => {

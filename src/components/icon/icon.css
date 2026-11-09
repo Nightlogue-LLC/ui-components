@@ -1,0 +1,9 @@
+.nl-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.nl-icon[data-weight='light'] .nl-icon__fill,
+.nl-icon[data-weight='fill'] .nl-icon__light {
+  display: none;
+}

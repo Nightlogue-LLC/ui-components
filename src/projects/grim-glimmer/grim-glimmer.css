@@ -878,10 +878,11 @@
   grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
   gap: var(--nl-space-2);
   align-items: center;
-  height: 3.5rem;
-  padding: 0 var(--nl-space-3);
+  min-height: calc(3.5rem + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) max(var(--nl-space-3), env(safe-area-inset-right, 0px)) 0
+    max(var(--nl-space-3), env(safe-area-inset-left, 0px));
   border-bottom: 1px solid var(--nl-color-border);
-  background: var(--nl-color-surface);
+  background: var(--nl-color-bg);
 }
 
 .nl-grim-glimmer-app-header__title {
@@ -1033,7 +1034,7 @@
 .nl-grim-glimmer-screen--compact .nl-grim-glimmer-app-header {
   grid-template-columns: 2.75rem 2.75rem;
   justify-content: space-between;
-  background: var(--nl-color-surface-hover);
+  background: var(--nl-color-bg);
   border-bottom: 1px solid var(--nl-color-border);
 }
 
@@ -1222,4 +1223,107 @@
 
 .nl-grim-glimmer-wordmark-accent {
   color: var(--nl-color-accent);
+}
+
+/* Headers remain above the game menu's local scrim. Only the app header has a divider. */
+.nl-grim-glimmer-screen__app-header,
+.nl-grim-glimmer-screen__header {
+  position: relative;
+  z-index: 12;
+  background: var(--nl-color-bg);
+}
+.nl-grim-glimmer-menu-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.nl-grim-glimmer-menu-sheet[hidden] {
+  display: none;
+}
+.nl-grim-glimmer-menu-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  touch-action: none;
+  background: color-mix(in srgb, var(--nl-color-bg) 75%, transparent);
+}
+.nl-grim-glimmer-menu-sheet__panel {
+  position: absolute;
+  inset: auto 0 0;
+  pointer-events: auto;
+  max-height: 65%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--nl-space-5) max(var(--nl-space-4), env(safe-area-inset-right, 0px))
+    max(var(--nl-space-5), env(safe-area-inset-bottom, 0px))
+    max(var(--nl-space-4), env(safe-area-inset-left, 0px));
+  background: var(--nl-color-surface);
+  color: var(--nl-color-text);
+  border: var(--nl-border-width) solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md) var(--nl-radius-md) 0 0;
+}
+.nl-grim-glimmer-menu-toggle {
+  --nl-icon-button-size: 3rem;
+}
+.nl-grim-glimmer-menu-toggle__closed,
+.nl-grim-glimmer-menu-toggle__opened {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+.nl-grim-glimmer-menu-toggle .nl-icon-button__icon {
+  position: relative;
+}
+.nl-grim-glimmer-menu-toggle__opened {
+  opacity: 0;
+  transform: rotate(-45deg);
+}
+.nl-grim-glimmer-menu-toggle[aria-expanded='true'] .nl-grim-glimmer-menu-toggle__closed {
+  opacity: 0;
+  transform: rotate(45deg);
+}
+.nl-grim-glimmer-menu-toggle[aria-expanded='true'] .nl-grim-glimmer-menu-toggle__opened {
+  opacity: 1;
+  transform: rotate(0);
+}
+.nl-grim-glimmer-menu-toggle[data-animations='off'] .nl-grim-glimmer-menu-toggle__closed,
+.nl-grim-glimmer-menu-toggle[data-animations='off'] .nl-grim-glimmer-menu-toggle__opened {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-menu-toggle__closed,
+  .nl-grim-glimmer-menu-toggle__opened {
+    transition: none;
+  }
+}
+
+.nl-grim-glimmer-menu-sheet__handle {
+  width: 2rem;
+  height: 3px;
+  margin: 0 auto var(--nl-space-4);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-border);
+  touch-action: none;
+}
+
+/* Existing menu choices/actions compose inside the sheet without their old popover geometry. */
+.nl-grim-glimmer-menu-sheet__panel > .nl-grim-glimmer-game-menu {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
