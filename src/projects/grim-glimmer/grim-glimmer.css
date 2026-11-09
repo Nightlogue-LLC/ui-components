@@ -685,7 +685,7 @@
   margin-inline: auto;
 }
 
-/* Guided tutorial: local practice, delayed guidance and rule examples. */
+/* Guided tutorial: local practice, immediate outlines and delayed glow. */
 .nl-grim-glimmer-guided-tutorial .nl-dialog__body {
   color: var(--nl-color-text);
 }
@@ -721,9 +721,8 @@
 
   outline: 2px solid var(--nl-grim-glimmer-tutorial-highlight);
   outline-offset: -3px;
-  transition: outline-color 160ms ease var(--nl-grim-glimmer-tutorial-highlight-delay, 650ms);
   animation: nl-grim-glimmer-tutorial-glow 2.6s ease-in-out
-    calc(var(--nl-grim-glimmer-tutorial-highlight-delay, 650ms) + 160ms) infinite;
+    var(--nl-grim-glimmer-tutorial-glow-delay, 1000ms) infinite;
 }
 
 /* A quiet glow around the tile; the outline and glyph stay fully legible and stationary. */
@@ -743,12 +742,6 @@
   --nl-grim-glimmer-tutorial-highlight: var(--nl-grim-glimmer-tutorial-error, var(--nl-color-text));
 }
 
-@starting-style {
-  .nl-grim-glimmer-guided-tutorial__highlight {
-    outline-color: transparent;
-  }
-}
-
 .nl-grim-glimmer-guided-tutorial .nl-dialog__actions {
   flex-wrap: nowrap;
   gap: var(--nl-space-2);
@@ -764,7 +757,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nl-grim-glimmer-guided-tutorial__highlight {
-    transition: none;
     animation: none;
   }
 }

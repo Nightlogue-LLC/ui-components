@@ -6,7 +6,7 @@ The story opens the existing shared modal automatically. This is the review surf
 
 ## Flow
 
-1. A single row introduces two fixed spires, outlined in gold after 650ms.
+1. A single row introduces two fixed spires, outlined in gold immediately.
 2. The same row highlights one empty cell. Three taps show tentative → confirmed → empty,
    with an instruction after each tap. Next stays disabled until the cell is cleared.
 3. Full-board examples demonstrate adjacency, one-to-one pairing, stars touching diagonally,
@@ -19,11 +19,11 @@ the tutorial. Reopening starts a fresh practice session. No app storage or real 
 
 ## Iteration controls
 
-- **highlightDelay**: 0–1500ms pause before outlines appear.
+- **glowDelay**: 0–1500ms pause before the glow begins (default 1000ms).
 - **initialLesson**: 0–7, for opening a particular lesson without repeating practice.
 - **Mode** toolbar: light or dark, with the approved story-only star/spire assets.
 - **Viewport** toolbar: 320, 375 and 430px phone widths.
-- Highlights gently pulse with a 2.6-second glow after the delayed reveal. Gold guidance and
+- Highlight outlines appear immediately; a gentle 2.6-second glow starts one second later. Gold guidance and
   red error outlines stay legible throughout; the grid and glyphs stay stationary.
 - Reduced motion: static outlines appear immediately, with no fade or pulse.
 
