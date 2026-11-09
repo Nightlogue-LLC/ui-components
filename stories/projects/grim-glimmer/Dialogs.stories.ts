@@ -276,7 +276,7 @@ export const Tutorial: StoryObj<TutorialArgs> = {
 /** Iteration concept for app issue #18. Uses the existing modal, with local tracked practice. */
 export const GuidedTutorial: StoryObj<TutorialArgs & { glowDelay: number; initialLesson: number }> =
   {
-    args: { onDone: fn(), glowDelay: 1000, initialLesson: 0 },
+    args: { onDone: fn(), glowDelay: 0, initialLesson: 0 },
     argTypes: {
       glowDelay: {
         control: { type: 'range', min: 0, max: 1500, step: 50 },

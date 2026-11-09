@@ -722,7 +722,7 @@
   outline: 2px solid var(--nl-grim-glimmer-tutorial-highlight);
   outline-offset: -3px;
   animation: nl-grim-glimmer-tutorial-glow 2.6s ease-in-out
-    var(--nl-grim-glimmer-tutorial-glow-delay, 1000ms) infinite;
+    var(--nl-grim-glimmer-tutorial-glow-delay, 0ms) infinite;
 }
 
 /* A quiet glow around the tile; the outline and glyph stay fully legible and stationary. */

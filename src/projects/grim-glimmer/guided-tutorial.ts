@@ -34,7 +34,7 @@ export interface GuidedTutorialOptions {
   lessons: readonly TutorialLesson[];
   /** Storybook can open directly at a lesson for visual iteration. Default 0. */
   initialLesson?: number;
-  /** Pause before the glow begins. Outlines appear immediately. Default 1000ms. */
+  /** Pause before the glow begins. Outlines appear immediately. Default 0ms. */
   glowDelay?: number;
   onDone: (outcome: TutorialOutcome) => void;
 }
@@ -74,7 +74,7 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
   dialog.classList.add('nl-grim-glimmer-guided-tutorial');
   dialog.style.setProperty(
     '--nl-grim-glimmer-tutorial-glow-delay',
-    `${Math.max(0, options.glowDelay ?? 1000)}ms`,
+    `${Math.max(0, options.glowDelay ?? 0)}ms`,
   );
 
   const counter = document.createElement('p');
