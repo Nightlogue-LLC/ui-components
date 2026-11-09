@@ -6,7 +6,7 @@
 
 ```ts
 import '@nightlogue-llc/ui-components/styles.css';
-import '@nightlogue-llc/ui-components/themes/grim-glimmer.css';
+import '@nightlogue-llc/ui-components/themes/moonlit-oxblood.css';
 import '@nightlogue-llc/ui-components/projects/grim-glimmer.css';
 import { applyTheme } from '@nightlogue-llc/ui-components';
 import { createPuzzleCollectionCard } from '@nightlogue-llc/ui-components/projects/grim-glimmer';

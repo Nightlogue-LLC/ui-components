@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const src = join(process.cwd(), 'src');
 const buttonCss = readFileSync(join(src, 'components/button/button.css'), 'utf8');
-const projectTheme = readFileSync(join(src, 'themes/grim-glimmer/grim-glimmer.css'), 'utf8');
+const projectTheme = readFileSync(join(src, 'themes/moonlit-oxblood/moonlit-oxblood.css'), 'utf8');
 const neutralTheme = readFileSync(join(src, 'themes/neutral/neutral.css'), 'utf8');
 
 describe('tactile Button theme', () => {

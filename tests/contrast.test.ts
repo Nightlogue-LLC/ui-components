@@ -36,19 +36,8 @@ describe.each(projectThemes)('%s theme contrast', (theme) => {
 
   for (const mode of ['light', 'dark'] as const) {
     it.each(contrastPairs.filter((p) => p.enforced))(`${mode}: $label`, (pair) => {
-      // Onyx primary controls use ink/paper, never the decorative red accent as a fill.
-      // Red graphics are audited separately with alpha in onyx.test.ts.
-      const onyx = theme.startsWith('onyx-crimson');
-      const foreground =
-        onyx && pair.fg === '--nl-color-on-accent'
-          ? '--nl-color-bg'
-          : onyx && pair.fg === '--nl-color-accent'
-            ? '--nl-color-text'
-            : pair.fg;
-      const background =
-        onyx && pair.bg.startsWith('--nl-color-accent') ? '--nl-color-text' : pair.bg;
-      const fg = modes[mode][foreground];
-      const bg = modes[mode][background];
+      const fg = modes[mode][pair.fg];
+      const bg = modes[mode][pair.bg];
       expect(fg, `${pair.fg} must be a literal color`).toBeDefined();
       expect(bg, `${pair.bg} must be a literal color`).toBeDefined();
       expect(contrastRatio(fg!, bg!)).toBeGreaterThanOrEqual(pair.min);

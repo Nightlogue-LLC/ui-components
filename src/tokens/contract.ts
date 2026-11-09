@@ -44,6 +44,8 @@ export type ThemeToken = (typeof requiredThemeTokens)[number];
  * `var(--nl-font-family-heading, var(--nl-font-family))`.
  */
 export const optionalThemeTokens = [
+  '--star',
+  '--spire',
   // --- families -------------------------------------------------------------------------------
   /** Expressive titles (puzzle names). */
   '--nl-font-family-display',

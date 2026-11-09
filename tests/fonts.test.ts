@@ -49,7 +49,7 @@ const themesWithFonts = themes.filter((t) => faces(read(`themes/${t}/${t}.css`))
 
 describe('theme font assets', () => {
   it('the grim-glimmer theme bundles fonts; the neutral theme stays on system fonts', () => {
-    expect(themesWithFonts).toContain('grim-glimmer');
+    expect(themesWithFonts).toContain('moonlit-oxblood');
     expect(faces(read('themes/neutral/neutral.css'))).toEqual([]);
     const neutralDeclared = parseThemeModes(read('themes/neutral/neutral.css'));
     const typographyTokens = optionalThemeTokens.filter((t) =>
@@ -119,7 +119,7 @@ describe('theme font assets', () => {
 });
 
 describe('grim-glimmer typography roles', () => {
-  const css = read('themes/grim-glimmer/grim-glimmer.css');
+  const css = read('themes/moonlit-oxblood/moonlit-oxblood.css');
   const { light, dark } = parseThemeModes(css);
   const declared = faces(css);
   const foundation = read('tokens/tokens.css');

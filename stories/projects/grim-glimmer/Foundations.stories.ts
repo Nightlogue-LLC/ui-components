@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/html-vite';
 import { createPuzzleCollection } from '../../../src/projects/grim-glimmer/index.js';
 import { createButton } from '../../../src/components/button/index.js';
 import { requiredThemeTokens } from '../../../src/tokens/index.js';
-import themeCss from '../../../src/themes/grim-glimmer/grim-glimmer.css?raw';
+import themeCss from '../../../src/themes/moonlit-oxblood/moonlit-oxblood.css?raw';
 import { contrastRatio } from '../../lib/contrast.js';
 import { contrastPairs } from '../../lib/contrast-pairs.js';
 import { el } from '../../lib/dom.js';
@@ -351,12 +351,3 @@ export const TypographySampleCards: Story = {
       { theme: THEME, bleed: true },
     ),
 };
-
-import {
-  MoonlitOxblood as moonlit,
-  MoonlitOxbloodComparison as comparison,
-  MoonlitContrast as audit,
-} from './MoonlitStories.js';
-export const MoonlitOxblood = moonlit;
-export const MoonlitOxbloodComparison = comparison;
-export const MoonlitContrast = audit;

@@ -10,7 +10,7 @@ Run `npm run storybook` and open **Projects / Grim & Glimmer / Foundations** to 
 
 ```ts
 import '@nightlogue-llc/ui-components/styles.css';
-import '@nightlogue-llc/ui-components/themes/grim-glimmer.css';
+import '@nightlogue-llc/ui-components/themes/moonlit-oxblood.css';
 import { applyTheme } from '@nightlogue-llc/ui-components';
 
 applyTheme(document.documentElement, 'grim-glimmer', 'dark'); // 'dark' = plum, 'light' = cream

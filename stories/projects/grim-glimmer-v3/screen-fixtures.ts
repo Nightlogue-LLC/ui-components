@@ -1,5 +1,4 @@
 import { applyTheme } from '../../../src/core/index.js';
-import { createButton } from '../../../src/components/button/index.js';
 import {
   createCluedBoard,
   createPuzzleCollection,
@@ -14,13 +13,9 @@ import {
 } from '../../../src/projects/grim-glimmer/index.js';
 import { createIcon } from '../../../src/projects/grim-glimmer-v3/index.js';
 import { el } from '../../lib/dom.js';
-import './onyx.css';
+import { createBottomNav } from '../../../src/components/bottom-nav/index.js';
+import './screen-fixtures.css';
 export type Screen = 'Home' | 'Game Screen' | 'Game Menu' | 'Settings' | 'Puzzle Complete';
-export const variants = [
-  { label: 'Light', theme: 'onyx-crimson', mode: 'light' },
-  { label: 'Dark A', theme: 'onyx-crimson', mode: 'dark' },
-  { label: 'Dark B · Deep Blue', theme: 'onyx-crimson-blue', mode: 'dark' },
-] as const;
 function board(): HTMLElement {
   const cells: BoardCellState[] = Array.from({ length: 36 }, (_, i) =>
     [1, 10, 18, 29].includes(i)
@@ -42,26 +37,19 @@ function board(): HTMLElement {
     columnClues: [2, 0, 0, 1, 0, 1],
     stateLabels: { fixed: 'spire', placed: 'star', tentative: 'maybe star' },
   });
-  node.querySelector('.nl-grim-glimmer-clued-board__clue')?.classList.add('sb-onyx-error');
   return node;
 }
 /** Real library compositions with isolated palette fixtures, not a production game engine. */
 export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTMLElement {
-  const root = el('div', { className: 'sb-onyx-screen' });
+  const root = el('div', { className: 'sb-screen-fixture' });
   applyTheme(root, theme, mode);
-  if (theme.startsWith('onyx')) root.classList.add('sb-onyx');
-  if (theme === 'moonlit-oxblood') root.classList.add('sb-onyx', 'sb-moonlit');
-  root.style.setProperty(
-    '--sb-onyx-star',
-    `url("${new URL('../grim-glimmer/assets/glyph-star.png', import.meta.url).href}")`,
-  );
-  root.style.setProperty(
-    '--sb-onyx-spire',
-    `url("${new URL('../grim-glimmer/assets/glyph-spire-light.png', import.meta.url).href}")`,
-  );
   if (kind === 'Home') {
     root.append(
-      el('h1', {}, ['Grim ', el('span', { className: 'sb-onyx-amp', text: '&' }), ' Glimmer']),
+      el('h1', {}, [
+        'Grim ',
+        el('span', { className: 'nl-grim-glimmer-wordmark-accent', text: '&' }),
+        ' Glimmer',
+      ]),
     );
     root.append(
       createPuzzleCollection(
@@ -70,22 +58,21 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
             title,
             status: i ? 'coming-soon' : 'continue',
             preview: board(),
-            onOpen: () => root.replaceChildren(screen('Game Screen', theme, mode)),
+            onOpen: () => root.replaceWith(screen('Game Screen', theme, mode)),
           }),
         ),
         { label: 'Puzzle collection' },
       ),
     );
-    const nav = el('nav', { className: 'sb-onyx-nav' });
-    for (const name of ['Home', 'Settings'] as const) {
-      const button = createButton({
-        label: name,
-        variant: 'ghost',
-        onClick: () => root.replaceChildren(screen(name, theme, mode)),
-      });
-      if (name === 'Home') button.setAttribute('aria-current', 'page');
-      nav.append(button);
-    }
+    const nav = createBottomNav({
+      label: 'Main navigation',
+      value: 'Home',
+      items: [
+        { value: 'Home', label: 'Home', icon: createIcon('home') },
+        { value: 'Settings', label: 'Settings', icon: createIcon('settings') },
+      ],
+      onNavigate: (value) => root.replaceWith(screen(value as Screen, theme, mode)),
+    });
     root.append(nav);
   } else if (kind === 'Settings') {
     root.append(
@@ -103,7 +90,7 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
       onHelp: () => undefined,
     });
     menu.hidden = kind !== 'Game Menu';
-    menu.classList.add('sb-onyx-sheet');
+    menu.classList.add('sb-screen-fixture__sheet');
     const header = createCompactGameHeader({
       title: 'Stars & Spires',
       status: 'EASY · 6×6',
@@ -127,26 +114,9 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
         onClose: () => undefined,
       });
       dialog.setAttribute('open', '');
-      dialog.classList.add('sb-onyx-complete');
+      dialog.classList.add('sb-screen-fixture__complete');
       root.append(dialog);
     }
   }
   return root;
-}
-export function comparison(kind: Screen, old = false): HTMLElement {
-  const items: { label: string; theme: string; mode: 'light' | 'dark' }[] = [...variants];
-  if (old)
-    items.push(
-      { label: 'Moonlit Oxblood · Light', theme: 'moonlit-oxblood', mode: 'light' },
-      { label: 'Moonlit Oxblood · Dark', theme: 'moonlit-oxblood', mode: 'dark' },
-      { label: 'Plum / Cream · Light', theme: 'grim-glimmer', mode: 'light' },
-      { label: 'Plum / Cream · Dark', theme: 'grim-glimmer', mode: 'dark' },
-    );
-  return el(
-    'div',
-    { className: 'sb-onyx-comparison' },
-    items.map((v) =>
-      el('section', {}, [el('h2', { text: v.label }), screen(kind, v.theme, v.mode)]),
-    ),
-  );
 }

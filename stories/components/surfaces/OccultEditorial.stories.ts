@@ -103,7 +103,7 @@ const meta = {
   tags: ['autodocs'],
   render: study,
   parameters: {
-    nlTheme: 'grim-glimmer',
+    nlTheme: 'moonlit-oxblood',
     docs: {
       description: {
         component:
@@ -120,7 +120,7 @@ export const InteractiveStudy: Story = {};
 
 export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },
-  render: (_args, context) => compareModes(context, () => study(), { theme: 'grim-glimmer' }),
+  render: (_args, context) => compareModes(context, () => study(), { theme: 'moonlit-oxblood' }),
 };
 
 export const TilesOnly: Story = {

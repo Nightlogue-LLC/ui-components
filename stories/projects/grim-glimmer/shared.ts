@@ -7,7 +7,7 @@ import {
 import { mockBoard } from '../../lib/mock-board.js';
 
 /** Theme the Grim & Glimmer stories use by default (the toolbar can still switch it). */
-export const THEME = 'grim-glimmer';
+export const THEME = 'moonlit-oxblood';
 
 /** A tiny static pattern for card previews: a few given pieces, one placed. Placeholder only. */
 export function previewCells(generation: number, withPlaced: boolean): BoardCellState[] {
