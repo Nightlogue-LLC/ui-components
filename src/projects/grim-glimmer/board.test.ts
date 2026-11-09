@@ -102,10 +102,45 @@ describe('createCluedBoard', () => {
     const board = shell.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
     expect(board.children).toHaveLength(4);
     expect(shell.querySelectorAll('.nl-grim-glimmer-clued-board__clue')).toHaveLength(4);
-    expect(shell.querySelector('.nl-grim-glimmer-clued-board__columns')?.textContent).toBe('01');
-    expect(shell.querySelector('.nl-grim-glimmer-clued-board__rows')?.textContent).toBe('10');
+    expect(
+      [...shell.querySelectorAll('.nl-grim-glimmer-clued-board__columns [aria-hidden]')]
+        .map((n) => n.textContent)
+        .join(''),
+    ).toBe('01');
+    expect(
+      shell.querySelector('.nl-grim-glimmer-clued-board__columns .nl-grim-glimmer-visually-hidden')
+        ?.textContent,
+    ).toBe('Column 1: 0');
+    expect(
+      shell.querySelector('.nl-grim-glimmer-clued-board__clue')?.hasAttribute('aria-label'),
+    ).toBe(false);
+    expect(
+      [...shell.querySelectorAll('.nl-grim-glimmer-clued-board__rows [aria-hidden]')]
+        .map((n) => n.textContent)
+        .join(''),
+    ).toBe('10');
+    expect(
+      shell.querySelector('.nl-grim-glimmer-clued-board__rows .nl-grim-glimmer-visually-hidden')
+        ?.textContent,
+    ).toBe('Row 1: 1');
     updateBoard(board, { cells: ['placed', 'empty', 'fixed', 'marked'] });
     expect(board.children[0]?.classList.contains('nl-grim-glimmer-board__cell--placed')).toBe(true);
+  });
+
+  it('announces localized clue descriptions and hides thumbnail clues', () => {
+    const shell = createCluedBoard({
+      label: 'Stars & Spires',
+      size: 2,
+      mode: 'preview',
+      cells: cells(2),
+      rowClues: [1, 0],
+      columnClues: [2, 0],
+      columnClueLabel: (column, count) => `Column ${column}: ${count} stars`,
+    });
+    expect(shell.getAttribute('aria-hidden')).toBe('true');
+    expect(shell.querySelector('.nl-grim-glimmer-visually-hidden')?.textContent).toBe(
+      'Column 1: 2 stars',
+    );
   });
 
   it('validates the clue lengths and count bounds', () => {

@@ -5,10 +5,9 @@ import {
   ICON_NAMES,
 } from '../../../src/projects/grim-glimmer-v3/index.js';
 import { el } from '../../lib/dom.js';
-import './moonlit.css';
 export const theme = 'moonlit-oxblood';
 export function specimen(part = 'all'): HTMLElement {
-  const root = el('div', { className: 'nl-grim-glimmer-v3-foundations sb-moonlit' });
+  const root = el('div', { className: 'nl-grim-glimmer-v3-foundations' });
   root.append(
     el('h2', { text: 'Stars & Spires' }),
     el('p', { text: 'Editorial V3 · Phase 1 foundations' }),

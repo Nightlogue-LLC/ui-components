@@ -156,11 +156,14 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   columnClues.forEach((value, index) => {
     const clue = document.createElement('span');
     clue.className = 'nl-grim-glimmer-clued-board__clue';
-    clue.textContent = String(value);
-    clue.setAttribute(
-      'aria-label',
-      options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`,
-    );
+    const visible = document.createElement('span');
+    visible.textContent = String(value);
+    visible.setAttribute('aria-hidden', 'true');
+    const description = document.createElement('span');
+    description.className = 'nl-grim-glimmer-visually-hidden';
+    description.textContent =
+      options.columnClueLabel?.(index + 1, value) ?? `Column ${index + 1}: ${value}`;
+    clue.append(visible, description);
     columns.append(clue);
   });
 
@@ -170,11 +173,14 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   rowClues.forEach((value, index) => {
     const clue = document.createElement('span');
     clue.className = 'nl-grim-glimmer-clued-board__clue';
-    clue.textContent = String(value);
-    clue.setAttribute(
-      'aria-label',
-      options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`,
-    );
+    const visible = document.createElement('span');
+    visible.textContent = String(value);
+    visible.setAttribute('aria-hidden', 'true');
+    const description = document.createElement('span');
+    description.className = 'nl-grim-glimmer-visually-hidden';
+    description.textContent =
+      options.rowClueLabel?.(index + 1, value) ?? `Row ${index + 1}: ${value}`;
+    clue.append(visible, description);
     rows.append(clue);
   });
 

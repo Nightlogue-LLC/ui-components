@@ -48,7 +48,7 @@ describe('themes', () => {
   it.each(themes)('%s: base (no-mode) rules define every token in the theme contract', (theme) => {
     // Checked on the base rules alone, so a dark-mode block can't mask a missing base token.
     const base = rules(read(`themes/${theme}/${theme}.css`))
-      .filter((r) => !r.selector.startsWith('@') && !r.selector.includes('data-nl-mode'))
+      .filter((r) => !r.selector.startsWith('@') && !/data-nl-mode=["']?dark/.test(r.selector))
       .map((r) => r.body)
       .join('\n');
     const missing = requiredThemeTokens.filter((t) => !declared(base).has(t));

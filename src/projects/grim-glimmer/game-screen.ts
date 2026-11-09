@@ -1,3 +1,4 @@
+import { createPuzzleGlyph } from './glyphs.js';
 import { createSelect } from '../../components/select/index.js';
 import { createButton } from '../../components/button/index.js';
 import { createIconButton } from '../../components/icon-button/index.js';
@@ -341,7 +342,10 @@ export function createGameControls(options: GameControlsOptions = {}): HTMLEleme
       button.setAttribute('aria-label', label);
       button.title = label;
     } else {
-      button.textContent = label;
+      if (mode === 'tent') button.append(createPuzzleGlyph('star'));
+      const text = document.createElement('span');
+      text.textContent = label;
+      button.append(text);
     }
     button.addEventListener('click', () => {
       setMode(mode);

@@ -1,3 +1,4 @@
+export { createPuzzleGlyph } from './glyphs.js';
 // Grim & Glimmer project-specific compositions. Import from
 // '@nightlogue-llc/ui-components/projects/grim-glimmer' (and its .css). Built from shared
 // components; contains no game engine, persistence, or final artwork.

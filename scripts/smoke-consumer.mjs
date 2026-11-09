@@ -157,12 +157,12 @@ const specs = [
   '${name}/components/bottom-nav',
   '${name}/components/bottom-nav.css',
   '${name}/components/dialog',
-  '${name}/themes/grim-glimmer.css',
+  '${name}/themes/moonlit-oxblood.css',
   '${name}/projects/grim-glimmer',
   '${name}/projects/grim-glimmer.css',
   '${name}/themes/neutral.css',
-  '${name}/themes/grim-glimmer.css',
-  '${name}/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2',
+  '${name}/themes/moonlit-oxblood.css',
+  '${name}/theme-assets/moonlit-oxblood/fonts/inter-latin-400-normal.woff2',
 ];
 for (const s of specs) import.meta.resolve(s);
 const lib = await import('${name}');
@@ -187,7 +187,7 @@ for (const fn of ['createButton','createIconButton','createCard','createSegmente
       join(root, 'app.ts'),
       `${imports.map((i) => `import '${name}/${i}';`).join('\n')}
 import { createButton, applyTheme } from '${name}';
-applyTheme(document.body, '${themeName}');
+applyTheme(document.body, '${themeName}', 'light');
 document.body.append(createButton({ label: 'Smoke' }));
 `,
     );
@@ -205,14 +205,14 @@ document.body.append(createButton({ label: 'Smoke' }));
   step('vite build of a consumer using both themes');
   const both = bundle(
     'app-themes',
-    ['styles.css', 'themes/neutral.css', 'themes/grim-glimmer.css', 'projects/grim-glimmer.css'],
-    'grim-glimmer',
+    ['styles.css', 'themes/neutral.css', 'themes/moonlit-oxblood.css', 'projects/grim-glimmer.css'],
+    'moonlit-oxblood',
   );
   for (const needle of [
     '.nl-button',
     '--nl-space-1',
     '[data-nl-theme=neutral]',
-    '[data-nl-theme=grim-glimmer]',
+    '[data-nl-theme=moonlit-oxblood]',
     '.nl-grim-glimmer-board',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);

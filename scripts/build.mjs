@@ -28,7 +28,7 @@ function copyCss(dir) {
     const from = join(dir, entry.name);
     if (entry.isDirectory()) {
       copyCss(from);
-    } else if (/\.(css|woff2)$/.test(entry.name) || /^OFL-.*\.txt$/.test(entry.name)) {
+    } else if (/\.(css|woff2|svg)$/.test(entry.name) || /^OFL-.*\.txt$/.test(entry.name)) {
       const to = join(dist, relative(src, from));
       mkdirSync(dirname(to), { recursive: true });
       copyFileSync(from, to);

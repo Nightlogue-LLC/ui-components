@@ -51,7 +51,7 @@ Requirements for the consumer: an ES-module-aware bundler (Vite is fine) and Typ
 
 ## Fonts
 
-A theme that bundles fonts (currently `grim-glimmer`) carries them with its CSS. Importing `.../themes/grim-glimmer.css` is enough: your bundler resolves the relative `url()`s and emits the WOFF2 files as local assets (no network, no CDN). Apps that use only the `neutral` theme, or no theme, receive no font files. To preload a font, use its asset path, for example `@nightlogue-llc/ui-components/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2` (`theme-assets/*` maps to the theme folders).
+A theme that bundles fonts (currently `grim-glimmer`) carries them with its CSS. Importing `.../themes/moonlit-oxblood.css` is enough: your bundler resolves the relative `url()`s and emits the WOFF2 files as local assets (no network, no CDN). Apps that use only the `neutral` theme, or no theme, receive no font files. To preload a font, use its asset path, for example `@nightlogue-llc/ui-components/theme-assets/grim-glimmer/fonts/inter-latin-400-normal.woff2` (`theme-assets/*` maps to the theme folders).
 
 ## Capacitor Android
 

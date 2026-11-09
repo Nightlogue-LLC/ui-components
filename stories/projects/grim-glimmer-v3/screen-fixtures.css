@@ -1,0 +1,29 @@
+.sb-screen-comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: 20px;
+  padding: 16px;
+}
+.sb-screen-fixture {
+  --nl-grim-glimmer-spire-inset: 15%;
+  position: relative;
+  min-height: 640px;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.sb-screen-fixture__sheet:not([hidden]) {
+  position: absolute;
+  inset: auto 0 0;
+  margin: 0;
+  padding: 24px;
+  z-index: 2;
+}
+.sb-screen-fixture__complete[open] {
+  position: absolute;
+  inset: auto 0 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 280px;
+}

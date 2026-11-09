@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
-import { screen, type Screen } from './onyx-screens.js';
+import { screen, type Screen } from './screen-fixtures.js';
 import { el } from '../../lib/dom.js';
-import './moonlit.css';
 const meta = {
   title: 'Projects/Grim & Glimmer — Editorial V3/Moonlit Oxblood',
   parameters: { nlStage: 'self' },
@@ -15,7 +14,7 @@ const meta = {
   render: (args: { screen: Screen }) =>
     el(
       'div',
-      { className: 'sb-onyx-comparison' },
+      { className: 'sb-screen-comparison' },
       (['light', 'dark'] as const).map((mode) =>
         el('section', {}, [
           el('h2', { text: 'Moonlit Oxblood · ' + mode }),

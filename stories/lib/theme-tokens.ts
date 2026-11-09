@@ -14,7 +14,7 @@ export function parseThemeModes(css: string): Record<ModeName, TokenValues> {
   const darkOverrides: TokenValues = {};
   for (const [, selector, body] of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     if (selector!.trim().startsWith('@')) continue;
-    const target = selector!.includes('data-nl-mode') ? darkOverrides : light;
+    const target = /data-nl-mode=["']?dark/.test(selector!) ? darkOverrides : light;
     for (const [, name, value] of body!.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
       target[name!] = value!.trim();
     }
