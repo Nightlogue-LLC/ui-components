@@ -24,12 +24,14 @@ const declared = (css: string) =>
 const used = (css: string) => new Set([...css.matchAll(/var\(\s*(--[\w-]+)/g)].map((m) => m[1]!));
 /** Strips comments so documentation never trips the checks. */
 const stripComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
-/** Style rules as {selector, body}, ignoring @-rules like @keyframes/@media wrappers. */
+/** Style rules as {selector, body}; keyframe stops are not element selectors. */
 const rules = (css: string) =>
-  [...stripComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
-    selector: m[1]!.trim(),
-    body: m[2]!,
-  }));
+  [...stripComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .map((m) => ({ selector: m[1]!.trim(), body: m[2]! }))
+    .filter(
+      (rule) =>
+        !rule.selector.split(',').every((stop) => /^(from|to|\d+(\.\d+)?%)$/.test(stop.trim())),
+    );
 
 describe('themes', () => {
   const themes = dirs('themes');

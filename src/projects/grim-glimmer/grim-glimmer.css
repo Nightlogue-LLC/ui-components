@@ -722,6 +722,21 @@
   outline: 2px solid var(--nl-grim-glimmer-tutorial-highlight);
   outline-offset: -3px;
   transition: outline-color 160ms ease var(--nl-grim-glimmer-tutorial-highlight-delay, 650ms);
+  animation: nl-grim-glimmer-tutorial-glow 2.6s ease-in-out
+    calc(var(--nl-grim-glimmer-tutorial-highlight-delay, 650ms) + 160ms) infinite;
+}
+
+/* A quiet glow around the tile; the outline and glyph stay fully legible and stationary. */
+@keyframes nl-grim-glimmer-tutorial-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: drop-shadow(
+      0 0 4px color-mix(in srgb, var(--nl-grim-glimmer-tutorial-highlight) 35%, transparent)
+    );
+  }
 }
 
 .nl-grim-glimmer-guided-tutorial__highlight[data-highlight-tone='error'] {
@@ -750,6 +765,7 @@
 @media (prefers-reduced-motion: reduce) {
   .nl-grim-glimmer-guided-tutorial__highlight {
     transition: none;
+    animation: none;
   }
 }
 

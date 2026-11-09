@@ -23,7 +23,9 @@ the tutorial. Reopening starts a fresh practice session. No app storage or real 
 - **initialLesson**: 0–7, for opening a particular lesson without repeating practice.
 - **Mode** toolbar: light or dark, with the approved story-only star/spire assets.
 - **Viewport** toolbar: 320, 375 and 430px phone widths.
-- Reduced motion: outlines appear immediately, with no fade.
+- Highlights gently pulse with a 2.6-second glow after the delayed reveal. Gold guidance and
+  red error outlines stay legible throughout; the grid and glyphs stay stationary.
+- Reduced motion: static outlines appear immediately, with no fade or pulse.
 
 The new `createGuidedTutorialDialog` composition accepts caller-authored lessons and keeps
 practice progress local. Stars & Spires copy and example data live in the Storybook source,
