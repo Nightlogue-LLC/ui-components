@@ -137,7 +137,9 @@ export function createCompactGameHeader(options: CompactGameHeaderOptions): HTML
     icon: options.icons.menu,
     ...(options.onMenu ? { onClick: options.onMenu } : {}),
   });
+  menu.classList.add('nl-grim-glimmer-game-header__menu-toggle');
   menu.setAttribute('aria-haspopup', 'dialog');
+  menu.setAttribute('aria-expanded', 'false');
   header.append(hintHolder, heading, menu);
   return header;
 }

@@ -117,6 +117,8 @@
 
 /* Close button: a CSS-drawn cross (no icon asset), 44x44 target. */
 .nl-dialog__close {
+  display: grid;
+  place-items: center;
   position: relative;
   flex: none;
   box-sizing: border-box;
@@ -131,22 +133,6 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-}
-
-.nl-dialog__close::before,
-.nl-dialog__close::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 1.125rem;
-  height: 2px;
-  background: currentcolor;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.nl-dialog__close::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 @media (hover: hover) {

@@ -1,3 +1,4 @@
+import { createIcon, type IconName } from '../../../src/components/icon/index.js';
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import { fn } from 'storybook/test';
 import { createBottomNav, updateBottomNav } from '../../../src/components/bottom-nav/index.js';
@@ -10,12 +11,11 @@ interface Args {
 
 function build(args: Args): HTMLElement {
   const items = [
-    ['home', 'Home', '◇'],
-    ['milestones', 'Milestones', '☆'],
-    ['preferences', 'Preferences', '⚙'],
+    ['home', 'Home', 'home'],
+    ['milestones', 'Milestones', 'achievements'],
+    ['preferences', 'Preferences', 'settings'],
   ].map(([value, label, glyph]) => {
-    const icon = document.createElement('span');
-    icon.textContent = glyph!;
+    const icon = createIcon(glyph as IconName);
     return { value: value!, label: label!, icon };
   });
   const nav = createBottomNav({

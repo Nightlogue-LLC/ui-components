@@ -1,3 +1,4 @@
+import { createIcon } from '../icon/index.js';
 export interface SelectOption {
   value: string;
   label: string;
@@ -32,7 +33,7 @@ export function createSelect(options: SelectOptions): HTMLElement {
   const arrow = document.createElement('span');
   arrow.className = 'nl-select__arrow';
   arrow.setAttribute('aria-hidden', 'true');
-  arrow.textContent = '⌄';
+  arrow.append(createIcon('chevronDown'));
   trigger.append(value, arrow);
   const list = document.createElement('div');
   list.className = 'nl-select__list';
@@ -46,7 +47,11 @@ export function createSelect(options: SelectOptions): HTMLElement {
     node.className = 'nl-select__option';
     node.setAttribute('role', 'option');
     node.tabIndex = -1;
-    node.textContent = option.label;
+    const label = document.createElement('span');
+    label.textContent = option.label;
+    const check = createIcon('check');
+    check.classList.add('nl-select__check');
+    node.append(label, check);
     node.addEventListener('click', () => commit(index));
     list.append(node);
     return node;

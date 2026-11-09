@@ -1,3 +1,4 @@
+import { createIcon } from '../icon/index.js';
 import { uniqueId } from '../../core/id.js';
 
 export type DialogCloseReason = 'close-button' | 'escape' | 'backdrop' | 'programmatic';
@@ -72,6 +73,7 @@ export function createDialog(options: DialogOptions): HTMLDialogElement {
     close.type = 'button';
     close.className = 'nl-dialog__close';
     close.setAttribute('aria-label', closeLabel);
+    close.append(createIcon('close'));
     close.addEventListener('click', () => finish(dialog, 'close-button'));
     header.append(close);
   }

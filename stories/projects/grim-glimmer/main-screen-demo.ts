@@ -1,3 +1,4 @@
+import { createIcon } from '../../../src/components/icon/index.js';
 import {
   createAppSettings,
   createMainScreen,
@@ -55,24 +56,6 @@ function collectionPage(): HTMLElement {
   );
 }
 
-/** Placeholder glyphs supplied by the story, never bundled as library artwork. */
-function icon(paths: readonly string[]): SVGSVGElement {
-  const ns = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('fill', 'none');
-  svg.setAttribute('stroke', 'currentColor');
-  svg.setAttribute('stroke-width', '1.6');
-  svg.setAttribute('stroke-linecap', 'round');
-  svg.setAttribute('stroke-linejoin', 'round');
-  for (const d of paths) {
-    const path = document.createElementNS(ns, 'path');
-    path.setAttribute('d', d);
-    svg.append(path);
-  }
-  return svg;
-}
-
 /** Visual-only navigation. No progress writes, game routes, achievements or device effects. */
 export function mainScreenDemo(page: MainPage): HTMLElement {
   const achievements = el('div', { className: 'nl-grim-glimmer-main-screen__placeholder' }, [
@@ -86,18 +69,9 @@ export function mainScreenDemo(page: MainPage): HTMLElement {
     value: page,
     pages: { collection: collectionPage(), achievements, settings },
     icons: {
-      collection: icon(['M3 10l9-7 9 7', 'M5 9v12h14V9', 'M9 21v-7h6v7']),
-      achievements: icon([
-        'M8 3h8v7a4 4 0 0 1-8 0V3Z',
-        'M8 5H4v3a4 4 0 0 0 4 4',
-        'M16 5h4v3a4 4 0 0 1-4 4',
-        'M12 14v6',
-        'M8 21h8',
-      ]),
-      settings: icon([
-        'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8',
-        'M10 3h4l1 3 3 1 3-1 2 4-2 2v3l1 2-3 3-3-1-2 2h-4l-1-3-3-1-3 1-2-4 2-2v-3L2 7l3-3 3 1 2-2Z',
-      ]),
+      collection: createIcon('home'),
+      achievements: createIcon('achievements'),
+      settings: createIcon('settings'),
     },
     onNavigate: (next) => updateMainScreen(screen, next),
   });
