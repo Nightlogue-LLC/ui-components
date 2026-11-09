@@ -1,0 +1,56 @@
+@import '../grim-glimmer/grim-glimmer.css';
+
+[data-nl-theme='grim-glimmer-v3'] {
+  color-scheme: light;
+  --nl-font-family: 'GG Inter', sans-serif;
+  --nl-font-family-heading: 'GG Cormorant Infant', serif;
+  --nl-font-family-display: 'GG Cormorant Upright', serif;
+  --nl-font-family-label: 'GG Cormorant SC', serif;
+  --nl-radius-md: 4px;
+  --nl-grim-glimmer-v3-button-ink: #2a1a2e;
+  --nl-grim-glimmer-v3-radius-surface: 12px;
+  --nl-size-control-md: 3rem;
+  --nl-shadow-card: none;
+  --nl-shadow-dialog: none;
+  --nl-button-radius: var(--nl-radius-md);
+  --nl-button-primary-border: #8f6b2f;
+  --nl-button-primary-background: #b8914a;
+  --nl-button-primary-background-hover: #b8914a;
+  --nl-button-primary-background-active: #b8914a;
+  --nl-button-press-transform: scale(0.96);
+  --nl-grim-glimmer-v3-error: #8c2b2b;
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+  --nl-color-bg: #f7f2e8;
+  --nl-color-surface: #fdfbf6;
+  --nl-color-surface-hover: #eee7dc;
+  --nl-color-text: #2a1a2e;
+  --nl-color-border: #8f818c;
+  --nl-grim-glimmer-v3-hairline: #c3bcc0;
+  --nl-color-accent: #8f6b2f;
+  --nl-color-accent-hover: #8f6b2f;
+  --nl-color-accent-active: #8f6b2f;
+  --nl-color-on-accent: #fdfbf6;
+  --nl-color-focus-ring: #8f6b2f;
+  --nl-color-disabled-bg: #f7f2e8;
+  --nl-color-disabled-text: #2a1a2e;
+  --nl-grim-glimmer-v3-label: #89662c;
+}
+[data-nl-theme='grim-glimmer-v3'][data-nl-mode='dark'] {
+  color-scheme: dark;
+  --nl-color-bg: #1e1520;
+  --nl-color-surface: #2e2230;
+  --nl-color-surface-hover: #382b3b;
+  --nl-color-text: #f4ecdd;
+  --nl-color-border: #8c8089;
+  --nl-grim-glimmer-v3-hairline: #5e555c;
+  --nl-color-accent: #b8914a;
+  --nl-color-accent-hover: #b8914a;
+  --nl-color-accent-active: #b8914a;
+  --nl-color-on-accent: #2a1a2e;
+  --nl-color-focus-ring: #b8914a;
+  --nl-color-disabled-bg: #2e2230;
+  --nl-color-disabled-text: #f4ecdd;
+  --nl-grim-glimmer-v3-label: #b8914a;
+}

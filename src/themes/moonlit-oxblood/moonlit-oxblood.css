@@ -1,0 +1,88 @@
+@import '../grim-glimmer/grim-glimmer.css';
+[data-nl-theme='moonlit-oxblood'] {
+  color-scheme: light;
+  --nl-color-bg: #efebe6;
+  --nl-color-surface: #f8f5f1;
+  --nl-color-surface-hover: #f8f5f1;
+  --nl-color-text: #170f12;
+  --nl-color-border: #6b5f60;
+  --nl-color-accent: #681f35;
+  --nl-color-accent-hover: #681f35;
+  --nl-color-accent-active: #681f35;
+  --nl-color-on-accent: #efebe6;
+  --nl-color-focus-ring: #681f35;
+  --nl-color-disabled-bg: #f8f5f1;
+  --nl-color-disabled-text: #6b5f60;
+  --nl-grim-glimmer-v3-label: #681f35;
+  --nl-grim-glimmer-v3-hairline: rgba(23, 15, 18, 0.28);
+  --nl-grim-glimmer-v3-error: #b83a22;
+  --nl-grim-glimmer-v3-button-ink: #efebe6;
+  --nl-moonlit-surface-high: #f8f5f1;
+  --nl-moonlit-text-muted: #6b5f60;
+  --nl-moonlit-star: #681f35;
+  --nl-moonlit-spire: #170f12;
+  --nl-button-primary-background: #170f12;
+  --nl-button-primary-background-hover: #170f12;
+  --nl-button-primary-background-active: #170f12;
+  --nl-button-primary-border: #170f12;
+  --nl-font-family: 'GG Inter', sans-serif;
+  --nl-font-family-heading: 'GG Cormorant Infant', serif;
+  --nl-font-family-display: 'GG Cormorant Upright', serif;
+  --nl-font-family-label: 'GG Cormorant SC', serif;
+  --nl-radius-md: 4px;
+  --nl-grim-glimmer-v3-radius-surface: 12px;
+  --nl-button-radius: 4px;
+  --nl-size-control-md: 3rem;
+  --nl-shadow-card: none;
+  --nl-shadow-dialog: none;
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+}
+[data-nl-theme='moonlit-oxblood'][data-nl-mode='dark'] {
+  color-scheme: dark;
+  --nl-color-bg: #120c0e;
+  --nl-color-surface: #1c1417;
+  --nl-color-surface-hover: #2a1f23;
+  --nl-color-text: #efe8e2;
+  --nl-color-border: #a99b9b;
+  --nl-color-accent: #b87a8c;
+  --nl-color-accent-hover: #b87a8c;
+  --nl-color-accent-active: #b87a8c;
+  --nl-color-on-accent: #120c0e;
+  --nl-color-focus-ring: #b87a8c;
+  --nl-color-disabled-bg: #1c1417;
+  --nl-color-disabled-text: #a99b9b;
+  --nl-grim-glimmer-v3-label: #c48a9b;
+  --nl-grim-glimmer-v3-hairline: rgba(239, 232, 226, 0.22);
+  --nl-grim-glimmer-v3-error: #e5533a;
+  --nl-grim-glimmer-v3-button-ink: #120c0e;
+  --nl-moonlit-surface-high: #2a1f23;
+  --nl-moonlit-text-muted: #a99b9b;
+  --nl-moonlit-star: #f4f0f2;
+  --nl-moonlit-spire: #b3a6a4;
+  --nl-button-primary-background: #efe8e2;
+  --nl-button-primary-background-hover: #efe8e2;
+  --nl-button-primary-background-active: #efe8e2;
+  --nl-button-primary-border: #efe8e2;
+  --nl-font-family: 'GG Inter', sans-serif;
+  --nl-font-family-heading: 'GG Cormorant Infant', serif;
+  --nl-font-family-display: 'GG Cormorant Upright', serif;
+  --nl-font-family-label: 'GG Cormorant SC', serif;
+  --nl-radius-md: 4px;
+  --nl-grim-glimmer-v3-radius-surface: 12px;
+  --nl-button-radius: 4px;
+  --nl-size-control-md: 3rem;
+  --nl-shadow-card: none;
+  --nl-shadow-dialog: none;
+  background: var(--nl-color-bg);
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+}
+[data-nl-theme='moonlit-oxblood'] .nl-button--primary {
+  color: var(--nl-color-bg);
+}
+[data-nl-theme='moonlit-oxblood'] .nl-button {
+  box-shadow: none;
+  background-image: none;
+}
