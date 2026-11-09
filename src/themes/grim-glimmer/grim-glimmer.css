@@ -91,6 +91,7 @@
   color-scheme: light;
 
   --nl-color-bg: #faf5ec;
+  --nl-grim-glimmer-tutorial-error: #b23a36;
   --nl-color-surface: #fffdf9;
   --nl-color-surface-hover: #eee7de;
   --nl-color-text: #211720;
@@ -222,6 +223,7 @@
   --nl-color-text: #f6e9da;
   --nl-color-border: #a99aa4;
   --nl-color-accent: #d6b279;
+  --nl-grim-glimmer-tutorial-error: #ffaaa1;
   --nl-color-accent-hover: #e3c796;
   --nl-color-accent-active: #c39a60;
   --nl-color-on-accent: #261624;

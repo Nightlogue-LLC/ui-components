@@ -685,6 +685,74 @@
   margin-inline: auto;
 }
 
+/* Guided tutorial: local practice, delayed guidance and rule examples. */
+.nl-grim-glimmer-guided-tutorial .nl-dialog__body {
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-guided-tutorial__heading {
+  margin: 0 0 var(--nl-space-4);
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: var(--nl-font-size-heading-md, 1.375rem);
+  font-weight: var(--nl-font-weight-heading, 400);
+}
+
+.nl-grim-glimmer-guided-tutorial__visual {
+  margin-block: var(--nl-space-4);
+}
+
+.nl-grim-glimmer-guided-tutorial__instruction {
+  min-height: 4.2em;
+  margin: var(--nl-space-4) 0 0;
+  color: var(--nl-color-text);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-grim-glimmer-board__cell {
+  border: var(--nl-border-width) solid var(--nl-color-border);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-grim-glimmer-board__cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.nl-grim-glimmer-guided-tutorial__highlight {
+  --nl-grim-glimmer-tutorial-highlight: var(--nl-color-accent);
+
+  outline: 2px solid var(--nl-grim-glimmer-tutorial-highlight);
+  outline-offset: -3px;
+  transition: outline-color 160ms ease var(--nl-grim-glimmer-tutorial-highlight-delay, 650ms);
+}
+
+.nl-grim-glimmer-guided-tutorial__highlight[data-highlight-tone='error'] {
+  --nl-grim-glimmer-tutorial-highlight: var(--nl-grim-glimmer-tutorial-error, var(--nl-color-text));
+}
+
+@starting-style {
+  .nl-grim-glimmer-guided-tutorial__highlight {
+    outline-color: transparent;
+  }
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions {
+  flex-wrap: nowrap;
+  gap: var(--nl-space-2);
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions > :first-child {
+  margin-right: auto;
+}
+
+.nl-grim-glimmer-guided-tutorial .nl-dialog__actions > [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-guided-tutorial__highlight {
+    transition: none;
+  }
+}
+
 /* Quiet celestial accent: one small four-point star. Decorative; no confetti. */
 .nl-grim-glimmer-success__accent {
   display: block;

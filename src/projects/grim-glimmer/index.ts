@@ -47,6 +47,8 @@ export type {
   TutorialDialogOptions,
   TutorialOutcome,
 } from './dialogs.js';
+export { createGuidedTutorialDialog } from './guided-tutorial.js';
+export type { GuidedTutorialOptions, TutorialLesson } from './guided-tutorial.js';
 
 export { createAppSettings } from './app-settings.js';
 export type { AppAppearance, AppSettingsState, AppSettingsOptions } from './app-settings.js';
