@@ -1,0 +1,126 @@
+/* Opt-in scope: the existing project stays available for comparison. */
+.nl-grim-glimmer-v3-foundations {
+  font-family: var(--nl-font-family);
+  color: var(--nl-color-text);
+  background: var(--nl-color-bg);
+  padding: var(--nl-space-4);
+}
+.nl-grim-glimmer-v3-foundations button,
+.nl-grim-glimmer-v3-foundations input,
+.nl-grim-glimmer-v3-foundations select,
+.nl-grim-glimmer-v3-foundations textarea {
+  font: inherit;
+}
+.nl-grim-glimmer-v3-foundations h2 {
+  font-family: var(--nl-font-family-heading, var(--nl-font-family));
+  font-size: 2rem;
+  font-weight: 600;
+}
+.nl-grim-glimmer-v3-foundations h3 {
+  color: var(--nl-grim-glimmer-v3-label);
+  font-family: var(--nl-font-family-label, var(--nl-font-family));
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--nl-grim-glimmer-v3-hairline);
+  padding-bottom: var(--nl-space-2);
+}
+.nl-grim-glimmer-v3-surface {
+  border: 1px solid var(--nl-grim-glimmer-v3-hairline);
+  border-radius: var(--nl-grim-glimmer-v3-radius-surface);
+  padding: var(--nl-space-4);
+  background: var(--nl-color-surface);
+  box-shadow: none;
+}
+.nl-grim-glimmer-v3-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nl-space-3);
+  align-items: center;
+}
+.nl-grim-glimmer-v3-foundations .nl-button {
+  box-shadow: none;
+  background-image: none;
+  transition: transform 80ms ease;
+}
+.nl-grim-glimmer-v3-foundations .nl-button:disabled {
+  opacity: 0.4;
+}
+.nl-grim-glimmer-v3-icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.nl-grim-glimmer-v3-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nl-space-4);
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-bottom: 1px solid var(--nl-grim-glimmer-v3-hairline);
+  padding: var(--nl-space-2) 0;
+  background: transparent;
+  color: var(--nl-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+.nl-grim-glimmer-v3-toggle__track {
+  display: block;
+  width: 42px;
+  height: 24px;
+  padding: 3px;
+  box-sizing: border-box;
+  border: 1px solid var(--nl-color-focus-ring);
+  border-radius: var(--nl-radius-md);
+}
+.nl-grim-glimmer-v3-toggle__track::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-text);
+  transition: transform 80ms ease;
+}
+.nl-grim-glimmer-v3-toggle[aria-checked='true'] .nl-grim-glimmer-v3-toggle__track {
+  background: var(--nl-color-accent);
+}
+.nl-grim-glimmer-v3-toggle[aria-checked='true'] .nl-grim-glimmer-v3-toggle__track::before {
+  transform: translateX(18px);
+  background: var(--nl-color-on-accent);
+}
+.nl-grim-glimmer-v3-toggle:focus-visible {
+  outline: 2px solid var(--nl-color-focus-ring);
+  outline-offset: 2px;
+}
+.nl-grim-glimmer-v3-toggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.nl-grim-glimmer-v3-foundations[data-animations='off'] *,
+.nl-grim-glimmer-v3-foundations[data-animations='off'] *::before {
+  transition: none;
+  animation: none;
+}
+.nl-grim-glimmer-v3-foundations[data-animations='off'] .nl-button:active {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-v3-foundations *,
+  .nl-grim-glimmer-v3-foundations *::before {
+    transition: none;
+    animation: none;
+  }
+  .nl-grim-glimmer-v3-foundations .nl-button:active {
+    transform: none;
+  }
+}
+
+.nl-grim-glimmer-v3-foundations .nl-button--primary {
+  color: var(--nl-grim-glimmer-v3-button-ink);
+}

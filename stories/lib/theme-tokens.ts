@@ -9,7 +9,7 @@ export type TokenValues = Record<string, string>;
  * Values are returned verbatim, so themes should use literal values for contract colors.
  */
 export function parseThemeModes(css: string): Record<ModeName, TokenValues> {
-  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@import[^;]+;/g, '');
   const light: TokenValues = {};
   const darkOverrides: TokenValues = {};
   for (const [, selector, body] of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {

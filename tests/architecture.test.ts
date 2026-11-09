@@ -23,7 +23,8 @@ const declared = (css: string) =>
 /** Custom properties read via var(--x ...). */
 const used = (css: string) => new Set([...css.matchAll(/var\(\s*(--[\w-]+)/g)].map((m) => m[1]!));
 /** Strips comments so documentation never trips the checks. */
-const stripComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+const stripComments = (css: string) =>
+  css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@import[^;]+;/g, '');
 /** Style rules as {selector, body}; keyframe stops are not element selectors. */
 const rules = (css: string) =>
   [...stripComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)]
