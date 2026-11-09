@@ -37,6 +37,8 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
   panel.setAttribute('aria-label', options.label ?? 'Game menu');
   panel.tabIndex = -1;
   content.hidden = false;
+  content.removeAttribute('role');
+  content.removeAttribute('aria-modal');
   const handle = document.createElement('div');
   handle.className = 'nl-grim-glimmer-menu-sheet__handle';
   handle.setAttribute('aria-hidden', 'true');
@@ -108,6 +110,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       window.addEventListener('popstate', popstate);
       (panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus();
     } else {
+      content.dispatchEvent(new Event('game-menu-close'));
       observer.disconnect();
       restoreInert?.();
       restoreInert = undefined;

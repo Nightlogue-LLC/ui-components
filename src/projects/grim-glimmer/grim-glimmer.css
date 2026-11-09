@@ -1310,3 +1310,20 @@
   background: var(--nl-color-border);
   touch-action: none;
 }
+
+/* Existing menu choices/actions compose inside the sheet without their old popover geometry. */
+.nl-grim-glimmer-menu-sheet__panel > .nl-grim-glimmer-game-menu {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}

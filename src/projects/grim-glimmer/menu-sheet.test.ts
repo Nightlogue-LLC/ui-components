@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createGameMenuSheet, type GameMenuSheet } from './menu-sheet.js';
-import { createCompactGameHeader, createGameScreen } from './game-screen.js';
+import { createCompactGameHeader, createGameScreen, createGameMenu } from './game-screen.js';
 import { createIcon } from '../../components/icon/index.js';
 let sheet: GameMenuSheet | undefined;
 afterEach(() => {
@@ -68,6 +68,23 @@ describe('shared game menu sheet', () => {
     pointer('pointerup', 25, 110);
     expect(sheet.isOpen).toBe(false);
   });
+  it('composes existing menu choices without nested dialog semantics', () => {
+    const fixture = setup();
+    fixture.sheet.destroy();
+    const content = createGameMenu({
+      difficulty: 'easy',
+      options: [{ value: 'easy', label: 'Easy', size: 6 }],
+      onDeal: () => undefined,
+    });
+    sheet = createGameMenuSheet({ trigger: fixture.trigger, content, history: false });
+    fixture.game.append(sheet.element);
+    sheet.open();
+    expect(sheet.element.querySelectorAll('[role="dialog"]')).toHaveLength(1);
+    expect(content.hidden).toBe(false);
+    sheet.close();
+    expect(fixture.trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
   it('browser Back consumes the sheet entry first, without changing the route', async () => {
     const { sheet } = setup(true);
     const url = window.location.href;
