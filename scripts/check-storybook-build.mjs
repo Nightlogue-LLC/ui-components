@@ -38,6 +38,10 @@ const REQUIRED_TITLES = [
   'Projects/Grim & Glimmer/V4/Board/Cell',
   'Projects/Grim & Glimmer/V4/Board/Grid',
   'Projects/Grim & Glimmer/V4/Board/Clues',
+  'Projects/Grim & Glimmer/V4/Sheets/GameMenu',
+  'Projects/Grim & Glimmer/V4/Sheets/Difficulty',
+  'Projects/Grim & Glimmer/V4/Settings/Settings',
+  'Projects/Grim & Glimmer/V4/HowToPlay/Modal',
 ];
 const obsolete = [...titles].filter(
   (title) =>
