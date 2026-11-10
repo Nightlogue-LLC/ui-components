@@ -42,9 +42,7 @@ describe('touch targets', () => {
     expect(css('card')).toMatch(
       /\.nl-card--interactive\s*\{[^}]*min-height:\s*var\(--nl-size-control-md\)/,
     );
-    expect(css('dialog')).toMatch(
-      /\.nl-dialog__close\s*\{[^}]*width:\s*var\(--nl-size-control-md\)/,
-    );
+    expect(css('icon-button')).toContain('var(--nl-size-control-md)');
   });
 });
 
