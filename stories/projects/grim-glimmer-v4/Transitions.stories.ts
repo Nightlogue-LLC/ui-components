@@ -9,8 +9,13 @@ import { compareModes } from '../../lib/stage.js';
 const meta = {
   title: 'Projects/Grim & Glimmer/V4/Motion/Transitions',
   parameters: { nlTheme: 'moonlit-oxblood', nlStage: 'bleed' },
-  args: { size: 6, reducedMotion: false, onTransaction: fn() },
+  args: { size: 6, reviewSpeed: 0.25, reducedMotion: false, onTransaction: fn() },
   argTypes: {
+    reviewSpeed: {
+      control: 'select',
+      options: [0.25, 0.5, 1],
+      description: 'Review playback only: quarter, half, or normal speed.',
+    },
     size: { control: 'select', options: [5, 6, 8, 15] },
     reducedMotion: { control: 'boolean' },
   },
@@ -36,3 +41,5 @@ export const LightDarkComparison: Story = {
       bleed: true,
     }),
 };
+
+export const NormalTiming: Story = { args: { reviewSpeed: 1 } };

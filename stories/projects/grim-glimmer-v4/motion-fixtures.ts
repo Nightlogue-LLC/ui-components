@@ -1,4 +1,4 @@
-import { createButton } from '../../../src/components/button/index.js';
+import { createButton, updateButton } from '../../../src/components/button/index.js';
 import { updateBoard } from '../../../src/projects/grim-glimmer/index.js';
 import { createV4Board, fixture, type Size } from './board.js';
 import { InteractionModel, type SelectionAdapter } from './interaction-model.js';
@@ -19,6 +19,7 @@ if (!customElements.get('gg-v4-motion-host'))
   customElements.define('gg-v4-motion-host', MotionHost);
 export interface MotionOptions {
   size?: Size;
+  reviewSpeed?: 0.25 | 0.5 | 1;
   mark?: 'placed' | 'excluded' | 'erase';
   reducedMotion?: boolean;
   haptics?: boolean;
@@ -36,7 +37,7 @@ export function createMarkPreview(options: MotionOptions = {}) {
   const mark = options.mark ?? 'placed';
   const root = host(
     'Mark placement',
-    'Replay the proposed motion. State and one-entry history use the Phase 3 adapter.',
+    'Watch the top-left cell. Replay shows the selected star, X or erase effect.',
   );
   const initial = fixture(size);
   initial[0] = mark === 'erase' ? 'placed' : 'empty';
@@ -130,22 +131,65 @@ export function createHintPreview(options: MotionOptions = {}) {
   root.dispose = motion.dispose;
   return root;
 }
+function speedControls(settings: MotionOptions, motion: ReturnType<typeof createMotionSystem>) {
+  const group = el('div', { className: 'gg-v4-motion-actions' });
+  group.setAttribute('role', 'group');
+  group.setAttribute('aria-label', 'Review playback speed');
+  const text = el('p');
+  text.setAttribute('role', 'status');
+  const speeds = [0.25, 0.5, 1] as const;
+  const labels = ['¼× slow', '½× slow', '1× normal'];
+  const buttons = speeds.map((speed, index) =>
+    createButton({
+      label: labels[index]!,
+      size: 'sm',
+      variant: 'ghost',
+      onClick: () => {
+        motion.cancel();
+        settings.reviewSpeed = speed;
+        paint();
+      },
+    }),
+  );
+  function paint() {
+    buttons.forEach((button, index) => {
+      const selected = speeds[index] === (settings.reviewSpeed ?? 1);
+      updateButton(button, {
+        label: labels[index]!,
+        size: 'sm',
+        variant: selected ? 'secondary' : 'ghost',
+      });
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    text.textContent =
+      settings.reviewSpeed === 0.25
+        ? 'Review playback: 4× slower than normal.'
+        : settings.reviewSpeed === 0.5
+          ? 'Review playback: 2× slower than normal.'
+          : 'Review playback: normal timing.';
+  }
+  group.append(...buttons);
+  paint();
+  return [text, group];
+}
 export function createScreenPreview(options: MotionOptions = {}) {
   const root = host(
     'Screen push',
-    'Isolated transition specimen · 280ms · 24px. No navigation changes.',
+    'Normal timing: 280ms · 24px. Use slower review playback to inspect the movement.',
   );
   const page = el('section', { className: 'gg-v4-motion-page' }, [
     el('h3', { text: 'Stars & Spires' }),
     el('p', { text: 'Preview content keeps its layout and focus throughout the transition.' }),
   ]);
-  const motion = createMotionSystem(options);
+  const settings = { ...options };
+  const motion = createMotionSystem(settings);
   root.append(
     el('div', { className: 'gg-v4-motion-page-window' }, [page]),
     el('div', { className: 'gg-v4-motion-actions' }, [
       createButton({ label: 'Replay screen push', onClick: () => motion.screen(page) }),
     ]),
   );
+  root.append(...speedControls(settings, motion));
   root.mount = motion.mount;
   root.dispose = motion.dispose;
   return root;
@@ -154,7 +198,7 @@ export function createDissolvePreview(options: MotionOptions = {}) {
   const size = options.size ?? 6;
   const root = host(
     'New-board dissolve',
-    'Center-distance stagger, including the fade, stays within 300ms. Prototype clear is one undo entry.',
+    'Normal timing stays within 300ms. Slower review playback stretches the fade and stagger together.',
   );
   const initial = fixture(size);
   const board = createV4Board({
@@ -165,7 +209,8 @@ export function createDissolvePreview(options: MotionOptions = {}) {
     conflict: false,
   });
   const grid = board.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
-  const motion = createMotionSystem(options);
+  const settings = { ...options };
+  const motion = createMotionSystem(settings);
   const status = el('p');
   status.setAttribute('role', 'status');
   status.textContent = '0 undo entries';
@@ -198,6 +243,7 @@ export function createDissolvePreview(options: MotionOptions = {}) {
     },
   });
   root.append(board, status, el('div', { className: 'gg-v4-motion-actions' }, [replay, undo]));
+  root.append(...speedControls(settings, motion));
   root.mount = motion.mount;
   root.dispose = motion.dispose;
   return root;

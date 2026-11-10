@@ -9,6 +9,7 @@ import {
   createHintPreview,
   createDissolvePreview,
   createIntegratedMotion,
+  createScreenPreview,
 } from '../stories/projects/grim-glimmer-v4/motion-fixtures.js';
 import { createV4Board } from '../stories/projects/grim-glimmer-v4/board.js';
 interface Recorded {
@@ -247,6 +248,33 @@ describe('V4 motion contracts', () => {
         expect(Object.keys(frame).every((key) => ['transform', 'opacity'].includes(key))).toBe(
           true,
         );
+    motion.dispose();
+  });
+  it('offers slow transition review and restores normal timing without changing constants', () => {
+    const root = createScreenPreview({ reviewSpeed: 0.25 });
+    document.body.append(root);
+    const replay = [...root.querySelectorAll<HTMLButtonElement>('button')].find(
+      (button) => button.textContent === 'Replay screen push',
+    )!;
+    replay.click();
+    expect(records.at(-1)!.timing.duration).toBe(1120);
+    const first = records.at(-1)!;
+    const normal = [...root.querySelectorAll<HTMLButtonElement>('button')].find(
+      (button) => button.textContent === '1× normal',
+    )!;
+    normal.click();
+    expect(first.cancel).toHaveBeenCalled();
+    expect(normal.getAttribute('aria-pressed')).toBe('true');
+    replay.click();
+    expect(records.at(-1)!.timing.duration).toBe(280);
+    expect(V4_MOTION.screen).toBe(280);
+  });
+  it('scales dissolve delays and duration together for quarter-speed review', () => {
+    const grid = board();
+    const motion = createMotionSystem({ reviewSpeed: 0.25 });
+    motion.dissolve(grid, 5, vi.fn());
+    expect(records[0]!.timing.duration).toBe(480);
+    expect(records[0]!.timing.delay).toBeCloseTo(dissolveTiming(0, 5).delay * 4);
     motion.dispose();
   });
   it('falls back to final state if Web Animations is unavailable', () => {

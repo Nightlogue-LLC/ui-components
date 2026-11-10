@@ -114,3 +114,13 @@ no new screenshots, browser-play execution or Android measurements are claimed.
 Open visual decisions: X transform-reveal delivery, 1600ms hint strength/timing, and
 ring prominence on dense boards. No unresolved palette change: canonical Moonlit stays
 in use. Phase 5 and production adoption are not started.
+
+## Slower transition review
+
+Transitions now default to quarter-speed playback: screen push takes 1120ms and the
+15×15 dissolve approximately 955ms. Half and normal speed are selectable both in the
+preview and Storybook Controls; Normal Timing is a separate reference story. Only
+review playback scales duration and stagger together. Normal timing constants and
+its 300ms dissolve cap are unchanged. Reduced motion still applies immediately.
+MarkPlacement targets the top-left cell; Replay mark demonstrates the chosen star,
+X or erase effect. Speed changes cancel pending preview work before the next replay.

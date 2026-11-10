@@ -27,7 +27,9 @@ interface Job {
   complete?: () => void;
 }
 /** Story-only motion ownership: a newer operation always invalidates old completion work. */
-export function createMotionSystem(options: { reducedMotion?: boolean; hint?: HTMLElement } = {}) {
+export function createMotionSystem(
+  options: { reducedMotion?: boolean; hint?: HTMLElement; reviewSpeed?: 0.25 | 0.5 | 1 } = {},
+) {
   const jobs = new Map<HTMLElement, Job>();
   const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   let pulse: Animation | undefined;
@@ -67,7 +69,13 @@ export function createMotionSystem(options: { reducedMotion?: boolean; hint?: HT
     );
   }
   function run(node: HTMLElement, keyframes: Keyframe[], timing: KeyframeAnimationOptions) {
-    return node.animate(keyframes, { fill: 'both', ...timing });
+    const speed = options.reviewSpeed ?? 1;
+    return node.animate(keyframes, {
+      fill: 'both',
+      ...timing,
+      duration: typeof timing.duration === 'number' ? timing.duration / speed : timing.duration,
+      delay: (timing.delay ?? 0) / speed,
+    });
   }
   function change(cell: HTMLElement, before: BoardCellState, after: BoardCellState) {
     stop(cell);
