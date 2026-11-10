@@ -302,7 +302,7 @@ export const BoardGlyphs: Story = {
     docs: {
       description: {
         story:
-          'Story-only artwork: the spire marks a given piece (plum in light mode, cream in dark mode) and the eight-point star a placed one (faded while tentative). Marked and excluded keep their simple shapes. The library board itself still ships generic placeholder glyphs; the game app owns the final artwork.',
+          'Shipped star/spire SVG masks: spires and stars have distinct theme-owned occupied fills. Tentative stars keep the star fill with faded artwork; X exclusions and empty cells use the bare board. Dark spires are rose, confirmed stars ivory. Preview, tutorial and game boards share these styles.',
       },
     },
   },
