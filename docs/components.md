@@ -130,3 +130,28 @@ This is opt-in: existing menu sheets have not adopted the motion pending review.
 The new project `createSuccessSheet` composition provides New Game, Return Home,
 and dismiss callbacks separately. `createSuccessDialog` remains compatible for
 existing consumers until their approved migration.
+
+### Success message banks
+
+Create one picker for each app-owned message bank and pass it as the sheet's `message`:
+
+```ts
+const pickSuccessMessage = createSuccessMessagePicker([
+  'Every star is in place. Beautifully done.',
+  'The sky is set. Nicely done.',
+]);
+const sheet = createSuccessSheet({
+  title: 'Puzzle Complete',
+  message: pickSuccessMessage,
+  onNewGame,
+  onReturnHome,
+  onClose,
+});
+```
+
+Each new sheet evaluates the picker once. Copy stays stable during that completion.
+The picker skips consecutive repeats, ignores blank entries and deduplicates copy.
+A single-message bank works; an empty bank throws. Keep the picker outside the
+sheet-opening callback to retain its previous selection. Fixed strings and custom
+message callbacks remain supported. Banks belong to the app so they can vary by
+puzzle, language or future content changes.

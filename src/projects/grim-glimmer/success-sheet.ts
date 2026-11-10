@@ -4,7 +4,8 @@ import { createButton } from '../../components/button/index.js';
 
 export interface SuccessSheetOptions {
   title: string;
-  message: string;
+  /** Fixed copy or a message picker, evaluated once for each new success sheet. */
+  message: string | (() => string);
   animations?: boolean;
   labels?: { newGame?: string; returnHome?: string; close?: string };
   onNewGame: () => void;
@@ -34,7 +35,7 @@ export function createSuccessSheet(options: SuccessSheetOptions): HTMLDialogElem
   star.setAttribute('aria-hidden', 'true');
   const message = document.createElement('p');
   message.className = 'nl-grim-glimmer-success-sheet__message';
-  message.textContent = options.message;
+  message.textContent = typeof options.message === 'function' ? options.message() : options.message;
   getDialogBody(sheet).append(star, message);
   const newGame = createButton({
     label: options.labels?.newGame ?? 'New Game',
@@ -56,4 +57,18 @@ export function createSuccessSheet(options: SuccessSheetOptions): HTMLDialogElem
     newGame,
   );
   return sheet;
+}
+
+/** Keep one picker per message bank in the app; consecutive sheets never repeat a message. */
+export function createSuccessMessagePicker(messages: readonly string[]): () => string {
+  const bank = [...new Set(messages.map((message) => message.trim()).filter(Boolean))];
+  if (bank.length === 0) throw new Error('Success message bank must contain non-empty text.');
+  let previous = -1;
+  return () => {
+    const count = bank.length - (previous >= 0 && bank.length > 1 ? 1 : 0);
+    let next = Math.floor(Math.random() * count);
+    if (bank.length > 1 && previous >= 0 && next >= previous) next += 1;
+    previous = next;
+    return bank[next]!;
+  };
 }

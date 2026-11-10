@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { openDialog } from '../../components/dialog/index.js';
-import { createSuccessSheet } from './success-sheet.js';
+import { createSuccessSheet, createSuccessMessagePicker } from './success-sheet.js';
 afterEach(() => document.body.replaceChildren());
 function setup() {
   const callbacks = { onNewGame: vi.fn(), onReturnHome: vi.fn(), onClose: vi.fn() };
@@ -39,4 +39,42 @@ describe('success sheet', () => {
       expect(document.activeElement).toBe(opener);
     },
   );
+});
+
+describe('success message bank', () => {
+  it('uses only supplied copy and never repeats consecutively', () => {
+    const pick = createSuccessMessagePicker(['First', 'Second', 'First', '   ']);
+    let previous = pick();
+    for (let i = 0; i < 30; i++) {
+      const next = pick();
+      expect(['First', 'Second']).toContain(next);
+      expect(next).not.toBe(previous);
+      previous = next;
+    }
+  });
+  it('supports one message and rejects an empty bank', () => {
+    const pick = createSuccessMessagePicker([' Only ']);
+    expect(pick()).toBe('Only');
+    expect(pick()).toBe('Only');
+    expect(() => createSuccessMessagePicker([])).toThrow();
+    expect(() => createSuccessMessagePicker(['  '])).toThrow();
+  });
+  it('evaluates dynamic copy once per sheet without changing it on interaction', () => {
+    const message = vi.fn(() => '<A new sky>');
+    const sheet = createSuccessSheet({
+      title: 'Complete',
+      message,
+      onNewGame: vi.fn(),
+      onReturnHome: vi.fn(),
+      onClose: vi.fn(),
+    });
+    document.body.append(sheet);
+    openDialog(sheet);
+    expect(message).toHaveBeenCalledTimes(1);
+    expect(sheet.querySelector('.nl-grim-glimmer-success-sheet__message')!.textContent).toBe(
+      '<A new sky>',
+    );
+    sheet.querySelector<HTMLButtonElement>('.nl-dialog__close')!.click();
+    expect(message).toHaveBeenCalledTimes(1);
+  });
 });

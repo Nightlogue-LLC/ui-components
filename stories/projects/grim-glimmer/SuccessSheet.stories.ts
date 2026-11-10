@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/html-vite';
 import { fn, userEvent, within } from 'storybook/test';
-import { createSuccessSheet } from '../../../src/projects/grim-glimmer/index.js';
+import {
+  createSuccessSheet,
+  createSuccessMessagePicker,
+} from '../../../src/projects/grim-glimmer/index.js';
 import { openDialog } from '../../../src/components/dialog/index.js';
 import { createButton } from '../../../src/components/button/index.js';
 import { screen } from '../grim-glimmer-v3/screen-fixtures.js';
@@ -13,6 +16,12 @@ interface Args {
   onClose: () => void;
 }
 function build(args: Args): HTMLElement {
+  const pickMessage = createSuccessMessagePicker([
+    'Every star is in place. Beautifully done.',
+    'The sky is set. Nicely done.',
+    'A little order in the night.',
+    'One more constellation complete.',
+  ]);
   const host = screen('Game Screen', 'moonlit-oxblood', 'light');
   // Inherit the Storybook mode; the screen helper's explicit scope is for comparison fixtures.
   host.removeAttribute('data-nl-theme');
@@ -24,7 +33,7 @@ function build(args: Args): HTMLElement {
         const sheet = createSuccessSheet({
           ...args,
           title: 'Puzzle Complete',
-          message: 'Every star is in place. Beautifully done.',
+          message: pickMessage,
           onNewGame: () => {
             args.onNewGame();
             sheet.remove();
@@ -53,7 +62,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Issue #19 review. Mobile bottom sheet; desktop centered dialog. New Game and Return Home are distinct outcomes. X, Escape, backdrop and handle swipe report dismissal only. Story callbacks are demonstrations; production navigation and saved game integration follow visual approval. Replay by dismissing and tapping Preview completion.',
+          'Issue #19 review. Mobile bottom sheet; desktop centered dialog. New Game and Return Home are distinct outcomes. X, Escape, backdrop and handle swipe report dismissal only. Story callbacks are demonstrations; production navigation and saved game integration follow visual approval. Replay by dismissing and tapping Preview completion. Each new sheet picks from a sample message bank without repeating the previous message.',
       },
     },
   },
