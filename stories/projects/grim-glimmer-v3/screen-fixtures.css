@@ -25,5 +25,5 @@
   margin: 0;
   width: 100%;
   box-sizing: border-box;
-  max-height: 280px;
+  max-height: calc(100% - 16px);
 }
