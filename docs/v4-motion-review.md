@@ -20,57 +20,33 @@ New story-only `motion.ts` owns animation lifetimes; `motion.css` holds static g
 Mark overlays reuse the original cell glyph classes/masks. X reveals retain the current
 50%-cell-width, 2px round stroke geometry and existing exclusion opacity.
 
-## Timing and conflict resolution
+## Accepted timing and dissolve
 
-| Effect         | Contract                                                                                            |
-| -------------- | --------------------------------------------------------------------------------------------------- |
-| Star           | Scale .5 → 1, 200ms, cubic-bezier(.34,1.56,.64,1)                                                   |
-| Placement ring | Scale .5 → 1.35, opacity .5 → 0, 280ms ease-out                                                     |
-| X reveal       | Two fixed diagonal axes; inner strokes scaleX 0 → 1 for 60ms each, second delayed 60ms; total 120ms |
-| Erase          | Old glyph snapshot opacity 1 → 0, 100ms ease-out; actual cell state/fill updates immediately        |
-| Hint           | Target ring scale .92 → 1.08 → .92 and opacity .35 → .85 → .35, 1600ms ease-in-out                  |
-| Screen push    | translateX 24px → 0 plus opacity 0 → 1, 560ms cubic-bezier(.2,.8,.2,1)                              |
-| Board dissolve | Center comparison: 480ms fade, delay = min(720ms, Euclidean center distance × 48ms)                 |
+The owner rejected the randomized pixel experiment. It has been removed entirely,
+including tile rendering, random seeds, variant stories and pixel-specific tests.
+The original center-out whole-cell opacity fade is restored at the preferred 4× slower
+timing. At 1× proposed playback, the fade lasts 480ms and the stagger uses center
+distance × 48ms (delay cap 720ms; full ceiling 1200ms). Resulting totals:
 
-The source stroke-dashoffset proposal conflicts with the transform/opacity-only rule.
-This review uses a transform reveal with two fixed axes; no dash offset, path, mask,
-shadow, gradient, filter, border or color animation. Existing star glow/shadow styling
-stays static. No React, Framer or motion dependency. Hint is a target ring rather than
-a faded tentative star. The screen specimen demonstrates motion only; no new navigation
-or alternate approved screen composition is introduced.
+| Size  | Total    |
+| ----- | -------- |
+| 5×5   | 615.76ms |
+| 6×6   | 649.71ms |
+| 8×8   | 717.59ms |
+| 15×15 | 955.18ms |
 
-The owner's follow-up replaces the original 300ms dissolve cap with the preferred
-four-times-slower proposal. Screen push now takes 560ms, matching the former half-speed
-preview. This does not change the shared production sheet timing.
+Screen push stays at 560ms, the preferred 2× slower timing, with the shared easing.
+Shared production sheet timing is unchanged. These preferences supersede the source
+280ms screen timing and 300ms dissolve ceiling in this Storybook proposal.
 
-Pixel dissolve is now the default: 120ms opacity fades, shuffled delays spanning 840ms,
-960ms total for every grid size. Larger cells subdivide into grid-aligned pieces so
-5×5/6×6/8×8 have a texture similar to 15×15. Cell subdivision is ceil(15 / size):
+Star remains 200ms plus a 280ms fading ring; X uses two fixed-axis transform reveals
+at 60ms each, 120ms total. Erase is a 100ms glyph fade. Hint is a 1600ms target-ring
+pulse. Only transform and opacity animate; static glow/shadows and artwork stay intact.
+No React/Framer dependency or stroke-dashoffset exception.
 
-| Size  | Pieces per cell | Total pixel tiles |
-| ----- | --------------- | ----------------- |
-| 5×5   | 3×3             | 225               |
-| 6×6   | 3×3             | 324               |
-| 8×8   | 2×2             | 256               |
-| 15×15 | 1×1             | 225               |
-
-Static clipped copies preserve the actual glyph/fill at full size behind each tile.
-Only tile opacity animates; no raster generation, asset edits, animated clipping,
-canvas or particle simulation. Original cell nodes remain in place. Tiles have no
-cell index, role or tab stop, and are aria-hidden. Copies and hidden-source classes
-are removed on completion/cancel/replay/reduction/disposal. Seed 42 is reproducible;
-replay increments the seed for a fresh pattern. Controls expose the initial seed.
-
-Comparison variants retain random whole cells and the prior center stagger. At the
-preferred timing the center reference totals 615.76 / 649.71 / 717.59 / 955.18ms for
-5/6/8/15. It was always the same algorithm at both densities; smaller cells made the
-dense version look finer. Default fine pixels keep the new random effect consistent
-across densities. The story-only timing ceiling is now 1200ms, superseding the old
-source cap by explicit owner preference.
-
-The read-only preview clears mock marks as one Phase 3 restart snapshot after the
-sequence. Undo restores it. It does not generate/select a new puzzle. Replay cancels
-old pending completions; no timer, toast or input lock is introduced.
+The read-only dissolve clears mock player marks as one Phase 3 restart snapshot after
+the fade. Undo restores it. It does not generate/select a real new puzzle. Replay
+cancels old pending completion before restarting. No timer, toast or input lock.
 
 ## State ownership, accessibility and lifecycle
 
@@ -103,7 +79,7 @@ No win detection, success message or victory sequence is added in Phase 4.
 - HintRing: Target Pulse, Dense Board, Reduced Motion and Light Dark Comparison;
   size Controls cover all approved densities; Replay hint restarts the pulse.
 - Transitions: Screen Push, Board Dissolve, Dense Dissolve, Reduced Motion and
-  Light Dark Comparison, Proposed Timing, Random Cells and Center Reference. Size Controls apply to board dissolve.
+  Light Dark Comparison. Size Controls apply to board dissolve.
 
 Mark/replay play demonstrates the resulting state and one-entry history. Integrated
 Painting uses Phase 3 drag/keyboard/zoom and Phase 2 controls with mark effects.
@@ -134,13 +110,11 @@ Open visual decisions: X transform-reveal delivery, 1600ms hint strength/timing,
 ring prominence on dense boards. No unresolved palette change: canonical Moonlit stays
 in use. Phase 5 and production adoption are not started.
 
-## Playback controls
+## Final playback decision
 
-The default 1× now means the owner's preferred proposal: 560ms screen push and 960ms
-random pixel dissolve. Quarter/half playback remain available for closer inspection,
-relative to those new baselines. Reduced motion stays immediate. Mark, X, erase and
-hint timing values are unchanged. MarkPlacement targets the top-left cell.
-
-Random pixel rendering and its maximum 324 mask copies still need physical Android
-performance and visual acceptance; unit tests do not establish frame rate. Review
-fine pixels versus random whole cells before accepting the final dissolve style.
+Default 1× proposed playback now uses the accepted slower baselines: 560ms screen
+push and the original center-out dissolve at four times its source duration. Quarter
+and half speeds remain optional inspection controls relative to that proposal.
+Proposed Timing replaces the earlier Normal Timing story. Reduced motion stays immediate.
+MarkPlacement identifies the top-left target cell. Random pixel and random whole-cell
+variants are removed. Physical Android rendering/performance checks remain unmeasured.

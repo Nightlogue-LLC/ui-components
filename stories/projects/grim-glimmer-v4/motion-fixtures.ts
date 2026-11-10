@@ -3,7 +3,7 @@ import { updateBoard } from '../../../src/projects/grim-glimmer/index.js';
 import { createV4Board, fixture, type Size } from './board.js';
 import { InteractionModel, type SelectionAdapter } from './interaction-model.js';
 import { createInteractionDemo } from './interaction.js';
-import { createMotionSystem, type DissolveStyle } from './motion.js';
+import { createMotionSystem } from './motion.js';
 import { el } from '../../lib/dom.js';
 class MotionHost extends HTMLElement {
   mount?: () => void;
@@ -20,8 +20,6 @@ if (!customElements.get('gg-v4-motion-host'))
 export interface MotionOptions {
   size?: Size;
   reviewSpeed?: 0.25 | 0.5 | 1;
-  dissolveStyle?: DissolveStyle;
-  pixelSeed?: number;
   mark?: 'placed' | 'excluded' | 'erase';
   reducedMotion?: boolean;
   haptics?: boolean;
@@ -200,7 +198,7 @@ export function createDissolvePreview(options: MotionOptions = {}) {
   const size = options.size ?? 6;
   const root = host(
     'New-board dissolve',
-    'Random pixel fragments clear in 960ms. Larger cells subdivide for a texture similar to the dense board. Choose whole-cell or center variants in Controls.',
+    'Center-out cell fade at the preferred four-times-slower timing. Dense boards finish in about 955ms.',
   );
   const initial = fixture(size);
   const board = createV4Board({

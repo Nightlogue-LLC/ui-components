@@ -9,17 +9,8 @@ import { compareModes } from '../../lib/stage.js';
 const meta = {
   title: 'Projects/Grim & Glimmer/V4/Motion/Transitions',
   parameters: { nlTheme: 'moonlit-oxblood', nlStage: 'bleed' },
-  args: {
-    size: 6,
-    reviewSpeed: 1,
-    reducedMotion: false,
-    onTransaction: fn(),
-    dissolveStyle: 'pixels',
-    pixelSeed: 42,
-  },
+  args: { size: 6, reviewSpeed: 1, reducedMotion: false, onTransaction: fn() },
   argTypes: {
-    dissolveStyle: { control: 'select', options: ['pixels', 'cells', 'center'] },
-    pixelSeed: { control: 'number' },
     reviewSpeed: {
       control: 'select',
       options: [0.25, 0.5, 1],
@@ -52,12 +43,3 @@ export const LightDarkComparison: Story = {
 };
 
 export const ProposedTiming: Story = { args: { reviewSpeed: 1 } };
-
-export const RandomCells: Story = {
-  args: { dissolveStyle: 'cells' },
-  render: (args) => createDissolvePreview(args),
-};
-export const CenterReference: Story = {
-  args: { dissolveStyle: 'center' },
-  render: (args) => createDissolvePreview(args),
-};

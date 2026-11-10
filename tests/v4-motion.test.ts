@@ -3,7 +3,6 @@ import {
   createMotionSystem,
   dissolveTiming,
   V4_MOTION,
-  pixelPlan,
 } from '../stories/projects/grim-glimmer-v4/motion.js';
 import {
   createMarkPreview,
@@ -251,7 +250,7 @@ describe('V4 motion contracts', () => {
         );
     motion.dispose();
   });
-  it('offers slower review without changing the preferred timing constants', () => {
+  it('offers slow transition review and restores normal timing without changing constants', () => {
     const root = createScreenPreview({ reviewSpeed: 0.25 });
     document.body.append(root);
     const replay = [...root.querySelectorAll<HTMLButtonElement>('button')].find(
@@ -272,54 +271,11 @@ describe('V4 motion contracts', () => {
   });
   it('scales dissolve delays and duration together for quarter-speed review', () => {
     const grid = board();
-    const motion = createMotionSystem({ reviewSpeed: 0.25, dissolveStyle: 'center' });
+    const motion = createMotionSystem({ reviewSpeed: 0.25 });
     motion.dissolve(grid, 5, vi.fn());
     expect(records[0]!.timing.duration).toBe(1920);
     expect(records[0]!.timing.delay).toBeCloseTo(dissolveTiming(0, 5).delay * 4);
     motion.dispose();
-  });
-  it.each([5, 6, 8, 15])(
-    'uses grid-aligned fine pixels with the same total timing at size %s',
-    (size) => {
-      const plan = pixelPlan(size, 'pixels', 42);
-      expect(plan.length).toBeGreaterThanOrEqual(225);
-      expect(plan.length).toBeLessThanOrEqual(324);
-      expect(new Set(plan.map((part) => `${part.cell}:${part.row}:${part.column}`)).size).toBe(
-        plan.length,
-      );
-      expect(Math.max(...plan.map((part) => part.delay + part.duration))).toBe(960);
-      expect(Math.min(...plan.map((part) => part.delay))).toBe(0);
-      expect(plan.every((part) => part.row < part.parts && part.column < part.parts)).toBe(true);
-    },
-  );
-  it('reproduces a seeded pattern, shuffles across cells and offers a whole-cell comparison', () => {
-    expect(pixelPlan(6, 'pixels', 42)).toEqual(pixelPlan(6, 'pixels', 42));
-    expect(pixelPlan(6, 'pixels', 42)).not.toEqual(pixelPlan(6, 'pixels', 43));
-    expect(pixelPlan(6, 'cells', 42)).toHaveLength(36);
-    const delays = pixelPlan(6, 'pixels', 42).map((part) => part.delay);
-    expect(delays).not.toEqual([...delays].sort((a, b) => a - b));
-  });
-  it('clips copies into tiles without duplicating cell indices and cleans interruptions', async () => {
-    const grid = board();
-    const cells = [...grid.children];
-    const motion = createMotionSystem();
-    motion.dissolve(grid, 5, vi.fn());
-    expect(grid.children).toHaveLength(25);
-    expect(grid.querySelectorAll('[data-index]')).toHaveLength(25);
-    expect(grid.querySelectorAll('.gg-v4-pixel-tile')).toHaveLength(225);
-    expect(grid.querySelectorAll('.gg-v4-pixel-tile[aria-hidden="true"]')).toHaveLength(225);
-    expect(grid.querySelector('.gg-v4-pixel-copy')?.hasAttribute('tabindex')).toBe(false);
-    const old = [...records];
-    motion.cancel();
-    expect(grid.querySelector('.gg-v4-pixel-source')).toBeNull();
-    expect(grid.querySelector('.gg-v4-pixel-tile')).toBeNull();
-    motion.dissolve(grid, 5, vi.fn());
-    old.forEach((record) => record.finish());
-    await flush();
-    expect(grid.querySelectorAll('.gg-v4-pixel-tile')).toHaveLength(225);
-    expect([...grid.children]).toEqual(cells);
-    motion.dispose();
-    expect(grid.querySelector('.gg-v4-pixel-copy')).toBeNull();
   });
   it('falls back to final state if Web Animations is unavailable', () => {
     Reflect.deleteProperty(HTMLElement.prototype, 'animate');

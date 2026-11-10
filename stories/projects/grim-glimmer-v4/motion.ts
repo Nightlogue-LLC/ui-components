@@ -12,8 +12,6 @@ export const V4_MOTION = {
   screen: SHEET_MOTION.duration * 2,
   dissolveFade: 480,
   dissolveCap: 1200,
-  pixelFade: 120,
-  pixelSpread: 840,
 } as const;
 export function dissolveTiming(index: number, size: number) {
   const center = (size - 1) / 2;
@@ -23,30 +21,6 @@ export function dissolveTiming(index: number, size: number) {
     delay: Math.min(V4_MOTION.dissolveCap - V4_MOTION.dissolveFade, distance * 48),
   };
 }
-export type DissolveStyle = 'pixels' | 'cells' | 'center';
-/** Grid-aligned fragments, with reproducible shuffled ranks for visual review. */
-export function pixelPlan(size: number, style: 'pixels' | 'cells', seed = 42) {
-  const parts = style === 'pixels' ? Math.ceil(15 / size) : 1;
-  const count = size * size * parts * parts;
-  const ranks = Array.from({ length: count }, (_, index) => index);
-  let state = (Number.isFinite(seed) ? seed : 42) | 0;
-  state ||= 1;
-  for (let index = count - 1; index > 0; index--) {
-    state ^= state << 13;
-    state ^= state >>> 17;
-    state ^= state << 5;
-    const swap = (state >>> 0) % (index + 1);
-    [ranks[index], ranks[swap]] = [ranks[swap]!, ranks[index]!];
-  }
-  return ranks.map((rank, index) => ({
-    cell: Math.floor(index / (parts * parts)),
-    row: Math.floor((index % (parts * parts)) / parts),
-    column: index % parts,
-    parts,
-    duration: V4_MOTION.pixelFade,
-    delay: (rank / Math.max(1, count - 1)) * V4_MOTION.pixelSpread,
-  }));
-}
 interface Job {
   animations: Animation[];
   cleanup: () => void;
@@ -54,19 +28,12 @@ interface Job {
 }
 /** Story-only motion ownership: a newer operation always invalidates old completion work. */
 export function createMotionSystem(
-  options: {
-    reducedMotion?: boolean;
-    hint?: HTMLElement;
-    reviewSpeed?: 0.25 | 0.5 | 1;
-    dissolveStyle?: DissolveStyle;
-    pixelSeed?: number;
-  } = {},
+  options: { reducedMotion?: boolean; hint?: HTMLElement; reviewSpeed?: 0.25 | 0.5 | 1 } = {},
 ) {
   const jobs = new Map<HTMLElement, Job>();
   const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   let pulse: Animation | undefined;
   let mounted = false;
-  let dissolveRun = 0;
   const reduced = () => options.reducedMotion === true || media?.matches === true;
   const allowed = (node: HTMLElement) =>
     !reduced() && !document.hidden && typeof node.animate === 'function';
@@ -212,52 +179,14 @@ export function createMotionSystem(
       complete();
       return;
     }
-    if (options.dissolveStyle === 'center') {
-      const animations = [...grid.children].map((cell, index) =>
-        run(cell as HTMLElement, [{ opacity: 1 }, { opacity: 0 }], {
-          ...dissolveTiming(index, size),
-          easing: 'ease-out',
-        }),
-      );
-      own(grid, animations, () => undefined, complete);
-      return;
-    }
-    const tiles: HTMLElement[] = [];
-    const cells = [...grid.children] as HTMLElement[];
-    const plan = pixelPlan(
-      size,
-      options.dissolveStyle ?? 'pixels',
-      (options.pixelSeed ?? 42) + dissolveRun++,
+    const animations = [...grid.children].map((cell, index) =>
+      run(cell as HTMLElement, [{ opacity: 1 }, { opacity: 0 }], {
+        ...dissolveTiming(index, size),
+        easing: 'ease-out',
+      }),
     );
-    const animations = plan.map((part) => {
-      const cell = cells[part.cell]!;
-      const tile = el('span', { className: 'gg-v4-pixel-tile' });
-      tile.setAttribute('aria-hidden', 'true');
-      tile.style.cssText = `left:${(part.column / part.parts) * 100}%;top:${(part.row / part.parts) * 100}%;width:${100 / part.parts}%;height:${100 / part.parts}%;`;
-      const copy = el('span', { className: `${cell.className} gg-v4-pixel-copy` });
-      copy.style.cssText = `left:${-part.column * 100}%;top:${-part.row * 100}%;width:${part.parts * 100}%;height:${part.parts * 100}%;`;
-      tile.append(copy);
-      cell.append(tile);
-      tiles.push(tile);
-      return run(tile, [{ opacity: 1 }, { opacity: 0 }], {
-        duration: part.duration,
-        delay: part.delay,
-        easing: 'linear',
-      });
-    });
-    // Copy all fragments before hiding the source paint; no clone inherits this class.
-    cells.forEach((cell) => cell.classList.add('gg-v4-pixel-source'));
-    own(
-      grid,
-      animations,
-      () => {
-        tiles.forEach((tile) => tile.remove());
-        cells.forEach((cell) => cell.classList.remove('gg-v4-pixel-source'));
-      },
-      complete,
-    );
+    own(grid, animations, () => undefined, complete);
   }
-
   function refreshHint() {
     pulse?.cancel();
     pulse = undefined;
