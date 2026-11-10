@@ -1,4 +1,8 @@
-import { createBoard, updateBoard } from '../../../src/projects/grim-glimmer/index.js';
+import {
+  createBoard,
+  updateBoard,
+  type BoardCellState,
+} from '../../../src/projects/grim-glimmer/index.js';
 import { createButton } from '../../../src/components/button/index.js';
 import { createControlRow, type Tool } from './controls.js';
 import { createV4Board, fixture, type Size } from './board.js';
@@ -34,6 +38,14 @@ export interface InteractionOptions {
   reducedMotion?: boolean;
   adapter?: SelectionAdapter;
   onTransaction?: (kind: string) => void;
+  /** Optional story-only motion observer; state/history stay owned by Phase 3. */
+  onCellsChange?: (
+    grid: HTMLElement,
+    before: readonly BoardCellState[],
+    after: readonly BoardCellState[],
+  ) => void;
+  onMount?: () => void;
+  onDispose?: () => void;
 }
 export function createInteractionDemo(options: InteractionOptions = {}) {
   const size = options.size ?? 6;
@@ -93,6 +105,7 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
   const controlHost = el('div');
   let view: View = { scale: 1, x: 0, y: 0 };
   let rendering = false;
+  let previousCells = fixture(size);
   const model = new InteractionModel({
     size,
     cells: fixture(size),
@@ -122,7 +135,11 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
   function render() {
     if (rendering) return;
     rendering = true;
+    const before = previousCells;
+    previousCells = [...model.cells];
     updateBoard(grid, { cells: model.cells });
+    if (before.some((state, index) => state !== model.cells[index]))
+      options.onCellsChange?.(grid, before, model.cells);
     status.textContent = `${model.history.length} undo entries · ${Math.round(view.scale * 100)}% zoom${model.painting ? ' · painting' : ''}`;
     // Do not replace controls during a stroke or after tool selection.
     const undo = controlHost.querySelector<HTMLButtonElement>('[aria-label="Undo move"]');
@@ -298,6 +315,7 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     render();
   };
   root.connect = () => {
+    options.onMount?.();
     window.addEventListener('blur', cancel);
     document.addEventListener('visibilitychange', visibility);
     window.addEventListener('resize', resize);
@@ -308,6 +326,7 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     window.removeEventListener('blur', cancel);
     document.removeEventListener('visibilitychange', visibility);
     window.removeEventListener('resize', resize);
+    options.onDispose?.();
   };
   controlHost.append(
     createControlRow({

@@ -1,0 +1,79 @@
+.gg-v4-motion-preview {
+  display: block;
+  box-sizing: border-box;
+  max-width: 393px;
+  min-height: 100dvh;
+  padding: 16px 8px max(16px, env(safe-area-inset-bottom));
+  margin-inline: auto;
+  font-family: var(--nl-font-family);
+  background: var(--nl-color-bg);
+}
+.gg-v4-motion-preview > h2 {
+  text-align: center;
+  font: 500 1.8rem/1.2 var(--nl-font-family-display);
+}
+.gg-v4-motion-preview > p {
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.gg-v4-motion-preview .gg-v4-board-card {
+  width: 100%;
+  margin-block: 24px;
+}
+.gg-v4-motion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-block: 16px;
+}
+.gg-v4-scope .nl-grim-glimmer-board .nl-grim-glimmer-board__cell.gg-v4-motion-overlay {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+.gg-v4-motion-hidden::before,
+.gg-v4-motion-hidden::after {
+  opacity: 0 !important;
+}
+.gg-v4-placement-ring {
+  position: absolute;
+  inset: 15%;
+  border: 1px solid var(--gg-v4-accent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.gg-v4-motion-x-axis {
+  position: absolute;
+  top: 48%;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  pointer-events: none;
+  opacity: var(--nl-grim-glimmer-exclusion-opacity, 0.5);
+}
+.gg-v4-motion-x-stroke {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--star, var(--nl-color-text));
+  border-radius: 2px;
+  transform-origin: left center;
+}
+.gg-v4-motion-target {
+  opacity: 0.75;
+}
+.gg-v4-motion-page-window {
+  overflow: hidden;
+}
+.gg-v4-motion-page {
+  min-height: 180px;
+  padding: 16px;
+  background: var(--nl-color-surface);
+  border: 1px solid var(--nl-color-border);
+  border-radius: 8px;
+}
