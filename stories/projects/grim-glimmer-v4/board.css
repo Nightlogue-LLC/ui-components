@@ -6,7 +6,7 @@
   --gg-v4-accent: var(--nl-color-accent);
   --gg-v4-star: var(--nl-moonlit-star);
   --gg-v4-spire: var(--nl-moonlit-spire);
-  --gg-v4-error: var(--nl-grim-glimmer-v3-error);
+  --gg-v4-error: #a44832;
   --gg-v4-fixed: var(--nl-grim-glimmer-cell-fixed-bg);
   --gg-v4-placed: var(--nl-grim-glimmer-cell-star-bg);
   --gg-v4-line: color-mix(in oklab, var(--gg-v4-ink) 20%, transparent);
@@ -27,9 +27,10 @@
   --gg-v4-accent: #5e1f33;
   --gg-v4-star: #5e1f33;
   --gg-v4-spire: #2b1d22;
-  --gg-v4-error: #b3263e;
+  --gg-v4-error: #a44832;
 }
 [data-nl-mode='dark'] .gg-v4-scope {
+  --gg-v4-error: #e49a80;
   --gg-v4-strip: rgb(255 255 255 / 0.04);
   --gg-v4-depth: rgb(26 10 16 / 0.8);
   --gg-v4-shine: rgb(255 255 255 / 0.05);
@@ -41,7 +42,7 @@
   --gg-v4-accent: #c98a9e;
   --gg-v4-star: #fff4f8;
   --gg-v4-spire: #b98294;
-  --gg-v4-error: #e5738a;
+  --gg-v4-error: #e49a80;
   --gg-v4-hairline: rgb(214 170 186 / 0.14);
   --gg-v4-edge: rgb(214 170 186 / 0.32);
 }
@@ -90,6 +91,9 @@
   padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
 }
 .gg-v4-board-card {
+  --gg-v4-card-padding: var(--gg-v4-card-padding);
+  --gg-v4-grid-radius: calc(24px - var(--gg-v4-card-padding));
+  --hairline-strong: var(--gg-v4-edge);
   grid-row: 2;
   position: relative;
   width: min(100%, calc(100dvh - 224px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
@@ -97,7 +101,7 @@
   min-width: 0;
   margin: 0;
   padding: 16px;
-  border: 1px solid var(--gg-v4-edge);
+  border: 1px solid var(--hairline-strong);
   border-radius: 24px;
   background: var(--gg-v4-surface);
   box-shadow:
@@ -105,15 +109,7 @@
     0 28px 48px -28px var(--gg-v4-depth);
 }
 .gg-v4-board-card[data-size='15'] {
-  padding: 10px;
-}
-.gg-v4-board-card::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  border: 1px solid var(--gg-v4-hairline);
-  border-radius: 20px;
-  pointer-events: none;
+  --gg-v4-card-padding: 6px;
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__body {
   grid-template-columns: 28px minmax(0, 1fr);
@@ -122,26 +118,27 @@
 .gg-v4-board-card .nl-grim-glimmer-clued-board__columns {
   height: 28px;
   margin: 0 0 4px 32px;
-  padding-inline: 1.5px;
+  padding-inline: 1px;
   gap: 1px;
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__rows {
   grid-template-rows: repeat(var(--nl-grim-glimmer-clued-board-size), minmax(0, 1fr));
-  padding-block: 1.5px;
+  padding-block: 1px;
   gap: 1px;
 }
 .gg-v4-grid-frame {
   position: relative;
   min-width: 0;
-  border-radius: 14px;
+  border-radius: var(--gg-v4-grid-radius, 8px);
   overflow: hidden;
 }
 .gg-v4-scope .nl-grim-glimmer-board {
   --nl-grim-glimmer-board-gap: 1px;
   box-sizing: border-box;
   gap: 1px;
-  border: 1.5px solid var(--gg-v4-line-strong);
-  border-radius: 14px;
+  border: 1px solid var(--hairline-strong, var(--gg-v4-edge));
+  overflow: hidden;
+  border-radius: var(--gg-v4-grid-radius, 8px);
   background: var(--gg-v4-line);
 }
 .gg-v4-scope .nl-grim-glimmer-board .nl-grim-glimmer-board__cell {
@@ -223,45 +220,31 @@
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied'] {
   color: var(--gg-v4-accent);
 }
-.gg-v4-board-card[data-dim-satisfied='true']
-  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied']
-  > [aria-hidden='true']:first-child {
-  opacity: 0.35;
-}
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue[data-v4-status='over'] {
   color: var(--gg-v4-error);
 }
+.gg-v4-clue-number {
+  position: relative;
+  display: inline-block;
+}
 .gg-v4-clue-status {
   position: absolute;
-  right: 0;
-  top: 0;
+  left: calc(100% + 1px);
+  top: -0.35em;
   font-size: 8px;
+  line-height: 1;
 }
-.gg-v4-ornament {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  color: var(--gg-v4-edge);
-  pointer-events: none;
+.gg-v4-board-card[data-size='15'] .nl-grim-glimmer-clued-board__body {
+  grid-template-columns: 22px minmax(0, 1fr);
 }
-.gg-v4-ornament:nth-last-child(4) {
-  top: 4px;
-  left: 4px;
+.gg-v4-board-card[data-size='15'] .nl-grim-glimmer-clued-board__columns {
+  height: 22px;
+  margin-left: 26px;
 }
-.gg-v4-ornament:nth-last-child(3) {
-  top: 4px;
-  right: 4px;
-  transform: rotate(90deg);
-}
-.gg-v4-ornament:nth-last-child(2) {
-  bottom: 4px;
-  right: 4px;
-  transform: rotate(180deg);
-}
-.gg-v4-ornament:last-child {
-  bottom: 4px;
-  left: 4px;
-  transform: rotate(270deg);
+.gg-v4-scope .nl-grim-glimmer-board__cell--tentative::before {
+  opacity: 1;
+  background: var(--gg-v4-accent);
+  mask-image: url('./tentative-outline.svg');
 }
 .gg-v4-cell-sample {
   width: 84px;

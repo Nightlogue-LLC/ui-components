@@ -15,10 +15,10 @@ export const CELL_STATES = ['empty', 'fixed', 'placed', 'tentative', 'excluded']
 
 /** Layout budget in CSS px, with zero safe-area insets. No gameplay calculations. */
 export function boardBudget(width: number, height: number, size: Size, chrome = 224) {
-  const padding = size === 15 ? 10 : 16;
+  const padding = size === 15 ? 6 : 16;
   const card = Math.max(0, Math.min(448, width - 24, height - chrome));
-  const grid = Math.max(0, card - 2 - padding * 2 - 28 - 4);
-  return { card, grid, cell: Math.max(0, (grid - 3 - (size - 1)) / size), padding };
+  const grid = Math.max(0, card - 2 - padding * 2 - (size === 15 ? 22 : 28) - 4);
+  return { card, grid, cell: Math.max(0, (grid - 2 - (size - 1)) / size), padding };
 }
 
 /** Deliberately illustrative states, not a generated or solvable puzzle. */
@@ -39,7 +39,6 @@ export interface BoardOptions {
   palette?: Palette;
   glow?: boolean;
   guides?: boolean;
-  dimSatisfied?: boolean;
   interactive?: boolean;
   cells?: readonly BoardCellState[];
   rowStates?: readonly ClueState[];
@@ -62,23 +61,6 @@ function decorateCell(cell: HTMLElement, kind: 'hint' | 'conflict') {
     `${cell.getAttribute('aria-label') ?? ''}; ${kind === 'hint' ? 'hint target' : 'conflict'}`,
   );
   cell.querySelector('.gg-v4-hint')?.setAttribute('aria-hidden', 'true');
-}
-
-function ornament(): SVGSVGElement {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 16 16');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.classList.add('gg-v4-ornament');
-  const arc = document.createElementNS(svg.namespaceURI, 'path');
-  arc.setAttribute('d', 'M1 11 A10 10 0 0 1 11 1');
-  arc.setAttribute('fill', 'none');
-  arc.setAttribute('stroke', 'currentColor');
-  arc.setAttribute('stroke-width', '1');
-  const star = document.createElementNS(svg.namespaceURI, 'path');
-  star.setAttribute('d', 'M11 7 L12 10 L15 11 L12 12 L11 15 L10 12 L7 11 L10 10 Z');
-  star.setAttribute('fill', 'currentColor');
-  svg.append(arc, star);
-  return svg;
 }
 
 /** Story-only composition: shared board semantics/artwork, isolated V4 layout and skin. */
@@ -112,7 +94,6 @@ export function createV4Board(options: BoardOptions): HTMLElement {
   scope(root, options.palette ?? 'current');
   root.dataset.size = String(size);
   root.dataset.glow = String(options.glow ?? true);
-  root.dataset.dimSatisfied = String(options.dimSatisfied ?? true);
   const grid = root.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
   const frame = el('div', { className: 'gg-v4-grid-frame' });
   grid.replaceWith(frame);
@@ -125,13 +106,12 @@ export function createV4Board(options: BoardOptions): HTMLElement {
         line.dataset.boundary = String(boundary);
         line.style.setProperty(
           '--gg-v4-cut',
-          `calc(1.5px + (100% - 17px) * ${boundary / 15} + ${boundary - 0.5}px)`,
+          `calc(1px + (100% - 16px) * ${boundary / 15} + ${boundary - 0.5}px)`,
         );
         frame.append(line);
       }
     }
   }
-  for (let i = 0; i < 4; i++) root.append(ornament());
   for (const [axis, states] of [
     ['rows', options.rowStates],
     ['columns', options.columnStates],
@@ -155,7 +135,9 @@ export function createV4Board(options: BoardOptions): HTMLElement {
             text: state === 'over' ? '!' : '✓',
           });
           status.setAttribute('aria-hidden', 'true');
-          clue.append(status);
+          const numeral = clue.querySelector<HTMLElement>("[aria-hidden='true']")!;
+          numeral.classList.add('gg-v4-clue-number');
+          numeral.append(status);
         }
       });
   }

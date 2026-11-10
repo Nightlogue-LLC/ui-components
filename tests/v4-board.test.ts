@@ -15,7 +15,7 @@ describe('V4 board review', () => {
       const grid = root.querySelector('.nl-grim-glimmer-board')!;
       expect(grid.children).toHaveLength(size * size);
       expect(root.querySelectorAll('.gg-v4-block-line')).toHaveLength(size === 15 ? 4 : 0);
-      expect(root.querySelectorAll('.gg-v4-ornament')).toHaveLength(4);
+      expect(root.querySelectorAll('.gg-v4-ornament')).toHaveLength(0);
       expect(root.querySelectorAll('.gg-v4-block-line[aria-hidden="true"]')).toHaveLength(
         size === 15 ? 4 : 0,
       );
@@ -60,13 +60,12 @@ describe('V4 board review', () => {
       size: 6,
       rowStates: ['satisfied'],
       columnStates: ['over'],
-      dimSatisfied: false,
     });
     const row = root.querySelector('.nl-grim-glimmer-clued-board__rows > *')!;
     const column = root.querySelector('.nl-grim-glimmer-clued-board__columns > *')!;
     expect(row.textContent).toContain('requires 0, 0 confirmed; satisfied');
     expect(column.textContent).toContain('requires 0, 1 confirmed; over count');
-    expect(root.dataset.dimSatisfied).toBe('false');
+    expect(row.querySelector('.gg-v4-clue-number .gg-v4-clue-status')).not.toBeNull();
     expect(row.querySelector('.gg-v4-clue-status')?.textContent).toBe('✓');
     expect(column.querySelector('.gg-v4-clue-status')?.textContent).toBe('!');
   });
@@ -82,18 +81,18 @@ describe('V4 board review', () => {
 
 describe('dense-board sizing budget', () => {
   it.each([
-    [393, 852, 19.8666667],
-    [360, 780, 17.6666667],
+    [393, 852, 20.8666667],
+    [360, 780, 18.6666667],
   ])(
     'reports the fit compromise at %spx instead of claiming a 23px cell',
     (width, height, expected) => {
       expect(boardBudget(width, height, 15).cell).toBeCloseTo(expected, 5);
     },
   );
-  it('needs 440px width for 23px dense cells with this frame', () => {
-    expect(boardBudget(440, 852, 15).cell).toBe(23);
+  it('needs 425px width for 23px dense cells with this frame', () => {
+    expect(boardBudget(425, 852, 15).cell).toBe(23);
     expect(boardBudget(393, 852, 6).padding).toBe(16);
-    expect(boardBudget(393, 852, 15).padding).toBe(10);
+    expect(boardBudget(393, 852, 15).padding).toBe(6);
   });
   it('constrains height and avoids a negative budget on very small previews', () => {
     expect(boardBudget(800, 500, 15).card).toBe(276);

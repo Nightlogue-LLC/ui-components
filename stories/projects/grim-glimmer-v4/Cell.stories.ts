@@ -60,3 +60,22 @@ export const LightDarkComparison: Story = {
       { theme: 'moonlit-oxblood' },
     ),
 };
+export const TentativePlacedComparison: Story = {
+  parameters: { nlStage: 'self' },
+  render: (args, context) =>
+    compareModes(
+      context,
+      () =>
+        el(
+          'div',
+          { className: 'gg-v4-specimens' },
+          ['tentative', 'placed'].map((state) =>
+            el('figure', {}, [
+              createV4Cell(state as 'tentative' | 'placed', args.palette),
+              el('figcaption', { text: state }),
+            ]),
+          ),
+        ),
+      { theme: 'moonlit-oxblood' },
+    ),
+};

@@ -4,13 +4,11 @@ import { compareModes } from '../../lib/stage.js';
 interface Args {
   status: ClueState;
   palette: Palette;
-  dimSatisfied: boolean;
 }
 const build = (args: Args) =>
   boardStage({
     size: 6,
     palette: args.palette,
-    dimSatisfied: args.dimSatisfied,
     rowStates: Array<ClueState>(6).fill(args.status),
     columnStates: ['default', 'satisfied', 'over', 'default', 'satisfied', 'over'],
     interactive: false,
@@ -25,24 +23,23 @@ const meta = {
     docs: {
       description: {
         component:
-          'Clue states are supplied mock reports. First clue is zero. Satisfied numerals dim to 35%, but the check mark and accessible status remain; turn dimSatisfied off for the full-contrast alternative. Over counts have an error color and a visible exclamation mark.',
+          'Full-contrast accent numerals with anchored superscript checks; terracotta over-count numerals with superscript exclamation marks.',
       },
     },
   },
-  args: { status: 'default', palette: 'current', dimSatisfied: true },
+  args: { status: 'default', palette: 'current' },
   argTypes: {
     status: { control: 'select', options: ['default', 'satisfied', 'over'] },
     palette: { control: 'select', options: ['current', 'proposal'] },
-    dimSatisfied: { control: 'boolean' },
   },
   render: build,
 } satisfies Meta<Args>;
 export default meta;
 type Story = StoryObj<Args>;
+export const FullContrastSatisfied: Story = { args: { status: 'satisfied' } };
 export const Default: Story = {};
 export const SatisfiedIncludingZero: Story = { args: { status: 'satisfied' } };
 export const OverIncludingZero: Story = { args: { status: 'over' } };
-export const FullContrastSatisfied: Story = { args: { status: 'satisfied', dimSatisfied: false } };
 export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },
   render: (args, context) =>

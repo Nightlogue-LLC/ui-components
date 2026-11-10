@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'V4 board review only. Fit sizing yields approximately 19.9px cells at 393px / 17.7px at 360px for 15×15; a 23px dense cell with this frame requires 440px width. These are calculated budgets, not physical-device measurements. All board states and clue reports are visual fixtures, not game rules.',
+          'V4 board review only. Fit sizing yields approximately 20.9px cells at 393px / 18.7px at 360px for 15×15; a 23px dense cell with this frame requires 425px width. These are calculated budgets, not physical-device measurements. All board states and clue reports are visual fixtures, not game rules.',
       },
     },
   },
@@ -20,7 +20,6 @@ const meta = {
     palette: 'current',
     glow: true,
     guides: true,
-    dimSatisfied: true,
     interactive: true,
     conflict: true,
     hint: true,
@@ -31,7 +30,6 @@ const meta = {
     palette: { control: 'select', options: ['current', 'proposal'] },
     glow: { control: 'boolean' },
     guides: { control: 'boolean' },
-    dimSatisfied: { control: 'boolean' },
     interactive: { control: 'boolean' },
     conflict: { control: 'boolean' },
     hint: { control: 'boolean' },
@@ -63,4 +61,17 @@ export const InteractionDemo: Story = {
     await userEvent.click(cell);
     await expect(cell).toHaveAccessibleName(/: empty/);
   },
+};
+export const AllSizesLightDark: Story = {
+  parameters: { nlStage: 'self' },
+  render: (args, context) =>
+    compareModes(
+      context,
+      () => {
+        const host = document.createElement('div');
+        for (const size of SIZES) host.append(boardStage({ ...args, size }));
+        return host;
+      },
+      { theme: 'moonlit-oxblood', bleed: true },
+    ),
 };
