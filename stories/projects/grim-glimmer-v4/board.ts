@@ -14,10 +14,17 @@ export type ClueState = 'default' | 'satisfied' | 'over';
 export const CELL_STATES = ['empty', 'fixed', 'placed', 'tentative', 'excluded'] as const;
 
 /** Layout budget in CSS px, with zero safe-area insets. No gameplay calculations. */
-export function boardBudget(width: number, height: number, size: Size, chrome = 224) {
-  const padding = size === 15 ? 6 : 16;
-  const card = Math.max(0, Math.min(448, width - 24, height - chrome));
-  const grid = Math.max(0, card - 2 - padding * 2 - (size === 15 ? 22 : 28) - 4);
+export function boardBudget(
+  width: number,
+  height: number,
+  size: Size,
+  chrome = 224,
+  framed = false,
+) {
+  const cardFrame = framed && size !== 15;
+  const padding = cardFrame ? 16 : 0;
+  const card = Math.max(0, Math.min(448, width - 16, height - chrome));
+  const grid = Math.max(0, card - (cardFrame ? 2 : 0) - padding * 2 - 24);
   return { card, grid, cell: Math.max(0, (grid - 2 - (size - 1)) / size), padding };
 }
 
@@ -38,6 +45,8 @@ export interface BoardOptions {
   size: Size;
   palette?: Palette;
   glow?: boolean;
+  /** Optional framed presentation for small review boards only. */
+  framed?: boolean;
   guides?: boolean;
   interactive?: boolean;
   cells?: readonly BoardCellState[];
@@ -93,6 +102,7 @@ export function createV4Board(options: BoardOptions): HTMLElement {
   root.classList.add('gg-v4-board-card');
   scope(root, options.palette ?? 'current');
   root.dataset.size = String(size);
+  root.dataset.framed = String(options.framed === true && size !== 15);
   root.dataset.glow = String(options.glow ?? true);
   const grid = root.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
   const frame = el('div', { className: 'gg-v4-grid-frame' });

@@ -13,18 +13,12 @@
   font: 0.75rem/1.4 var(--nl-font-family);
 }
 .gg-v4-frame-review figure {
-  width: 369px;
+  width: 377px;
   max-width: 100%;
 }
 .gg-v4-frame-review .gg-v4-board-card {
   width: 100%;
   box-sizing: border-box;
-}
-.gg-v4-before-frame svg {
-  width: 100%;
-  fill: none;
-  stroke: var(--nl-color-accent);
-  stroke-width: 1;
 }
 .gg-v4-corner-crop {
   position: relative;
@@ -35,7 +29,7 @@
 }
 .gg-v4-corner-crop .gg-v4-board-card {
   position: absolute;
-  width: 369px;
+  width: 353px;
   box-sizing: border-box;
   max-width: none;
   transform: scale(3);
@@ -55,4 +49,12 @@
 }
 .gg-v4-corner-crop[data-corner='bottom-right'] .gg-v4-board-card {
   transform-origin: bottom right;
+}
+
+.gg-v4-frame-review .gg-v4-board-card[data-historical='true'] {
+  --gg-v4-grid-radius: 8px;
+}
+.gg-v4-frame-review .gg-v4-board-card[data-historical='true'][data-size='15'] {
+  padding: 6px;
+  --gg-v4-grid-radius: 18px;
 }

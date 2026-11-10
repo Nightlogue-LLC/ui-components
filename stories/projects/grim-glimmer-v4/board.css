@@ -10,7 +10,7 @@
   --gg-v4-fixed: var(--nl-grim-glimmer-cell-fixed-bg);
   --gg-v4-placed: var(--nl-grim-glimmer-cell-star-bg);
   --gg-v4-line: color-mix(in oklab, var(--gg-v4-ink) 20%, transparent);
-  --gg-v4-line-strong: color-mix(in oklab, var(--gg-v4-ink) 38%, transparent);
+  --gg-v4-line-strong: color-mix(in oklab, var(--gg-v4-ink) 32%, transparent);
   --gg-v4-hairline: color-mix(in srgb, var(--gg-v4-accent) 14%, transparent);
   --gg-v4-edge: color-mix(in srgb, var(--gg-v4-accent) 40%, transparent);
   --gg-v4-strip: color-mix(in srgb, var(--gg-v4-accent) 5%, transparent);
@@ -88,11 +88,10 @@
   grid-template-rows: 45fr auto 55fr;
   justify-items: center;
   min-height: 0;
-  padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+  padding-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right));
 }
 .gg-v4-board-card {
-  --gg-v4-card-padding: var(--gg-v4-card-padding);
-  --gg-v4-grid-radius: calc(24px - var(--gg-v4-card-padding));
+  --gg-v4-grid-radius: 8px;
   --hairline-strong: var(--gg-v4-edge);
   grid-row: 2;
   position: relative;
@@ -100,24 +99,28 @@
   max-width: 448px;
   min-width: 0;
   margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.gg-v4-board-card[data-framed='true'] {
   padding: 16px;
   border: 1px solid var(--hairline-strong);
   border-radius: 24px;
   background: var(--gg-v4-surface);
   box-shadow:
     inset 0 1px 0 var(--gg-v4-shine),
-    0 28px 48px -28px var(--gg-v4-depth);
-}
-.gg-v4-board-card[data-size='15'] {
-  --gg-v4-card-padding: 6px;
+    0 12px 28px -18px var(--gg-v4-depth);
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__body {
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 4px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 0;
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__columns {
-  height: 28px;
-  margin: 0 0 4px 32px;
+  height: 24px;
+  margin: 0 0 0 24px;
   padding-inline: 1px;
   gap: 1px;
 }
@@ -131,6 +134,18 @@
   min-width: 0;
   border-radius: var(--gg-v4-grid-radius, 8px);
   overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 var(--gg-v4-shine),
+    0 12px 28px -18px var(--gg-v4-depth);
+}
+.gg-v4-grid-frame::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 7px;
+  box-shadow: inset 0 1px 0 var(--gg-v4-shine);
+  pointer-events: none;
+  z-index: 3;
 }
 .gg-v4-scope .nl-grim-glimmer-board {
   --nl-grim-glimmer-board-gap: 1px;
@@ -213,7 +228,8 @@
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue {
   position: relative;
-  font: 600 clamp(0.625rem, 2.8vw, 0.875rem)/1 var(--nl-font-family);
+  font: 600 clamp(0.625rem, 2.8vw, 0.75rem)/1 var(--nl-font-family);
+  overflow: visible;
   font-variant-numeric: tabular-nums;
   color: var(--gg-v4-ink);
 }
@@ -227,19 +243,17 @@
   position: relative;
   display: inline-block;
 }
+.gg-v4-clue-number:has(.gg-v4-clue-status) {
+  transform: translateX(-4px);
+}
 .gg-v4-clue-status {
   position: absolute;
   left: calc(100% + 1px);
   top: -0.35em;
+  width: 7px;
+  text-align: left;
   font-size: 8px;
   line-height: 1;
-}
-.gg-v4-board-card[data-size='15'] .nl-grim-glimmer-clued-board__body {
-  grid-template-columns: 22px minmax(0, 1fr);
-}
-.gg-v4-board-card[data-size='15'] .nl-grim-glimmer-clued-board__columns {
-  height: 22px;
-  margin-left: 26px;
 }
 .gg-v4-scope .nl-grim-glimmer-board__cell--tentative::before {
   opacity: 1;

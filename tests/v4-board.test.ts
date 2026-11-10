@@ -20,6 +20,7 @@ describe('V4 board review', () => {
         size === 15 ? 4 : 0,
       );
       expect(root.dataset.palette).toBe('current');
+      expect(root.dataset.framed).toBe('false');
     },
   );
   it('cycles mock marks in place, preserves fixed spires and clears old conflict annotations', () => {
@@ -81,18 +82,24 @@ describe('V4 board review', () => {
 
 describe('dense-board sizing budget', () => {
   it.each([
-    [393, 852, 20.8666667],
-    [360, 780, 18.6666667],
+    [393, 852, 22.4666667],
+    [360, 780, 20.2666667],
   ])(
     'reports the fit compromise at %spx instead of claiming a 23px cell',
     (width, height, expected) => {
       expect(boardBudget(width, height, 15).cell).toBeCloseTo(expected, 5);
     },
   );
-  it('needs 425px width for 23px dense cells with this frame', () => {
-    expect(boardBudget(425, 852, 15).cell).toBe(23);
-    expect(boardBudget(393, 852, 6).padding).toBe(16);
-    expect(boardBudget(393, 852, 15).padding).toBe(6);
+  it('needs 401px width for 23px dense cells without the card', () => {
+    expect(boardBudget(401, 852, 15).cell).toBe(23);
+    expect(boardBudget(393, 852, 6).padding).toBe(0);
+    expect(boardBudget(393, 852, 15).padding).toBe(0);
+  });
+  it('restores a framed small board without restoring dense padding', () => {
+    expect(createV4Board({ size: 6, framed: true }).dataset.framed).toBe('true');
+    expect(createV4Board({ size: 15, framed: true }).dataset.framed).toBe('false');
+    expect(boardBudget(393, 852, 6, 224, true).padding).toBe(16);
+    expect(boardBudget(393, 852, 15, 224, true).padding).toBe(0);
   });
   it('constrains height and avoids a negative budget on very small previews', () => {
     expect(boardBudget(800, 500, 15).card).toBe(276);

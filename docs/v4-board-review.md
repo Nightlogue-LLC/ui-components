@@ -18,57 +18,72 @@ No src/, dependencies, production tokens, V3 compositions or app files change.
 Current Moonlit remains the default; the prior scoped proposal comparison remains available.
 No production adoption, native haptics or motion was added.
 
-## Revised frame and cells
+## Frameless follow-up
 
-- Removed ornaments and inset inner hairline from every current board.
-- Single 1px outer border uses the local `--hairline-strong` alias of the existing
-  V4 edge role. Grid perimeter uses that exact role at 1px.
-- Outer radius 24px. Grid radius is `24px - card padding`: 8px for small boards,
-  18px for dense boards. Both the grid and wrapper clip their contents.
-  Isolated Cell specimens use the same clipped 1px perimeter and 8px radius.
-- Original inset top highlight and warm shadow depth retained unchanged.
-- Dense padding 6px, page margins 12px each, clue gutter 22px plus 4px gap.
-  Interior 1px gaps and 5th/10th dividers remain.
-- Tentative stars use a fully opaque accent outline, derived from the exact
-  original path in a story-only stroke mask (`tentative-outline.svg`). Original
-  approved artwork is unchanged. The mask view box has 8-unit breathing room
-  to avoid clipping the 12-unit stroke. Placed stars retain the filled mask.
-- Tentative outline uses oxblood in light and the existing rose accent in dark.
-  This follows the mode's oxblood system rather than a low-contrast literal dark red.
-- Full-contrast satisfied numerals use accent plus check. Over-count uses
-  story-only terracotta #A44832 / #E49A80 plus exclamation mark.
-  Both markers are anchored to the numeral span, 1px beside it, as superscripts.
-  The 35% rule and control are removed entirely.
+- All sizes default to no card border, padding, background or shadow. The DOM
+  composition wrapper remains for shared accessible clues; it paints no card.
+- Grid perimeter alone is 1px `--hairline-strong`, radius 8px. Warm shadow is
+  `0 12px 28px -18px`; top highlight is inset over the cell paint. There is no
+  inset perimeter hairline or ornament.
+- `framed: true` restores the 24px card with 16px padding for 5×5–8×8.
+  Dense boards ignore this option. The old self-referential padding variable
+  has been removed; the optional framed layout now has explicit real padding.
+- Page margins 8px each side, respecting larger safe-area insets. Clue gutter
+  24px for all sizes, including superscript space; no extra inter-gutter gap.
+- Single-digit clue type is capped at 12px. Superscripts reserve 7px width,
+  remain 1px from the number and shift the combined number/marker group 4px left
+  for centering. Clue overflow stays visible. This budgets the complete group
+  inside the 24px row gutter and leaves space between neighboring column groups.
+  Pixel geometry still requires browser/device acceptance.
+- 5th/10th dividers now use 32% ink. Interior grid remains 20%.
+- Full-contrast clue colors, tentative outline, occupied fills and filled stars
+  remain from the prior revision. No production tokens or original assets change.
 
 ## Calculated dense sizing
 
-Zero safe-area insets; height does not constrain these two viewports.
+Zero safe-area insets; height does not constrain these viewports.
 
-| Viewport | Card  | Grid  | Cell      |
-| -------- | ----- | ----- | --------- |
-| 393×852  | 369px | 329px | 20.8667px |
-| 360×780  | 336px | 296px | 18.6667px |
+| Viewport | Composition width | Grid  | Cell      |
+| -------- | ----------------- | ----- | --------- |
+| 393×852  | 377px             | 353px | 22.4667px |
+| 360×780  | 344px             | 320px | 20.2667px |
 
-Formula: card = width − 24; grid = card − 2 outer borders − 12 padding − 22 gutter − 4 gap;
+Formula: composition = width − 16; grid = composition − 24 clue gutter;
 cell = (grid − 2 perimeter borders − 14 internal gaps) / 15.
-A 23px cell now requires 425px viewport width. Zoom remains Phase 3.
-These are computed budgets, not a claim of browser or touch-target acceptance.
+The requested approximate 23.5px target at 393px does not fit these margins and
+clue gutter; it needs 408.5px viewport width. A 23px cell needs 401px.
+Zoom remains Phase 3. These are calculated budgets, not browser measurements.
 
-## Stories
+## Updated review stories
 
 Under **Projects / Grim & Glimmer / V4 / Board**:
 
-- Grid: existing 5×5, 6×6, 8×8, 15×15 and theme controls updated;
-  All Sizes Light Dark renders every size in both modes.
-- Frame review / Before After: archival pre-revision frame schematic beside the
-  actual revised 6×6 board, light/dark. The schematic is labelled and is not a
-  device screenshot or a second current board implementation. Its historical
-  strokes appear only in this explicitly requested before reference.
-- Frame review / Corner Crops: all four corners at 6×6 and 15×15, light/dark,
-  magnified 3× at a 369px card width. Occupied corner cells expose fill clipping.
-- Cell / Tentative Placed Comparison remains visible in both modes, alongside
-  existing individual states, conflict and hint examples.
-- Clues / Full Contrast Satisfied remains; zero satisfied/over examples remain.
+- Grid: updated 5×5, 6×6, 8×8, 15×15; All Sizes Light Dark; Framed Small Board
+  and a framed control for optional small-board restoration.
+- Frame review / Before After: actual framed reference versus frameless board,
+  both modes and 6×6/15×15. Historical dense padding appears only in the labelled
+  reference, never as a current dense option.
+- Frame review / Corner Crops, Tentative Corners, Hint Corners: each grid corner
+  at 6×6 and 15×15 in both themes, magnified 3×. The crop anchors to the actual
+  grid edge rather than the former card or clue gutter. Grid width is 353px,
+  matching the 393px layout. Separate specimens expose placed/outline/hint clipping.
+- Cell and full-contrast Clues stories remain available in both modes.
+
+## Android back gesture device acceptance
+
+8px page margins reduce available edge spacing. The right outer column is 8px
+from the viewport edge; the left outer column has the extra 24px clue gutter.
+System back recognition may compete with future drag-paint. No Android gesture
+exclusion zones or platform behavior changes are introduced by this prototype.
+
+- [ ] On physical Android with gesture navigation, start a drag-paint on the
+      outermost column from **both edges**. Check intended paint versus accidental
+      Back, correct cancellation and no stray marks. Repeat in light/dark, portrait
+      and representative board sizes once Phase 3 drag-paint exists.
+- [ ] For this Phase 1 preview, check outer-column taps/press/release and Back
+      cancellation; drag-paint is not implemented yet.
+- [ ] Check all corner crops and superscript alignment on device; no clipping,
+      collision or attribution to neighboring row/column clues.
 
 ## Phase 2 proposal — CSS sliding indicator
 

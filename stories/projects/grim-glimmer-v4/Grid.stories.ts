@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'V4 board review only. Fit sizing yields approximately 20.9px cells at 393px / 18.7px at 360px for 15×15; a 23px dense cell with this frame requires 425px width. These are calculated budgets, not physical-device measurements. All board states and clue reports are visual fixtures, not game rules.',
+          'V4 board review only. Fit sizing yields approximately 22.47px cells at 393px / 20.27px at 360px for 15×15; a 23px dense cell with this frame requires 401px width. These are calculated budgets, not physical-device measurements. All board states and clue reports are visual fixtures, not game rules.',
       },
     },
   },
@@ -19,6 +19,7 @@ const meta = {
     size: 6,
     palette: 'current',
     glow: true,
+    framed: false,
     guides: true,
     interactive: true,
     conflict: true,
@@ -29,6 +30,10 @@ const meta = {
     size: { control: 'select', options: SIZES },
     palette: { control: 'select', options: ['current', 'proposal'] },
     glow: { control: 'boolean' },
+    framed: {
+      control: 'boolean',
+      description: 'Restore card for 5×5–8×8 only; dense remains frameless.',
+    },
     guides: { control: 'boolean' },
     interactive: { control: 'boolean' },
     conflict: { control: 'boolean' },
@@ -75,3 +80,5 @@ export const AllSizesLightDark: Story = {
       { theme: 'moonlit-oxblood', bleed: true },
     ),
 };
+
+export const FramedSmallBoard: Story = { args: { size: 6, framed: true } };
