@@ -38,7 +38,8 @@ No production adoption, native haptics or motion was added.
   inside the 24px row gutter and leaves space between neighboring column groups.
   Pixel geometry still requires browser/device acceptance.
 - 5th/10th dividers now use 32% ink. Interior grid remains 20%.
-- Full-contrast clue colors, tentative outline, occupied fills and filled stars
+- Satisfied clues use 55% opacity and a diagonal strike instead of a check,
+  per the latest owner revision. Over-count color and exclamation stay unchanged. Tentative outline, occupied fills and filled stars
   remain from the prior revision. No production tokens or original assets change.
 
 ## Calculated dense sizing
@@ -69,7 +70,7 @@ Under **Projects / Grim & Glimmer / V4 / Board**:
   at 6×6 and 15×15 in both themes, magnified 3×. The crop anchors to the actual
   grid edge rather than the former card or clue gutter. Grid width is 353px,
   matching the 393px layout. Separate specimens expose placed/outline/hint clipping.
-- Cell and full-contrast Clues stories remain available in both modes.
+- Cell and satisfied crossed-out Clues stories remain available in both modes.
 
 ## Android back gesture device acceptance
 
@@ -119,3 +120,11 @@ viewport the calculated clue font sizes are 20px (5×5), 18.45px (6×6), 13.76px
 not change. The upper cap reserves room for the superscript; the lower cap keeps
 dense clues readable. Both themes share this sizing rule. Browser/device visual
 acceptance remains pending; Phase 2 has not started.
+
+## Satisfied clue follow-up
+
+Satisfied numerals now dim to 55% opacity and carry a thin diagonal slash through
+that numeral. No checkmark is rendered, and no superscript space is reserved for
+satisfied state. The spoken satisfied status, including zero, is retained.
+Over-count terracotta and superscript exclamation remain unchanged. The latest
+owner request supersedes the prior full-contrast satisfied treatment.

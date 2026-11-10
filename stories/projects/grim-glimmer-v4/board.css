@@ -244,6 +244,25 @@
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied'] {
   color: var(--gg-v4-accent);
 }
+/* Satisfied state: strike the numeral itself, preserving its spoken status. */
+.gg-v4-board-card
+  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied']
+  .gg-v4-clue-number {
+  opacity: 0.55;
+}
+.gg-v4-board-card
+  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied']
+  .gg-v4-clue-number::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -0.12em;
+  width: calc(100% + 0.24em);
+  height: 1px;
+  background: currentColor;
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue[data-v4-status='over'] {
   color: var(--gg-v4-error);
 }

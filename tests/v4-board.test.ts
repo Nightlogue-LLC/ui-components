@@ -66,8 +66,9 @@ describe('V4 board review', () => {
     const column = root.querySelector('.nl-grim-glimmer-clued-board__columns > *')!;
     expect(row.textContent).toContain('requires 0, 0 confirmed; satisfied');
     expect(column.textContent).toContain('requires 0, 1 confirmed; over count');
-    expect(row.querySelector('.gg-v4-clue-number .gg-v4-clue-status')).not.toBeNull();
-    expect(row.querySelector('.gg-v4-clue-status')?.textContent).toBe('✓');
+    expect(row.querySelector('.gg-v4-clue-number')).not.toBeNull();
+    expect(row.querySelector('.gg-v4-clue-status')).toBeNull();
+    expect(row.textContent).not.toContain('✓');
     expect(column.querySelector('.gg-v4-clue-status')?.textContent).toBe('!');
   });
   it('renders read-only review boards without activating mock gameplay', () => {

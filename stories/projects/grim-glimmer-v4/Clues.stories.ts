@@ -23,7 +23,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Full-contrast accent numerals with anchored superscript checks; terracotta over-count numerals with superscript exclamation marks.',
+          'Dimmed accent numerals with diagonal strikes for satisfied clues; terracotta over-count numerals with superscript exclamation marks.',
       },
     },
   },
@@ -36,7 +36,7 @@ const meta = {
 } satisfies Meta<Args>;
 export default meta;
 type Story = StoryObj<Args>;
-export const FullContrastSatisfied: Story = { args: { status: 'satisfied' } };
+export const SatisfiedCrossedOut: Story = { args: { status: 'satisfied' } };
 export const Default: Story = {};
 export const SatisfiedIncludingZero: Story = { args: { status: 'satisfied' } };
 export const OverIncludingZero: Story = { args: { status: 'over' } };

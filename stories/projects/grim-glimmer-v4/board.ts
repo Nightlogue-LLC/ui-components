@@ -139,14 +139,11 @@ export function createV4Board(options: BoardOptions): HTMLElement {
               : Math.max(0, values[i]! - 1);
         clue.querySelector('.nl-grim-glimmer-visually-hidden')!.textContent =
           `${axis === 'rows' ? 'Row' : 'Column'} ${i + 1}: requires ${values[i]}, ${count} confirmed; ${state === 'over' ? 'over count' : state === 'satisfied' ? 'satisfied' : 'not marked satisfied'}`;
-        if (state !== 'default') {
-          const status = el('span', {
-            className: 'gg-v4-clue-status',
-            text: state === 'over' ? '!' : '✓',
-          });
+        const numeral = clue.querySelector<HTMLElement>("[aria-hidden='true']")!;
+        numeral.classList.add('gg-v4-clue-number');
+        if (state === 'over') {
+          const status = el('span', { className: 'gg-v4-clue-status', text: '!' });
           status.setAttribute('aria-hidden', 'true');
-          const numeral = clue.querySelector<HTMLElement>("[aria-hidden='true']")!;
-          numeral.classList.add('gg-v4-clue-number');
           numeral.append(status);
         }
       });
