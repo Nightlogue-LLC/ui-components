@@ -91,6 +91,7 @@
   padding-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right));
 }
 .gg-v4-board-card {
+  container-type: inline-size;
   --gg-v4-grid-radius: 8px;
   --hairline-strong: var(--gg-v4-edge);
   grid-row: 2;
@@ -228,7 +229,14 @@
 }
 .gg-v4-board-card .nl-grim-glimmer-clued-board__clue {
   position: relative;
-  font: 600 clamp(0.625rem, 2.8vw, 0.75rem)/1 var(--nl-font-family);
+  /* cqw follows this board's content box, including framed/height-constrained previews. */
+  --gg-v4-cell-size: calc(
+    (100cqw - 26px - (var(--nl-grim-glimmer-clued-board-size) - 1) * 1px) /
+      var(--nl-grim-glimmer-clued-board-size)
+  );
+  --gg-v4-clue-size: clamp(10px, calc(var(--gg-v4-cell-size) * 0.32), 20px);
+  --gg-v4-marker-size: clamp(7px, calc(var(--gg-v4-clue-size) * 0.5), 10px);
+  font: 600 var(--gg-v4-clue-size)/1 var(--nl-font-family);
   overflow: visible;
   font-variant-numeric: tabular-nums;
   color: var(--gg-v4-ink);
@@ -244,15 +252,15 @@
   display: inline-block;
 }
 .gg-v4-clue-number:has(.gg-v4-clue-status) {
-  transform: translateX(-4px);
+  transform: translateX(calc((var(--gg-v4-marker-size) + 1px) / -2));
 }
 .gg-v4-clue-status {
   position: absolute;
   left: calc(100% + 1px);
   top: -0.35em;
-  width: 7px;
+  width: var(--gg-v4-marker-size);
   text-align: left;
-  font-size: 8px;
+  font-size: var(--gg-v4-marker-size);
   line-height: 1;
 }
 .gg-v4-scope .nl-grim-glimmer-board__cell--tentative::before {

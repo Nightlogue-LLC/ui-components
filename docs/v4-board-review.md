@@ -30,9 +30,11 @@ No production adoption, native haptics or motion was added.
   has been removed; the optional framed layout now has explicit real padding.
 - Page margins 8px each side, respecting larger safe-area insets. Clue gutter
   24px for all sizes, including superscript space; no extra inter-gutter gap.
-- Single-digit clue type is capped at 12px. Superscripts reserve 7px width,
-  remain 1px from the number and shift the combined number/marker group 4px left
-  for centering. Clue overflow stays visible. This budgets the complete group
+- Clue type follows 32% of the actual cell width, clamped to 10–20px.
+  CSS container units follow the board content box, so framed, narrow and
+  height-constrained previews scale with their own grids. Superscripts follow
+  half the clue size, clamped to 7–10px, remain 1px from the number and center
+  the combined number/marker group. Clue overflow stays visible. This budgets the complete group
   inside the 24px row gutter and leaves space between neighboring column groups.
   Pixel geometry still requires browser/device acceptance.
 - 5th/10th dividers now use 32% ink. Interior grid remains 20%.
@@ -108,3 +110,12 @@ Local Chromium previously failed before capture with a socket permission error;
 this revision does not claim rendered screenshots or browser geometry validation.
 The new corner crops are executable review stories, not captured images.
 Physical Android visual acceptance remains with the owner. Stop for review.
+
+## Cell-proportional clue follow-up
+
+The viewport-based 12px cap is replaced with board-container sizing. At a 393px
+viewport the calculated clue font sizes are 20px (5×5), 18.45px (6×6), 13.76px
+(8×8), and 10px (15×15). The 24px gutter, board width and dense cell budgets do
+not change. The upper cap reserves room for the superscript; the lower cap keeps
+dense clues readable. Both themes share this sizing rule. Browser/device visual
+acceptance remains pending; Phase 2 has not started.
