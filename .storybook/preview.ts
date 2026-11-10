@@ -51,6 +51,16 @@ const preview: Preview = {
     // Real viewport sizes (the preview iframe is resized, so @media rules also apply).
     viewport: {
       options: {
+        mobile393: {
+          name: 'V4 mobile 393 × 852',
+          styles: { width: '393px', height: '852px' },
+          type: 'mobile',
+        },
+        mobile360: {
+          name: 'V4 mobile 360 × 780',
+          styles: { width: '360px', height: '780px' },
+          type: 'mobile',
+        },
         mobile320: {
           name: 'Mobile 320 (small phone)',
           styles: { width: '320px', height: '568px' },
