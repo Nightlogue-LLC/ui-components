@@ -3,7 +3,7 @@ import { updateBoard } from '../../../src/projects/grim-glimmer/index.js';
 import { createV4Board, fixture, type Size } from './board.js';
 import { InteractionModel, type SelectionAdapter } from './interaction-model.js';
 import { createInteractionDemo } from './interaction.js';
-import { createMotionSystem } from './motion.js';
+import { createMotionSystem, type DissolveStyle } from './motion.js';
 import { el } from '../../lib/dom.js';
 class MotionHost extends HTMLElement {
   mount?: () => void;
@@ -20,6 +20,8 @@ if (!customElements.get('gg-v4-motion-host'))
 export interface MotionOptions {
   size?: Size;
   reviewSpeed?: 0.25 | 0.5 | 1;
+  dissolveStyle?: DissolveStyle;
+  pixelSeed?: number;
   mark?: 'placed' | 'excluded' | 'erase';
   reducedMotion?: boolean;
   haptics?: boolean;
@@ -138,7 +140,7 @@ function speedControls(settings: MotionOptions, motion: ReturnType<typeof create
   const text = el('p');
   text.setAttribute('role', 'status');
   const speeds = [0.25, 0.5, 1] as const;
-  const labels = ['¼× slow', '½× slow', '1× normal'];
+  const labels = ['¼× slow', '½× slow', '1× proposed'];
   const buttons = speeds.map((speed, index) =>
     createButton({
       label: labels[index]!,
@@ -163,10 +165,10 @@ function speedControls(settings: MotionOptions, motion: ReturnType<typeof create
     });
     text.textContent =
       settings.reviewSpeed === 0.25
-        ? 'Review playback: 4× slower than normal.'
+        ? 'Review playback: 4× slower than proposed timing.'
         : settings.reviewSpeed === 0.5
-          ? 'Review playback: 2× slower than normal.'
-          : 'Review playback: normal timing.';
+          ? 'Review playback: 2× slower than proposed timing.'
+          : 'Review playback: proposed timing.';
   }
   group.append(...buttons);
   paint();
@@ -175,7 +177,7 @@ function speedControls(settings: MotionOptions, motion: ReturnType<typeof create
 export function createScreenPreview(options: MotionOptions = {}) {
   const root = host(
     'Screen push',
-    'Normal timing: 280ms · 24px. Use slower review playback to inspect the movement.',
+    'Proposed timing: 560ms · 24px, matching your preferred half-speed preview.',
   );
   const page = el('section', { className: 'gg-v4-motion-page' }, [
     el('h3', { text: 'Stars & Spires' }),
@@ -198,7 +200,7 @@ export function createDissolvePreview(options: MotionOptions = {}) {
   const size = options.size ?? 6;
   const root = host(
     'New-board dissolve',
-    'Normal timing stays within 300ms. Slower review playback stretches the fade and stagger together.',
+    'Random pixel fragments clear in 960ms. Larger cells subdivide for a texture similar to the dense board. Choose whole-cell or center variants in Controls.',
   );
   const initial = fixture(size);
   const board = createV4Board({

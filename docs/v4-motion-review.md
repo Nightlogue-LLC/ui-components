@@ -29,8 +29,8 @@ Mark overlays reuse the original cell glyph classes/masks. X reveals retain the 
 | X reveal       | Two fixed diagonal axes; inner strokes scaleX 0 → 1 for 60ms each, second delayed 60ms; total 120ms |
 | Erase          | Old glyph snapshot opacity 1 → 0, 100ms ease-out; actual cell state/fill updates immediately        |
 | Hint           | Target ring scale .92 → 1.08 → .92 and opacity .35 → .85 → .35, 1600ms ease-in-out                  |
-| Screen push    | translateX 24px → 0 plus opacity 0 → 1, shared 280ms cubic-bezier(.2,.8,.2,1)                       |
-| Board dissolve | 120ms opacity fade, delay = min(180ms, Euclidean center distance × 12ms)                            |
+| Screen push    | translateX 24px → 0 plus opacity 0 → 1, 560ms cubic-bezier(.2,.8,.2,1)                              |
+| Board dissolve | Center comparison: 480ms fade, delay = min(720ms, Euclidean center distance × 48ms)                 |
 
 The source stroke-dashoffset proposal conflicts with the transform/opacity-only rule.
 This review uses a transform reveal with two fixed axes; no dash offset, path, mask,
@@ -39,19 +39,38 @@ stays static. No React, Framer or motion dependency. Hint is a target ring rathe
 a faded tentative star. The screen specimen demonstrates motion only; no new navigation
 or alternate approved screen composition is introduced.
 
-The dissolve cap includes the fade, not merely the stagger. Calculated total times:
+The owner's follow-up replaces the original 300ms dissolve cap with the preferred
+four-times-slower proposal. Screen push now takes 560ms, matching the former half-speed
+preview. This does not change the shared production sheet timing.
 
-| Size  | Latest fade completion |
-| ----- | ---------------------- |
-| 5×5   | 153.94ms               |
-| 6×6   | 162.43ms               |
-| 8×8   | 179.40ms               |
-| 15×15 | 238.79ms               |
+Pixel dissolve is now the default: 120ms opacity fades, shuffled delays spanning 840ms,
+960ms total for every grid size. Larger cells subdivide into grid-aligned pieces so
+5×5/6×6/8×8 have a texture similar to 15×15. Cell subdivision is ceil(15 / size):
 
-All are below the 300ms global maximum. The read-only dissolve preview clears mock
-player marks as one Phase 3 restart snapshot after the fade; Undo preview restores it.
-It does not generate/select a new puzzle. Replay cancels an older pending completion
-before restoring and starting again. No input lock or timer is introduced.
+| Size  | Pieces per cell | Total pixel tiles |
+| ----- | --------------- | ----------------- |
+| 5×5   | 3×3             | 225               |
+| 6×6   | 3×3             | 324               |
+| 8×8   | 2×2             | 256               |
+| 15×15 | 1×1             | 225               |
+
+Static clipped copies preserve the actual glyph/fill at full size behind each tile.
+Only tile opacity animates; no raster generation, asset edits, animated clipping,
+canvas or particle simulation. Original cell nodes remain in place. Tiles have no
+cell index, role or tab stop, and are aria-hidden. Copies and hidden-source classes
+are removed on completion/cancel/replay/reduction/disposal. Seed 42 is reproducible;
+replay increments the seed for a fresh pattern. Controls expose the initial seed.
+
+Comparison variants retain random whole cells and the prior center stagger. At the
+preferred timing the center reference totals 615.76 / 649.71 / 717.59 / 955.18ms for
+5/6/8/15. It was always the same algorithm at both densities; smaller cells made the
+dense version look finer. Default fine pixels keep the new random effect consistent
+across densities. The story-only timing ceiling is now 1200ms, superseding the old
+source cap by explicit owner preference.
+
+The read-only preview clears mock marks as one Phase 3 restart snapshot after the
+sequence. Undo restores it. It does not generate/select a new puzzle. Replay cancels
+old pending completions; no timer, toast or input lock is introduced.
 
 ## State ownership, accessibility and lifecycle
 
@@ -84,7 +103,7 @@ No win detection, success message or victory sequence is added in Phase 4.
 - HintRing: Target Pulse, Dense Board, Reduced Motion and Light Dark Comparison;
   size Controls cover all approved densities; Replay hint restarts the pulse.
 - Transitions: Screen Push, Board Dissolve, Dense Dissolve, Reduced Motion and
-  Light Dark Comparison. Size Controls apply to board dissolve.
+  Light Dark Comparison, Proposed Timing, Random Cells and Center Reference. Size Controls apply to board dissolve.
 
 Mark/replay play demonstrates the resulting state and one-entry history. Integrated
 Painting uses Phase 3 drag/keyboard/zoom and Phase 2 controls with mark effects.
@@ -115,12 +134,13 @@ Open visual decisions: X transform-reveal delivery, 1600ms hint strength/timing,
 ring prominence on dense boards. No unresolved palette change: canonical Moonlit stays
 in use. Phase 5 and production adoption are not started.
 
-## Slower transition review
+## Playback controls
 
-Transitions now default to quarter-speed playback: screen push takes 1120ms and the
-15×15 dissolve approximately 955ms. Half and normal speed are selectable both in the
-preview and Storybook Controls; Normal Timing is a separate reference story. Only
-review playback scales duration and stagger together. Normal timing constants and
-its 300ms dissolve cap are unchanged. Reduced motion still applies immediately.
-MarkPlacement targets the top-left cell; Replay mark demonstrates the chosen star,
-X or erase effect. Speed changes cancel pending preview work before the next replay.
+The default 1× now means the owner's preferred proposal: 560ms screen push and 960ms
+random pixel dissolve. Quarter/half playback remain available for closer inspection,
+relative to those new baselines. Reduced motion stays immediate. Mark, X, erase and
+hint timing values are unchanged. MarkPlacement targets the top-left cell.
+
+Random pixel rendering and its maximum 324 mask copies still need physical Android
+performance and visual acceptance; unit tests do not establish frame rate. Review
+fine pixels versus random whole cells before accepting the final dissolve style.

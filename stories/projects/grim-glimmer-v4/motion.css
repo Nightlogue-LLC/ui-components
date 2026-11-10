@@ -77,3 +77,24 @@
   border: 1px solid var(--nl-color-border);
   border-radius: 8px;
 }
+/* Static fragments preserve the original glyph/fill, while only their opacity animates. */
+.gg-v4-pixel-tile {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+}
+.gg-v4-scope .nl-grim-glimmer-board .nl-grim-glimmer-board__cell.gg-v4-pixel-copy {
+  position: absolute;
+  aspect-ratio: auto;
+  min-width: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.gg-v4-scope .nl-grim-glimmer-board .nl-grim-glimmer-board__cell.gg-v4-pixel-source {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.gg-v4-pixel-source::before,
+.gg-v4-pixel-source::after {
+  opacity: 0 !important;
+}
