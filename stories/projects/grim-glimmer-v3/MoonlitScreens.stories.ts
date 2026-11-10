@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/html-vite';
 import { screen, type Screen } from './screen-fixtures.js';
 import { el } from '../../lib/dom.js';
 const meta = {
-  title: 'Projects/Grim & Glimmer — Editorial V3/Moonlit Oxblood',
+  title: 'Projects/Grim & Glimmer/V3/Moonlit Oxblood',
   parameters: { nlStage: 'self' },
   args: { screen: 'Home' as Screen },
   argTypes: {

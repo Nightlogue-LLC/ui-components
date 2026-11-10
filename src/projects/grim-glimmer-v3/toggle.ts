@@ -5,6 +5,7 @@ export interface ToggleOptions {
   onChange?: (checked: boolean) => void;
 }
 /** Native button provides Space/Enter activation. State is local; persistence belongs to callers. */
+/** @deprecated Experimental specimen; current settings use createAppSettings. */
 export function createToggle(options: ToggleOptions): HTMLButtonElement {
   const button = document.createElement('button');
   button.type = 'button';

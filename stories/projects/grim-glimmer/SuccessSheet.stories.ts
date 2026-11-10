@@ -55,7 +55,7 @@ function build(args: Args): HTMLElement {
   return host;
 }
 const meta = {
-  title: 'Projects/Grim & Glimmer/Dialogs/Success Sheet',
+  title: 'Projects/Grim & Glimmer/V3/Completion',
   parameters: {
     nlTheme: 'moonlit-oxblood',
     nlStage: 'bleed',

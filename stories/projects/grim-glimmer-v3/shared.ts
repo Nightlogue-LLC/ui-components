@@ -10,7 +10,7 @@ export function specimen(part = 'all'): HTMLElement {
   const root = el('div', { className: 'nl-grim-glimmer-v3-foundations' });
   root.append(
     el('h2', { text: 'Stars & Spires' }),
-    el('p', { text: 'Editorial V3 · Phase 1 foundations' }),
+    el('p', { text: 'Moonlit Oxblood · current V3 foundations' }),
   );
   const section = (title: string, nodes: Node[]) =>
     root.append(
@@ -24,7 +24,7 @@ export function specimen(part = 'all'): HTMLElement {
       el('div', { className: 'nl-grim-glimmer-v3-row' }, [
         createButton({ label: 'New game' }),
         createButton({ label: 'Continue', variant: 'secondary' }),
-        createButton({ label: 'View board', variant: 'ghost' }),
+        createButton({ label: 'Dismiss', variant: 'ghost' }),
         createButton({ label: 'Restart', disabled: true }),
       ]),
     ]);
