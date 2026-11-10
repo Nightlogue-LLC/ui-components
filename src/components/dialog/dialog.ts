@@ -1,4 +1,6 @@
 import { createIcon } from '../icon/index.js';
+import { createIconButton } from '../icon-button/index.js';
+import { animateSheet } from '../../core/motion.js';
 import { uniqueId } from '../../core/id.js';
 
 export type DialogCloseReason = 'close-button' | 'escape' | 'backdrop' | 'programmatic';
@@ -6,6 +8,9 @@ export type DialogCloseReason = 'close-button' | 'escape' | 'backdrop' | 'progra
 export interface DialogOptions {
   /** Visible heading; also the dialog's accessible name (via aria-labelledby). */
   title: string;
+  /** Shared sheet motion; ordinary dialogs retain their approved presentation. */
+  motion?: 'sheet';
+  animations?: boolean;
   /**
    * Whether the user may dismiss it (close button, Escape, backdrop click). Default true.
    * Use `false` for compulsory choices: the dialog then closes only through `closeDialog`.
@@ -19,6 +24,11 @@ export interface DialogOptions {
 
 interface State {
   dismissible: boolean;
+  motion?: 'sheet';
+  animations?: boolean;
+  animation?: Animation;
+  closing?: boolean;
+  releaseHistory?: () => boolean;
   onClose: ((reason: DialogCloseReason) => void) | undefined;
   /** Reason set by our own close paths, consumed by the close handler. */
   pendingReason: DialogCloseReason | undefined;
@@ -51,6 +61,8 @@ export function createDialog(options: DialogOptions): HTMLDialogElement {
 
   const state: State = {
     dismissible,
+    motion: options.motion,
+    animations: options.animations,
     onClose,
     pendingReason: undefined,
     returnFocus: null,
@@ -69,11 +81,8 @@ export function createDialog(options: DialogOptions): HTMLDialogElement {
   header.append(heading);
 
   if (dismissible) {
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'nl-dialog__close';
-    close.setAttribute('aria-label', closeLabel);
-    close.append(createIcon('close'));
+    const close = createIconButton({ label: closeLabel, icon: createIcon('close') });
+    close.classList.add('nl-dialog__close');
     close.addEventListener('click', () => finish(dialog, 'close-button'));
     header.append(close);
   }
@@ -139,7 +148,7 @@ function part(dialog: HTMLDialogElement, selector: string): HTMLElement {
 }
 
 /** Opens the dialog modally. It must already be attached to the document. No-op if open. */
-export function openDialog(dialog: HTMLDialogElement): void {
+export function openDialog(dialog: HTMLDialogElement, options: { history?: boolean } = {}): void {
   const state = stateOf(dialog);
   if (dialog.hasAttribute('open')) return;
   if (!dialog.isConnected) {
@@ -148,9 +157,36 @@ export function openDialog(dialog: HTMLDialogElement): void {
     );
   }
   state.returnFocus = document.activeElement;
+  if (options.history) {
+    const marker = uniqueId('nl-modal-history');
+    let entry = true;
+    const back = () => {
+      if (!state.dismissible) {
+        window.history.pushState({ ...window.history.state, nlModal: marker }, '');
+        return;
+      }
+      entry = false;
+      finish(dialog, 'escape');
+    };
+    try {
+      window.history.pushState({ ...window.history.state, nlModal: marker }, '');
+      window.addEventListener('popstate', back);
+      state.releaseHistory = () => {
+        window.removeEventListener('popstate', back);
+        const consume =
+          entry && (window.history.state as { nlModal?: string } | null)?.nlModal === marker;
+        entry = false;
+        if (consume) window.history.back();
+        return consume;
+      };
+    } catch {
+      /* History can be unavailable in embedded previews. */
+    }
+  }
 
   if (typeof dialog.showModal === 'function') {
     dialog.showModal();
+    enter(dialog, state);
     return;
   }
 
@@ -159,6 +195,7 @@ export function openDialog(dialog: HTMLDialogElement): void {
   dialog.setAttribute('open', '');
   dialog.setAttribute('aria-modal', 'true');
   dialog.classList.add('nl-dialog--fallback');
+  enter(dialog, state);
   state.fallbackKeydown = (event) => {
     if (event.key === 'Escape' && state.dismissible) {
       event.preventDefault();
@@ -188,19 +225,52 @@ function stateOf(dialog: HTMLDialogElement): State {
   return state;
 }
 
+function enter(dialog: HTMLDialogElement, state: State): void {
+  state.animation?.cancel();
+  state.closing = false;
+  if (state.motion === 'sheet') {
+    state.animation = animateSheet(dialog, 'enter', {
+      animations: state.animations,
+      placement: 'responsive',
+    });
+    const current = state.animation;
+    current?.finished.then(
+      () => {
+        if (state.animation === current) {
+          current.cancel();
+          state.animation = undefined;
+        }
+      },
+      () => undefined,
+    );
+  }
+}
+
 function finish(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
   const state = stateOf(dialog);
-  if (!dialog.hasAttribute('open')) return;
+  if (!dialog.hasAttribute('open') || state.closing) return;
+  state.closing = true;
   state.pendingReason = reason;
-  if (typeof dialog.close === 'function') {
-    dialog.close(); // native: the 'close' event then calls complete()
-  } else {
-    dialog.removeAttribute('open');
-    dialog.removeAttribute('aria-modal');
-    dialog.classList.remove('nl-dialog--fallback');
-    state.pendingReason = undefined;
-    complete(dialog, reason);
-  }
+  state.animation?.cancel();
+  const commit = () => {
+    state.animation?.cancel();
+    state.animation = undefined;
+    if (!dialog.hasAttribute('open')) return;
+    if (typeof dialog.close === 'function') dialog.close();
+    else {
+      dialog.removeAttribute('open');
+      dialog.removeAttribute('aria-modal');
+      dialog.classList.remove('nl-dialog--fallback');
+      state.pendingReason = undefined;
+      complete(dialog, reason);
+    }
+  };
+  state.animation =
+    state.motion === 'sheet'
+      ? animateSheet(dialog, 'exit', { animations: state.animations, placement: 'responsive' })
+      : undefined;
+  if (state.animation) state.animation.finished.then(commit, commit);
+  else commit();
 }
 
 function complete(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
@@ -209,8 +279,20 @@ function complete(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
     document.removeEventListener('keydown', state.fallbackKeydown);
     state.fallbackKeydown = undefined;
   }
+  state.closing = false;
+  state.animation?.cancel();
+  state.animation = undefined;
   const back = state.returnFocus;
   state.returnFocus = null;
   if (back instanceof HTMLElement && back.isConnected) back.focus();
-  state.onClose?.(reason);
+  const release = state.releaseHistory;
+  state.releaseHistory = undefined;
+  if (release) {
+    const notify = () => state.onClose?.(reason);
+    window.addEventListener('popstate', notify, { once: true });
+    if (!release()) {
+      window.removeEventListener('popstate', notify);
+      notify();
+    }
+  } else state.onClose?.(reason);
 }

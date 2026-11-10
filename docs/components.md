@@ -155,3 +155,21 @@ A single-message bank works; an empty bank throws. Keep the picker outside the
 sheet-opening callback to retain its previous selection. Fixed strings and custom
 message callbacks remain supported. Banks belong to the app so they can vary by
 puzzle, language or future content changes.
+
+## Sheet motion and modal Back integration
+
+`createBottomSheet` uses `animateSheet` from the shared core for matching 280 ms
+entry and exit. Modal visibility/focus stay active until exit finishes. Both
+`animations: false` and reduced motion bypass movement; missing Web Animations
+support closes synchronously. The header-local GameMenuSheet uses the same
+primitive, retaining its persistent trigger, inert board and history contract.
+
+Use `openDialog(dialog, { history: true })` in an application to make browser or
+Android Back dismiss the current modal first. This opt-in avoids altering other
+consumers' routing. Action callbacks run after the modal's same-URL entry is
+consumed, so a new route is not immediately undone. Compulsory confirmations
+retain their explicit choice policy. Sheet swipe starts on its handle only.
+
+The app owns routing and preference persistence. Public dialog APIs remain
+compatible; the approved G&G completion is `createSuccessSheet`, with a persistent
+`createSuccessMessagePicker` per copy bank.
