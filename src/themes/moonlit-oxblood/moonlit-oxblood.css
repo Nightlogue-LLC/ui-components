@@ -103,6 +103,8 @@
   --nl-moonlit-text-muted: #6b5f60;
   --nl-moonlit-star: #681f35;
   --nl-moonlit-spire: #170f12;
+  --nl-grim-glimmer-cell-fixed-bg: #e1dad5;
+  --nl-grim-glimmer-cell-star-bg: #ead8de;
   --nl-button-primary-background: #170f12;
   --nl-button-primary-background-hover: #170f12;
   --nl-button-primary-background-active: #170f12;
@@ -168,7 +170,9 @@
   --nl-moonlit-surface-high: #2a1f23;
   --nl-moonlit-text-muted: #a99b9b;
   --nl-moonlit-star: #f4f0f2;
-  --nl-moonlit-spire: #b3a6a4;
+  --nl-moonlit-spire: #b87a8c;
+  --nl-grim-glimmer-cell-fixed-bg: #332329;
+  --nl-grim-glimmer-cell-star-bg: #3b202a;
   --nl-button-primary-background: #efe8e2;
   --nl-button-primary-background-hover: #efe8e2;
   --nl-button-primary-background-active: #efe8e2;

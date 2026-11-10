@@ -55,3 +55,23 @@ it('consumes its Back entry before invoking a navigation callback', async () => 
   await vi.waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
   expect(window.history.state).toEqual(before);
 });
+it('reveals success content after entry finishes, with an immediate path for motion off', async () => {
+  vi.stubGlobal('matchMedia', () => ({ matches: false }));
+  let resolve!: () => void;
+  const finished = new Promise<void>((done) => {
+    resolve = done;
+  });
+  const sheet = createBottomSheet({ title: 'Completion' });
+  sheet.animate = vi.fn().mockReturnValue({ finished, cancel: vi.fn() });
+  document.body.append(sheet);
+  openDialog(sheet);
+  expect(sheet.dataset.nlEntering).toBe('true');
+  resolve();
+  await finished;
+  await Promise.resolve();
+  expect(sheet.dataset.nlEntering).toBeUndefined();
+  const still = createBottomSheet({ title: 'Static completion', animations: false });
+  document.body.append(still);
+  openDialog(still);
+  expect(still.dataset.nlEntering).toBeUndefined();
+});

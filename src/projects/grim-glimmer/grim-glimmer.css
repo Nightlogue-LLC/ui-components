@@ -31,9 +31,19 @@
   aspect-ratio: 1 / 1;
   border: var(--nl-border-width) solid var(--nl-color-border);
   border-radius: calc(var(--nl-radius-md) * 0.6);
-  background: var(--nl-color-surface);
+  --nl-grim-glimmer-cell-bg: var(--nl-color-surface);
+  background: var(--nl-grim-glimmer-cell-bg);
   color: var(--nl-color-text);
   font: inherit;
+}
+
+/* Occupied fills follow state, never the last pointer/focus position. */
+.nl-grim-glimmer-board__cell--fixed {
+  --nl-grim-glimmer-cell-bg: var(--nl-grim-glimmer-cell-fixed-bg, var(--nl-color-surface));
+}
+.nl-grim-glimmer-board__cell--placed,
+.nl-grim-glimmer-board__cell--tentative {
+  --nl-grim-glimmer-cell-bg: var(--nl-grim-glimmer-cell-star-bg, var(--nl-color-surface));
 }
 
 /* SVG masks are shipped with the component; colors come from the active theme. */
@@ -86,13 +96,13 @@
 
 .nl-grim-glimmer-board--interactive
   .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
-  background: var(--nl-color-surface-hover);
+  background: color-mix(in srgb, var(--nl-grim-glimmer-cell-bg) 92%, var(--nl-color-border));
 }
 
 @media (hover: hover) and (pointer: fine) {
   .nl-grim-glimmer-board--interactive
     .nl-grim-glimmer-board__cell:not([aria-disabled='true']):hover {
-    background: var(--nl-color-surface-hover);
+    background: color-mix(in srgb, var(--nl-grim-glimmer-cell-bg) 92%, var(--nl-color-border));
   }
 }
 
@@ -737,16 +747,16 @@
     var(--nl-grim-glimmer-tutorial-glow-delay, 0ms) infinite;
 }
 
-/* A quiet glow around the tile; the outline and glyph stay fully legible and stationary. */
+/* Inset guidance stays visible inside clipped mobile grids; glyphs remain stationary. */
 @keyframes nl-grim-glimmer-tutorial-glow {
   0%,
   100% {
-    filter: drop-shadow(0 0 0 transparent);
+    box-shadow: inset 0 0 0 0 transparent;
   }
   50% {
-    filter: drop-shadow(
-      0 0 4px color-mix(in srgb, var(--nl-grim-glimmer-tutorial-highlight) 35%, transparent)
-    );
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--nl-grim-glimmer-tutorial-highlight) 60%, transparent),
+      inset 0 0 12px color-mix(in srgb, var(--nl-grim-glimmer-tutorial-highlight) 28%, transparent);
   }
 }
 
@@ -1238,6 +1248,8 @@
   background: var(--nl-color-bg);
 }
 .nl-grim-glimmer-menu-sheet {
+  overflow: hidden;
+  overflow: clip;
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -1270,6 +1282,9 @@
 }
 .nl-grim-glimmer-menu-toggle {
   --nl-icon-button-size: 3rem;
+  --nl-icon-button-ghost-background: var(--nl-color-bg);
+  --nl-icon-button-ghost-background-hover: var(--nl-color-bg);
+  --nl-icon-button-ghost-background-active: var(--nl-color-bg);
 }
 .nl-grim-glimmer-menu-toggle__closed,
 .nl-grim-glimmer-menu-toggle__opened {
@@ -1379,11 +1394,17 @@
   min-width: 0;
   white-space: normal;
 }
-.nl-grim-glimmer-success-sheet[open] .nl-grim-glimmer-success-sheet__star {
-  animation: nl-grim-glimmer-success-star 600ms 220ms ease-out both;
+.nl-grim-glimmer-success-sheet[data-nl-entering='true'] .nl-grim-glimmer-success-sheet__star,
+.nl-grim-glimmer-success-sheet[data-nl-entering='true'] .nl-grim-glimmer-success-sheet__message {
+  visibility: hidden;
 }
-.nl-grim-glimmer-success-sheet[open] .nl-grim-glimmer-success-sheet__message {
-  animation: nl-grim-glimmer-success-copy 300ms 400ms ease-out both;
+.nl-grim-glimmer-success-sheet[open]:not([data-nl-entering='true'])
+  .nl-grim-glimmer-success-sheet__star {
+  animation: nl-grim-glimmer-success-star 600ms ease-out both;
+}
+.nl-grim-glimmer-success-sheet[open]:not([data-nl-entering='true'])
+  .nl-grim-glimmer-success-sheet__message {
+  animation: nl-grim-glimmer-success-copy 300ms 180ms ease-out both;
 }
 @keyframes nl-grim-glimmer-success-star {
   from {
@@ -1403,13 +1424,16 @@
     opacity: 1;
   }
 }
-.nl-grim-glimmer-success-sheet[data-animations='off'] .nl-grim-glimmer-success-sheet__star,
-.nl-grim-glimmer-success-sheet[data-animations='off'] .nl-grim-glimmer-success-sheet__message {
+.nl-grim-glimmer-success-sheet[open][data-animations='off'] .nl-grim-glimmer-success-sheet__star,
+.nl-grim-glimmer-success-sheet[open][data-animations='off']
+  .nl-grim-glimmer-success-sheet__message {
   animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .nl-grim-glimmer-success-sheet[open] .nl-grim-glimmer-success-sheet__star,
-  .nl-grim-glimmer-success-sheet[open] .nl-grim-glimmer-success-sheet__message {
+  .nl-grim-glimmer-success-sheet[open]:not([data-nl-entering='true'])
+    .nl-grim-glimmer-success-sheet__star,
+  .nl-grim-glimmer-success-sheet[open]:not([data-nl-entering='true'])
+    .nl-grim-glimmer-success-sheet__message {
     animation: none;
   }
 }

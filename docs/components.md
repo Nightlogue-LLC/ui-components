@@ -173,3 +173,9 @@ retain their explicit choice policy. Sheet swipe starts on its handle only.
 The app owns routing and preference persistence. Public dialog APIs remain
 compatible; the approved G&G completion is `createSuccessSheet`, with a persistent
 `createSuccessMessagePicker` per copy bank.
+
+Ghost IconButton consumers can set `--nl-icon-button-ghost-background`,
+`--nl-icon-button-ghost-background-hover` and
+`--nl-icon-button-ghost-background-active` to keep persistent icon transitions on
+their owning canvas. Defaults retain existing hover/press surfaces; focus-visible
+styling is unchanged.

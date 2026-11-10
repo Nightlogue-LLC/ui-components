@@ -184,6 +184,7 @@ export function openDialog(dialog: HTMLDialogElement, options: { history?: boole
     }
   }
 
+  if (state.motion === 'sheet') dialog.dataset.nlEntering = 'true';
   if (typeof dialog.showModal === 'function') {
     dialog.showModal();
     enter(dialog, state);
@@ -207,10 +208,10 @@ export function openDialog(dialog: HTMLDialogElement, options: { history?: boole
     dialog.querySelector<HTMLElement>('[autofocus]') ??
     dialog.querySelector<HTMLElement>(FOCUSABLE);
   if (target) {
-    target.focus();
+    target.focus({ preventScroll: true });
   } else {
     dialog.tabIndex = -1;
-    dialog.focus();
+    dialog.focus({ preventScroll: true });
   }
 }
 
@@ -239,10 +240,12 @@ function enter(dialog: HTMLDialogElement, state: State): void {
         if (state.animation === current) {
           current.cancel();
           state.animation = undefined;
+          delete dialog.dataset.nlEntering;
         }
       },
       () => undefined,
     );
+    if (!current) delete dialog.dataset.nlEntering;
   }
 }
 
@@ -280,11 +283,12 @@ function complete(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
     state.fallbackKeydown = undefined;
   }
   state.closing = false;
+  delete dialog.dataset.nlEntering;
   state.animation?.cancel();
   state.animation = undefined;
   const back = state.returnFocus;
   state.returnFocus = null;
-  if (back instanceof HTMLElement && back.isConnected) back.focus();
+  if (back instanceof HTMLElement && back.isConnected) back.focus({ preventScroll: true });
   const release = state.releaseHistory;
   state.releaseHistory = undefined;
   if (release) {
