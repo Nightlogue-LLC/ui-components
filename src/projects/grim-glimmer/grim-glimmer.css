@@ -84,6 +84,11 @@
   cursor: default;
 }
 
+.nl-grim-glimmer-board--interactive
+  .nl-grim-glimmer-board__cell:active:not([aria-disabled='true']) {
+  background: var(--nl-color-surface-hover);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .nl-grim-glimmer-board--interactive
     .nl-grim-glimmer-board__cell:not([aria-disabled='true']):hover {
