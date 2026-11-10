@@ -35,16 +35,26 @@ const REQUIRED_TITLES = [
   'Projects/Grim & Glimmer/V3/Gameplay',
   'Projects/Grim & Glimmer/V3/Tutorial',
   'Projects/Grim & Glimmer/V3/Completion',
+  'Projects/Grim & Glimmer/V4/Board/Cell',
+  'Projects/Grim & Glimmer/V4/Board/Grid',
+  'Projects/Grim & Glimmer/V4/Board/Clues',
 ];
 const obsolete = [...titles].filter(
   (title) =>
-    title.startsWith('Projects/Grim & Glimmer') && !title.startsWith('Projects/Grim & Glimmer/V3/'),
+    title.startsWith('Projects/Grim & Glimmer') &&
+    !/^Projects\/Grim & Glimmer\/V[34]\//.test(title),
 );
 if (obsolete.length) fail(`obsolete project sections: ${obsolete.join(', ')}`);
 const missingTitles = REQUIRED_TITLES.filter((t) => !titles.has(t));
 if (missingTitles.length > 0) fail(`missing story groups: ${missingTitles.join(', ')}`);
 
 const REQUIRED_STORIES = [
+  'projects-grim-glimmer-v4-board-grid--grid-5-x-5',
+  'projects-grim-glimmer-v4-board-grid--grid-6-x-6',
+  'projects-grim-glimmer-v4-board-grid--grid-8-x-8',
+  'projects-grim-glimmer-v4-board-grid--grid-15-x-15',
+  'projects-grim-glimmer-v4-board-grid--interaction-demo',
+  'projects-grim-glimmer-v4-board-clues--over-including-zero',
   'components-actions-button--playground',
   'components-actions-button--variant-size-state-matrix',
   'components-actions-iconbutton--playground',
