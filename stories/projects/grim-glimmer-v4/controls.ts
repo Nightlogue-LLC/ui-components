@@ -1,5 +1,4 @@
 import { createIconButton } from '../../../src/components/icon-button/index.js';
-import { createButton } from '../../../src/components/button/index.js';
 import { createIcon } from '../../../src/components/icon/index.js';
 import { createV4Board, fixture } from './board.js';
 import { updateBoard, type BoardCellState } from '../../../src/projects/grim-glimmer/index.js';
@@ -104,101 +103,11 @@ export function createControlRow(options: ControlsOptions = {}) {
   return root;
 }
 
-// Standard custom-element disconnection prevents abandoned story timers/listeners.
-class ReviewHost extends HTMLElement {
-  cleanup?: () => void;
-  disconnectedCallback() {
-    this.cleanup?.();
-  }
-}
-if (!customElements.get('gg-v4-controls-host'))
-  customElements.define('gg-v4-controls-host', ReviewHost);
-function reviewHost() {
-  return document.createElement('gg-v4-controls-host') as ReviewHost;
-}
-
-export function createRestartToast(onUndo: () => void, onExpire?: () => void) {
-  const root = reviewHost();
-  root.className = 'gg-v4-restart-toast';
-  root.hidden = true;
-  const announcement = el('span');
-  announcement.setAttribute('role', 'status');
-  announcement.setAttribute('aria-live', 'polite');
-  const undo = createButton({
-    label: 'Undo',
-    variant: 'ghost',
-    size: 'sm',
-    onClick: () => {
-      hide();
-      onUndo();
-    },
-  });
-  root.append(announcement, el('span', { text: '·' }), undo);
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let remaining = 5000;
-  let started = 0;
-  const paused = new Set<string>();
-  function cancel() {
-    if (timer !== undefined) clearTimeout(timer);
-    timer = undefined;
-  }
-  function schedule() {
-    if (root.hidden || paused.size) return;
-    started = Date.now();
-    timer = setTimeout(() => {
-      hide();
-      onExpire?.();
-    }, remaining);
-  }
-  function pause(reason: string) {
-    if (!paused.size && timer !== undefined)
-      remaining = Math.max(0, remaining - (Date.now() - started));
-    paused.add(reason);
-    cancel();
-  }
-  function resume(reason: string) {
-    if (!paused.has(reason)) return;
-    paused.delete(reason);
-    cancel();
-    schedule();
-  }
-  function visibility() {
-    if (document.hidden) pause('hidden');
-    else resume('hidden');
-  }
-  root.addEventListener('pointerenter', () => pause('hover'));
-  root.addEventListener('pointerleave', () => resume('hover'));
-  root.addEventListener('focusin', () => pause('focus'));
-  root.addEventListener('focusout', (event) => {
-    if (!root.contains(event.relatedTarget as Node | null)) resume('focus');
-  });
-  function hide() {
-    cancel();
-    root.hidden = true;
-    announcement.textContent = '';
-    document.removeEventListener('visibilitychange', visibility);
-  }
-  function show() {
-    hide();
-    remaining = 5000;
-    paused.clear();
-    root.hidden = false;
-    announcement.textContent = 'Board cleared';
-    if (root.contains(document.activeElement)) paused.add('focus');
-    if (root.matches(':hover')) paused.add('hover');
-    if (document.hidden) paused.add('hidden');
-    document.addEventListener('visibilitychange', visibility);
-    schedule();
-  }
-  root.cleanup = hide;
-  return { root, show, hide };
-}
-
 export interface DemoOptions extends ControlsOptions {
   onTransaction?: (action: string) => void;
 }
 export function createControlsDemo(options: DemoOptions = {}) {
-  const root = reviewHost();
+  const root = el('section');
   root.className = 'gg-v4-controls-demo gg-v4-scope';
   root.dataset.palette = 'current';
   root.dataset.reducedMotion = String(options.reducedMotion ?? false);
@@ -223,11 +132,6 @@ export function createControlsDemo(options: DemoOptions = {}) {
     controlsHost
       .querySelector<HTMLButtonElement>('[aria-label="Restart board"]')
       ?.focus({ preventScroll: true });
-  const toast = createRestartToast(() => {
-    if (options.haptics) options.tick?.();
-    undo();
-    restoreFocus();
-  });
   function undo() {
     const previous = history.pop();
     if (!previous) return;
@@ -252,17 +156,14 @@ export function createControlsDemo(options: DemoOptions = {}) {
         },
         canUndo: history.length > 0,
         onUndo: () => {
-          toast.hide();
           undo();
         },
         onRestart: () => {
-          toast.hide();
           history.push([...cells]);
           cells = cells.map((cell) => (cell === 'fixed' ? cell : 'empty'));
           options.onTransaction?.('restart: one snapshot');
           options.onRestart?.();
           refresh();
-          toast.show();
         },
       }),
     );
@@ -273,8 +174,6 @@ export function createControlsDemo(options: DemoOptions = {}) {
     if (activeLabel && !controlsHost.contains(document.activeElement)) restoreFocus();
   }
   refresh();
-  const toastSlot = el('div', { className: 'gg-v4-toast-slot' }, [toast.root]);
-  root.append(heading, note, board, summary, toastSlot, controlsHost);
-  root.cleanup = toast.hide;
+  root.append(heading, note, board, summary, controlsHost);
   return root;
 }

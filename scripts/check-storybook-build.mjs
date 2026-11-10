@@ -122,7 +122,7 @@ const REQUIRED_FONTS = [
   'inter-latin-400-normal',
   'inter-latin-600-normal',
 ];
-for (const title of ['ControlRow', 'ToolToggle', 'RestartToast']) {
+for (const title of ['ControlRow', 'ToolToggle']) {
   if (!entries.some((entry) => entry.title === `Projects/Grim & Glimmer/V4/Controls/${title}`))
     fail(`missing V4 controls section: ${title}`);
 }

@@ -97,24 +97,6 @@
   width: 100%;
   margin-block: 32px;
 }
-.gg-v4-restart-toast {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px;
-  margin: 12px 0;
-  border-radius: 8px;
-  border: 1px solid var(--nl-color-border);
-  background: var(--nl-color-surface);
-  color: var(--nl-color-text);
-  font: 0.875rem/1.4 var(--nl-font-family);
-  box-shadow: 0 12px 28px -18px rgb(60 20 30 / 0.3);
-}
-.gg-v4-restart-toast[hidden] {
-  display: none;
-}
 @media (prefers-reduced-motion: reduce) {
   .gg-v4-tool-indicator,
   .gg-v4-scope .gg-v4-control.nl-icon-button {
@@ -133,14 +115,6 @@
 }
 .gg-v4-controls-demo .gg-v4-board-card {
   margin: 16px auto;
-}
-.gg-v4-toast-slot {
-  min-height: 80px;
-  display: grid;
-  align-content: center;
-}
-.gg-v4-toast-slot .gg-v4-restart-toast {
-  margin: 0;
 }
 [data-reduced-motion='true'] .gg-v4-tool-indicator,
 [data-reduced-motion='true'] .gg-v4-control.nl-icon-button {

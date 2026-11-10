@@ -8,7 +8,7 @@ Storybook-only proposal; Phase 3 and app adoption are not started.
 | Source                                      | Reuse / decision                                                                                       |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `src/components/icon-button/`               | Native disabled behavior, accessible names, theme focus styles; additive scoped V4 square presentation |
-| `src/components/button/`                    | Toast Undo and replay buttons                                                                          |
+| `src/components/button/`                    | No extra action after toast removal                                                                    |
 | `src/components/icon/`                      | Existing Phosphor light hint, exclude, undo and restart map; no new icon dependency                    |
 | `src/projects/grim-glimmer/assets/star.svg` | Existing filled star mask unchanged                                                                    |
 | `stories/projects/grim-glimmer-v4/board.ts` | Approved Phase 1 board in read-only mock fixture                                                       |
@@ -43,22 +43,14 @@ The existing Button/IconButton APIs and defaults remain unchanged.
 - One injected selection-tick callback, gated by the story preference, logs to Actions.
   No native haptics call. Same selected tool does not repeat the tick.
 
-## Restart, history and toast policy
+## Restart and history
 
-The illustrative read-only board starts with fixed spires and mock player marks.
-Restart stores one complete mock snapshot and clears player marks, retaining spires.
-There is no confirmation dialog. Toast Undo or row Undo restores that snapshot.
-Tool selection persists; toast Undo returns focus to Restart without scrolling.
-No drag painting, real transaction store, solver, persistence or history depth policy
-is added; Phase 3 supplies the integrated interaction model.
-
-Toast text: “Board cleared · Undo”. Polite status announcement does not steal focus.
-Five seconds counts only active time: pause for focus anywhere inside the toast,
-pointer hover or hidden document. Resume the remaining time after all pause reasons
-clear. A focused action never expires. Replay resets the timer; story disconnection
-clears timeout and visibility listener via a scoped custom-element lifecycle.
-Expiry hides only the toast; the row Undo remains available for the same snapshot.
-A reserved 80px toast slot prevents controls jumping when the toast appears/disappears.
+The owner removed the toast after review. Restart stores one mock snapshot and
+clears player marks, retaining fixed spires. The existing row Undo restores the
+snapshot; selected tool and keyboard focus persist. No confirmation dialog, toast,
+countdown, timer, toast slot or additional Undo action remains. A quiet existing
+status summary announces mark/history changes without stealing focus.
+Phase 3 supplies the integrated interaction/history model; no persistence change.
 
 ## Stories
 
@@ -68,26 +60,23 @@ A reserved 80px toast slot prevents controls jumping when the toast appears/disa
   Light Dark Comparison, Interaction Demo, Reduced Motion.
 - ToolToggle: Star Selected, Exclusion Selected, Disabled, Light Dark Comparison,
   Keyboard Demo, Reduced Motion.
-- RestartToast: Replayable and Light Dark Comparison. Replay button starts the
-  five-second announcement rather than spending its duration during story loading.
 
 Use the existing 393×852 / 360×780 viewport presets and theme toolbar. Actions log
 selection ticks, tool/hint requests and mock history actions. Browser play demos
-exercise tool switch, hint, restart, toast Undo and keyboard selection.
+exercise tool switch, hint, restart, row Undo and keyboard selection.
 
 ## Validation and remaining acceptance
 
 Focused tests cover selection/keyboard, preference gating, disabled actions, hint
-states, timer expiry, combined pause reasons, background visibility, replay/removal
-cleanup and exact one-snapshot restore with preserved spires/tool/focus. Run full
+states and exact one-snapshot restore with preserved spires/tool/focus. Run full
 lint, formatting, TypeScript, tests, library/package checks and Storybook build.
 A static build does not execute browser play functions.
 
 - [ ] Comparable light/dark screenshots, mobile hit-target geometry and no overflow
       at 393×852 / 360×780. Local browser capture remains blocked by the prior Chromium
       socket permission failure; no screenshots or physical-device performance claimed.
-- [ ] Owner acceptance of control density, CSS timing, available-hint dot and toast.
-- [ ] Check screen-reader announcement and keyboard focus/expiry on device.
+- [ ] Owner acceptance of control density, CSS timing, available-hint dot.
+- [ ] Check screen-reader announcement and keyboard focus on device.
 
 No new token conflict: canonical Moonlit values remain the default; selection fill
 uses the existing accent, not the source document's approximate literal #5E1F33.

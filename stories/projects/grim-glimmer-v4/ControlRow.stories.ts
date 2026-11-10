@@ -53,9 +53,9 @@ export const InteractionDemo: Story = {
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Hint available' }));
     await userEvent.click(canvas.getByRole('button', { name: 'Restart board' }));
-    await expect(canvas.getByText('Board cleared')).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: /^Undo$/ }));
-    await expect(canvas.queryByText('Board cleared')).not.toBeInTheDocument();
+    await expect(canvas.getByText('0 marks · 2 mock history entries')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Undo move' }));
+    await expect(canvas.queryByText('0 marks · 2 mock history entries')).not.toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Exclude cell' })).toHaveAttribute(
       'aria-pressed',
       'true',
