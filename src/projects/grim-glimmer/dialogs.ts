@@ -87,6 +87,7 @@ const NEXT_STATE: Record<BoardCellState, BoardCellState> = {
  * offers Finish. It never touches the game board behind it, so Skip and Finish leave the board
  * as it was (the app decides what, if anything, to record).
  */
+/** @deprecated Use createGuidedTutorialDialog. */
 export function createTutorialDialog(options: TutorialDialogOptions): HTMLDialogElement {
   const { steps, labels } = options;
   if (steps.length === 0) throw new Error('createTutorialDialog: at least one step is required');
@@ -169,6 +170,7 @@ export interface SuccessDialogOptions {
 }
 
 /** Concise success message with a quiet, decorative accent (no confetti). */
+/** @deprecated Use createSuccessSheet. */
 export function createSuccessDialog(options: SuccessDialogOptions): HTMLDialogElement {
   let again = false;
   const dialog = createDialog({

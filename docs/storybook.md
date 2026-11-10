@@ -153,3 +153,9 @@ The custom gallery was removed only after every story and behavior below was rep
 - Hosted previews are SSO-protected and the Vercel project's Node version is 26.x (see the steps above).
 - `npm audit` reports the same single moderate `minimatch` advisory as before; Storybook adds no new advisory, only more packages in the affected tree. It is dev tooling only.
 - Storybook's static build warns about chunks over 500 kB; acceptable for an internal catalog.
+
+## Current Grim & Glimmer reference
+
+Use **Projects / Grim & Glimmer / V3**. Moonlit Oxblood is authoritative.
+Files ending `.stories.ts.archive` retain historical examples outside active discovery.
+Public APIs keep `projects/grim-glimmer` imports. See [the consolidation audit](v3-consolidation-audit.md).

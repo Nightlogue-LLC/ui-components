@@ -4,7 +4,7 @@ import { THEME } from './shared.js';
 import { mainScreenDemo } from './main-screen-demo.js';
 
 const meta = {
-  title: 'Projects/Grim & Glimmer/Achievements',
+  title: 'Projects/Grim & Glimmer/V3/Achievements',
   parameters: {
     nlTheme: THEME,
     nlStage: 'self',

@@ -1,6 +1,7 @@
 import { applyTheme } from '../../../src/core/index.js';
 import {
   createCluedBoard,
+  createPuzzleGlyph,
   createPuzzleCollection,
   createPuzzleCollectionCard,
   createCompactGameHeader,
@@ -68,6 +69,7 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
     );
     const nav = createBottomNav({
       label: 'Main navigation',
+      iconOnly: true,
       value: 'Home',
       items: [
         { value: 'Home', label: 'Home', icon: createIcon('home') },
@@ -99,6 +101,13 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
       icons: { hint: createIcon('hint'), menu: createIcon('menu') },
     });
     const controls = createGameControls({
+      compact: true,
+      showHint: false,
+      icons: {
+        tent: createPuzzleGlyph('star'),
+        exclude: createIcon('exclude'),
+        clear: createIcon('clear'),
+      },
       tentLabel: 'Star',
       excludeLabel: 'Exclude',
       showNewGame: false,

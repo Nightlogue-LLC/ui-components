@@ -173,7 +173,7 @@ function gameScreen(initialDifficulty = 'easy'): HTMLElement {
 }
 
 const meta = {
-  title: 'Projects/Grim & Glimmer/Gameplay',
+  title: 'Projects/Grim & Glimmer/V3/Gameplay',
   tags: ['autodocs'],
   parameters: {
     nlTheme: THEME,

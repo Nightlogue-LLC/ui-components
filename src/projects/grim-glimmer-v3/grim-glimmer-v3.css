@@ -36,14 +36,6 @@
   gap: var(--nl-space-3);
   align-items: center;
 }
-.nl-grim-glimmer-v3-foundations .nl-button {
-  box-shadow: none;
-  background-image: none;
-  transition: transform 80ms ease;
-}
-.nl-grim-glimmer-v3-foundations .nl-button:disabled {
-  opacity: 0.4;
-}
 .nl-grim-glimmer-v3-toggle {
   display: flex;
   align-items: center;
@@ -109,8 +101,4 @@
   .nl-grim-glimmer-v3-foundations .nl-button:active {
     transform: none;
   }
-}
-
-.nl-grim-glimmer-v3-foundations .nl-button--primary {
-  color: var(--nl-grim-glimmer-v3-button-ink);
 }

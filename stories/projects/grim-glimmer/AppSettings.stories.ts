@@ -50,7 +50,7 @@ function settingsScreen(): HTMLElement {
 }
 
 const meta = {
-  title: 'Projects/Grim & Glimmer/App Settings',
+  title: 'Projects/Grim & Glimmer/V3/App Settings',
   tags: ['autodocs'],
   parameters: {
     nlTheme: THEME,

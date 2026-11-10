@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/html-vite';
 import { compareModes } from '../../lib/stage.js';
 import { specimen, theme } from './shared.js';
 const meta = {
-  title: 'Projects/Grim & Glimmer — Editorial V3/Icon',
+  title: 'Projects/Grim & Glimmer/V3/Icon',
   parameters: { nlTheme: theme },
   render: () => specimen('icons'),
 } satisfies Meta;

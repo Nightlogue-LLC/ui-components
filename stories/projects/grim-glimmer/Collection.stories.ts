@@ -3,7 +3,6 @@ import { createPuzzleCollection } from '../../../src/projects/grim-glimmer/index
 import { el } from '../../lib/dom.js';
 import { compareModes } from '../../lib/stage.js';
 import { THEME, card, sampleCards } from './shared.js';
-import { mainScreenDemo } from './main-screen-demo.js';
 
 function cardStates(): HTMLElement {
   return el('div', { className: 'sb-gg-states' }, [
@@ -14,7 +13,7 @@ function cardStates(): HTMLElement {
 }
 
 const meta = {
-  title: 'Projects/Grim & Glimmer/Collection',
+  title: 'Projects/Grim & Glimmer/V3/Collection',
   tags: ['autodocs'],
   parameters: {
     nlTheme: THEME,
@@ -47,13 +46,6 @@ Previews are generic placeholder boards (no final artwork). "Ghosts & Graves" is
 
 export default meta;
 type Story = StoryObj;
-
-/** The whole home screen, in light and dark, at the true width of the selected viewport. */
-export const HomeScreen: Story = {
-  parameters: { nlStage: 'self' },
-  render: (_args, context) =>
-    compareModes(context, () => mainScreenDemo('collection'), { theme: THEME, bleed: true }),
-};
 
 /** Play, Continue and Coming Soon side by side. */
 export const CardStatuses: Story = {

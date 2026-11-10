@@ -30,11 +30,17 @@ const REQUIRED_TITLES = [
   'Components/Navigation/BottomNav',
   'Components/Overlays/Dialog',
   'Components/Feedback/Badge',
-  'Projects/Grim & Glimmer/Foundations',
-  'Projects/Grim & Glimmer/Collection',
-  'Projects/Grim & Glimmer/Gameplay',
-  'Projects/Grim & Glimmer/Dialogs',
+  'Projects/Grim & Glimmer/V3/Foundations',
+  'Projects/Grim & Glimmer/V3/Collection',
+  'Projects/Grim & Glimmer/V3/Gameplay',
+  'Projects/Grim & Glimmer/V3/Tutorial',
+  'Projects/Grim & Glimmer/V3/Completion',
 ];
+const obsolete = [...titles].filter(
+  (title) =>
+    title.startsWith('Projects/Grim & Glimmer') && !title.startsWith('Projects/Grim & Glimmer/V3/'),
+);
+if (obsolete.length) fail(`obsolete project sections: ${obsolete.join(', ')}`);
 const missingTitles = REQUIRED_TITLES.filter((t) => !titles.has(t));
 if (missingTitles.length > 0) fail(`missing story groups: ${missingTitles.join(', ')}`);
 
@@ -47,22 +53,16 @@ const REQUIRED_STORIES = [
   'components-feedback-badge--playground',
   'components-overlays-dialog--playground',
   'components-overlays-dialog--compulsory',
-  'projects-grim-glimmer-foundations--palette',
-  'projects-grim-glimmer-foundations--contrast',
-  'projects-grim-glimmer-foundations--typefaces',
-  'projects-grim-glimmer-foundations--typography-hierarchy',
-  'projects-grim-glimmer-foundations--typography-sample-cards',
-  'projects-grim-glimmer-collection--home-screen',
-  'projects-grim-glimmer-app-settings--settings-screen',
-  'projects-grim-glimmer-achievements--navigation-placeholder',
+  'projects-grim-glimmer-v3-foundations--playground',
+  'projects-grim-glimmer-v3-moonlit-oxblood--home',
+  'projects-grim-glimmer-v3-app-settings--settings-screen',
+  'projects-grim-glimmer-v3-achievements--navigation-placeholder',
   'components-navigation-bottomnav--playground',
-  'projects-grim-glimmer-gameplay--game-screen',
-  'projects-grim-glimmer-gameplay--board-glyphs',
-  'projects-grim-glimmer-dialogs--tutorial',
-  'projects-grim-glimmer-dialogs--guided-tutorial',
-  'projects-grim-glimmer-dialogs--success',
-  'projects-grim-glimmer-dialogs--discard-confirmation',
-  'projects-grim-glimmer-dialogs--modal-flow',
+  'projects-grim-glimmer-v3-gameplay--game-screen',
+  'projects-grim-glimmer-v3-gameplay--board-glyphs',
+  'projects-grim-glimmer-v3-tutorial--guided-tutorial',
+  'projects-grim-glimmer-v3-tutorial--new-game-confirmation',
+  'projects-grim-glimmer-v3-completion--playground',
 ];
 const missing = REQUIRED_STORIES.filter((id) => !ids.has(id));
 if (missing.length > 0) fail(`missing stories: ${missing.join(', ')}`);
