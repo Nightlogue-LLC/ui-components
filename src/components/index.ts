@@ -11,3 +11,4 @@ export * from './grain-surface/index.js';
 export * from './select/index.js';
 export * from './bottom-nav/index.js';
 export * from './icon/index.js';
+export * from './bottom-sheet/index.js';

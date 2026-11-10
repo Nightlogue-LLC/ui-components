@@ -10,7 +10,7 @@ import {
   createAppFrameHeader,
   createGameMenuSheet,
   createAppSettings,
-  createSuccessDialog,
+  createSuccessSheet,
   type BoardCellState,
 } from '../../../src/projects/grim-glimmer/index.js';
 import { createIcon } from '../../../src/projects/grim-glimmer-v3/index.js';
@@ -121,11 +121,11 @@ export function screen(kind: Screen, theme: string, mode: 'light' | 'dark'): HTM
         if (game.isConnected) sheet.open();
       });
     if (kind === 'Puzzle Complete') {
-      const dialog = createSuccessDialog({
+      const dialog = createSuccessSheet({
         title: 'Puzzle Complete',
-        message: 'The sky is set.',
-        labels: { playAgain: 'New game', close: 'View board' },
-        onPlayAgain: () => undefined,
+        message: 'Every star is in place. Beautifully done.',
+        onNewGame: () => undefined,
+        onReturnHome: () => root.replaceWith(screen('Home', theme, mode)),
         onClose: () => undefined,
       });
       dialog.setAttribute('open', '');

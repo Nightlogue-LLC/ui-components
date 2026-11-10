@@ -113,3 +113,45 @@ Optional per-component custom properties let a theme tune a component without ov
 `createBottomNav({ label, items, value, onNavigate })` creates a labelled navigation landmark with app-owned icon nodes and visible destination labels. Each item has a unique string value. The current page has `aria-current=page`, an accent label/icon and a small line marker; other destinations have no current marker. The consumer accepts a request with `updateBottomNav(nav, value)`; clicking the current page is a no-op. Native button keyboard behavior is retained. Items remain in place during updates so keyboard focus is preserved.
 
 The bar uses theme tokens, avoids browser tap highlights, pads device safe areas and has 44px minimum targets. It contains no route names, history, storage or project imports. Placement is owned by the surrounding shell. Import from the package root or `components/bottom-nav`; styles ship in `styles.css` and `components/bottom-nav.css`.
+
+## Bottom Sheet
+
+`createBottomSheet(options)` builds on NL Dialog and accepts `DialogOptions`, plus
+`animations?: boolean` and `swipeToDismiss?: boolean`. Use the existing `openDialog`,
+`closeDialog`, `getDialogBody` and `getDialogActions` helpers. Native dialog semantics
+retain focus containment, inert background, Escape, backdrop dismissal and focus return.
+Below 48rem, the component anchors to the bottom, honors safe areas and slides up
+once over 280ms. At larger widths it becomes a centered dialog. Swipe down more
+than 56px on the handle to dismiss; content scrolling never triggers dismissal.
+Compulsory sheets disable dismissal gestures. Reduced motion or `animations: false`
+disables the entrance. `--nl-bottom-sheet-duration` customizes entrance duration.
+
+This is opt-in: existing menu sheets have not adopted the motion pending review.
+The new project `createSuccessSheet` composition provides New Game, Return Home,
+and dismiss callbacks separately. `createSuccessDialog` remains compatible for
+existing consumers until their approved migration.
+
+### Success message banks
+
+Create one picker for each app-owned message bank and pass it as the sheet's `message`:
+
+```ts
+const pickSuccessMessage = createSuccessMessagePicker([
+  'Every star is in place. Beautifully done.',
+  'The sky is set. Nicely done.',
+]);
+const sheet = createSuccessSheet({
+  title: 'Puzzle Complete',
+  message: pickSuccessMessage,
+  onNewGame,
+  onReturnHome,
+  onClose,
+});
+```
+
+Each new sheet evaluates the picker once. Copy stays stable during that completion.
+The picker skips consecutive repeats, ignores blank entries and deduplicates copy.
+A single-message bank works; an empty bank throws. Keep the picker outside the
+sheet-opening callback to retain its previous selection. Fixed strings and custom
+message callbacks remain supported. Banks belong to the app so they can vary by
+puzzle, language or future content changes.
