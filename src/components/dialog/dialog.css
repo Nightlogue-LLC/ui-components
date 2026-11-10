@@ -115,35 +115,9 @@
   display: none;
 }
 
-/* Close button: a CSS-drawn cross (no icon asset), 44x44 target. */
+/* Appearance, touch target and focus styling come from the shared IconButton. */
 .nl-dialog__close {
-  display: grid;
-  place-items: center;
-  position: relative;
   flex: none;
-  box-sizing: border-box;
-  width: var(--nl-size-control-md);
-  height: var(--nl-size-control-md);
-  margin: 0;
-  padding: 0;
-  border: var(--nl-border-width) solid transparent;
-  border-radius: var(--nl-radius-md);
-  background: transparent;
-  color: var(--nl-color-text);
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-@media (hover: hover) {
-  .nl-dialog__close:hover {
-    background: var(--nl-color-surface-hover);
-  }
-}
-
-.nl-dialog__close:focus-visible {
-  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
-  outline-offset: var(--nl-focus-ring-offset);
 }
 
 @keyframes nl-dialog-in {

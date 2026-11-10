@@ -1,3 +1,4 @@
+import { animateSheet } from '../../core/motion.js';
 import { uniqueId } from '../../core/id.js';
 import { createIcon } from '../../components/icon/index.js';
 
@@ -58,6 +59,8 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
   opened.append(createIcon('close'));
   holder.replaceChildren(closed, opened);
   let active = false;
+  let motionVersion = 0;
+  let animation: Animation | undefined;
   let historyEntry = false;
   let pendingHistory = false;
   let requestedOpen = false;
@@ -76,7 +79,20 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       return;
     }
     active = next;
-    root.hidden = !next;
+    animation?.cancel();
+    const version = ++motionVersion;
+    root.hidden = false;
+    animation = animateSheet(panel, next ? 'enter' : 'exit', {
+      animations: options.animations?.() !== false,
+    });
+    const done = () => {
+      if (version !== motionVersion) return;
+      animation?.cancel();
+      animation = undefined;
+      root.hidden = !active;
+    };
+    if (animation) animation.finished.then(done, done);
+    else done();
     trigger.setAttribute('aria-expanded', String(next));
     const motion = options.animations?.() !== false;
     root.dataset.animations = motion ? 'on' : 'off';

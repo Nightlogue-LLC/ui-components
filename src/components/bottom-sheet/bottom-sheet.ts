@@ -9,7 +9,7 @@ export interface BottomSheetOptions extends DialogOptions {
 
 /** Native modal semantics, shared dialog slots, mobile sheet and desktop dialog placement. */
 export function createBottomSheet(options: BottomSheetOptions): HTMLDialogElement {
-  const sheet = createDialog(options);
+  const sheet = createDialog({ ...options, motion: 'sheet' });
   sheet.classList.add('nl-bottom-sheet');
   sheet.dataset.animations = options.animations === false ? 'off' : 'on';
   for (const part of ['panel', 'header', 'title', 'body', 'actions', 'close']) {
