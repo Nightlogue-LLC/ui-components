@@ -126,6 +126,10 @@ for (const title of ['ControlRow', 'ToolToggle']) {
   if (!entries.some((entry) => entry.title === `Projects/Grim & Glimmer/V4/Controls/${title}`))
     fail(`missing V4 controls section: ${title}`);
 }
+for (const title of ['DragPaint', 'History', 'ZoomPan']) {
+  if (!entries.some((entry) => entry.title === `Projects/Grim & Glimmer/V4/Interaction/${title}`))
+    fail(`missing V4 interaction section: ${title}`);
+}
 const missingFonts = REQUIRED_FONTS.filter((stem) => !fonts.some((f) => f.includes(stem)));
 if (missingFonts.length > 0) fail(`missing bundled font file(s): ${missingFonts.join(', ')}`);
 if (/url\(\s*(https?:)?\/\/[^)]*\.woff2?/i.test(bundled)) fail('a font is loaded from the network');
