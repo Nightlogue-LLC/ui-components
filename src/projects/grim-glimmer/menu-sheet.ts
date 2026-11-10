@@ -124,7 +124,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       }
       document.addEventListener('keydown', keydown);
       window.addEventListener('popstate', popstate);
-      (panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus();
+      (panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus({ preventScroll: true });
     } else {
       content.dispatchEvent(new Event('game-menu-close'));
       observer.disconnect();
@@ -157,7 +157,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
         historyEntry &&
         (window.history.state as { nlGameMenu?: unknown } | null)?.nlGameMenu === marker;
       historyEntry = false;
-      if (trigger.isConnected) trigger.focus();
+      if (trigger.isConnected) trigger.focus({ preventScroll: true });
       if (!waitForHistory) afterClose?.();
     }
     options.onOpenChange?.(next);
@@ -181,7 +181,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
         : index - 1
       : (index + 1) % items.length;
     event.preventDefault();
-    items[next]!.focus();
+    items[next]!.focus({ preventScroll: true });
   }
   const toggle = () => setOpen(pendingHistory ? !requestedOpen : !active);
   trigger.addEventListener('click', toggle);

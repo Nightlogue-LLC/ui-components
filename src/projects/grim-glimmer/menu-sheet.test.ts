@@ -29,6 +29,17 @@ function setup(history = false) {
   return { trigger, button, game, sheet };
 }
 describe('shared game menu sheet', () => {
+  it('moves and restores focus without asking the viewport to scroll', () => {
+    const { trigger, button, sheet } = setup();
+    const enter = vi.spyOn(button, 'focus');
+    const restore = vi.spyOn(trigger, 'focus');
+    sheet.open();
+    expect(enter).toHaveBeenCalledWith({ preventScroll: true });
+    sheet.close();
+    expect(restore).toHaveBeenCalledWith({ preventScroll: true });
+    enter.mockRestore();
+    restore.mockRestore();
+  });
   it('toggles the persistent dots/X control, traps focus, and restores focus on Escape', () => {
     const { trigger, button, game, sheet } = setup();
     trigger.focus();

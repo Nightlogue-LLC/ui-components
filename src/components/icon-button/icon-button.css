@@ -44,7 +44,9 @@
 }
 
 .nl-icon-button--ghost {
-  --_bg: transparent;
+  --_bg: var(--nl-icon-button-ghost-background, transparent);
+  --_bg-hover: var(--nl-icon-button-ghost-background-hover, var(--nl-color-surface-hover));
+  --_bg-active: var(--nl-icon-button-ghost-background-active, var(--nl-color-surface-hover));
   --_border: transparent;
 }
 

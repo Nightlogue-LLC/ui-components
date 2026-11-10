@@ -22,3 +22,15 @@ modes. Existing tentative opacity remains unchanged; its previously documented
 contrast limitation still requires a separate decision.
 
 Review V3 Gameplay / Board Glyphs and Game Screen in light and dark modes.
+
+## Mobile overlay motion
+
+The local game-menu overlay clips its translated panel so entry cannot extend
+page scroll bounds. Focus entry, Tab cycling and restoration use preventScroll.
+The menu toggle uses the canvas color for idle, hover and press through shared
+IconButton ghost-background hooks, preserving its focus-visible ring.
+
+Success content waits for the shared sheet entry to finish before its one-shot
+star/copy reveal starts. Motion-off and reduced-motion paths reveal it immediately
+without the decorative animation. Tutorial guidance uses an inset pulse, keeping
+it inside the cell rather than relying on a faint shadow outside clipped grids.
