@@ -89,6 +89,22 @@ describe('ritual reveal, deal and lifecycle', () => {
     const off = createRitualDraw({ now: '2026-11-10T16:18:00' });
     expect(off.hidden).toBe(true);
   });
+  it('floats the unflipped card vertically over six seconds and stops on activation', async () => {
+    const { root, button } = draw();
+    const floating = records.find((record) =>
+      record.node.classList.contains('gg-v4-ritual-float'),
+    )!;
+    expect(floating.options.duration).toBe(6000);
+    expect(floating.options.iterations).toBe(Infinity);
+    expect(floating.frames[1]!.transform).toBe('translateY(-4px)');
+    button.click();
+    expect(floating.cancel).toHaveBeenCalledOnce();
+    await advance(500);
+    expect(root.dataset.state).toBe('revealed-unstarted');
+    expect(
+      records.filter((record) => record.node.classList.contains('gg-v4-ritual-float')),
+    ).toHaveLength(1);
+  });
   it('flips for 500ms, settles once, then deals for 350ms through adapters only', async () => {
     const light = vi.fn(),
       medium = vi.fn(),

@@ -316,3 +316,8 @@
   border-radius: 50%;
   background: var(--gg-v4-night);
 }
+
+.gg-v4-ritual-float {
+  position: absolute;
+  inset: 0;
+}

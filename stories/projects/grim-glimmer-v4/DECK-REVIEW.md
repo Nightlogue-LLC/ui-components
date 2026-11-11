@@ -1,3 +1,11 @@
+## Latest StackHome follow-up (PR #49)
+
+The owner removed the logo header to give Daily Draw the top section. StackHome uses 24px top spacing / inter-block gaps and a larger responsive hero: calculated 336×504px at 393×852; 302×453px at 360×780. Device fit remains pending. The carousel comparison retains its original logo and size.
+
+All three outer card papers now use the same 46% canonical accent/surface mix, removing the Arbiter’s stronger tint. Artwork files and the opaque shell backing remain intact. The face-down Daily Draw mini card gains a six-second 4px vertical float; reduced motion and reveal stop it. See `MONTHLY-REVIEW.md` for the current composition; earlier sizes below describe the previous revision.
+
+---
+
 # Phase 7 — illustrated SVG deck revision
 
 Current direction: use the selected supplied illustrations as the entire visual object.

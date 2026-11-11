@@ -1,7 +1,7 @@
 import { createRitualDraw, type RitualDrawOptions } from './ritual-draw.js';
 import { createDeck, type DeckOptions } from './deck.js';
 import { homeHost, createAtmosphere } from './home.js';
-import { createHomeLogo, createHomeNav } from './home-parts.js';
+import { createHomeNav } from './home-parts.js';
 import { createHomeMotion } from './home-motion.js';
 export interface StackHomeOptions extends DeckOptions {
   dailyEnabled?: boolean;
@@ -23,7 +23,6 @@ export function createStackHome(options: StackHomeOptions = {}) {
   root.dataset.reducedMotion = String(options.reducedMotion ?? false);
   root.append(
     createAtmosphere(),
-    createHomeLogo({ tagline: false }),
     createRitualDraw({
       now: '2026-11-10T16:18:00',
       state: 'unplayed',

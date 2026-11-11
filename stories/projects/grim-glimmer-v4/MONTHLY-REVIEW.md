@@ -25,14 +25,14 @@ The original carousel and Home comparison remain. The older strip is clearly lab
 
 ## Presentation and states
 
-The fixed night panel is **88 CSS px** high, plus a **10px** top allowance for the **44×70px** mini card, for a **98px** layout slot. Panel radius is 18px; the rose border is 40%, the fixed star pattern 6%. The mini rotates -4 degrees and lifts on press. The panel stays dark on either page theme.
+The fixed night panel is **88 CSS px** high, plus a **10px** top allowance for the **44×70px** mini card, for a **98px** layout slot. Panel radius is 18px; the rose border is 40%, the fixed star pattern 6%. The mini rotates -4 degrees, floats vertically by 4px over six seconds when unplayed, and lifts on press. Float, press and flip use separate nested elements, preventing competing transforms. The float stops on reveal and is absent under reduced motion. The panel stays dark on either page theme. All three deck cards now share the Camper’s 46% accent/surface paper mix; the Arbiter’s stronger 60% tint and Architect’s 34% tint have been removed. Artwork bytes and inner illustration colors remain unchanged.
 
-| Default-font viewport, zero extra safe-area insets | Hero art envelope | Trade-off                                                                   |
-| -------------------------------------------------- | ----------------- | --------------------------------------------------------------------------- |
-| 393×852                                            | 280×420px         | Hero retains its maximum size                                               |
-| 360×780                                            | 243.33×365px      | Hero gives 34px of height to the taller ritual versus the merged 64px strip |
+| Default-font viewport, zero extra safe-area insets | Hero art envelope | Trade-off                                     |
+| -------------------------------------------------- | ----------------- | --------------------------------------------- |
+| 393×852                                            | 336×504px         | Logo removed; ritual occupies the top section |
+| 360×780                                            | 302×453px         | Hero grows into the recovered header space    |
 
-These are arithmetic budgets, not measured browser bounds. The layout still reserves 96px for the wordmark and 40px below the art for the fan/ground shadow, plus indicators and navigation. The duplicate tagline and stats remain absent. Safe-area insets reduce available hero space. Font loading, enlarged text and device screenshots remain review items.
+These are arithmetic budgets, not measured browser bounds. StackHome has no logo/header block. It has a 24px top safe-area allowance, 24px gaps and 40px below the art for the fan/ground shadow, plus indicators and navigation. The original carousel comparison retains its logo. The duplicate tagline and stats remain absent. Safe-area insets reduce available hero space. Font loading, enlarged text and device screenshots remain review items.
 
 Daily stories cover unplayed, revealing (Controls scrub), revealed/unstarted, in-progress, solved with and without a streak, hidden, flip replay, reduced motion and 360/393 presets. Both page themes are rendered. No ISO date is printed in the new ritual. The entire panel is one native button; non-actionable states have no chevron and ignore activation. Solved countdown announces only a changed minute. Streak text appears only at two nights or more.
 
@@ -49,15 +49,15 @@ Monthly stories cover day-one empty, 40%, 90%, complete, fragmentary/expired pas
 
 ## Timing and interruption
 
-| Interaction              | Default                                                         | Reduced motion                                      |
-| ------------------------ | --------------------------------------------------------------- | --------------------------------------------------- |
-| Idle mini/halo           | 4s breathing; halo .25–.5                                       | Off                                                 |
-| Sparkle                  | One crossing per 8s                                             | Off                                                 |
-| Press                    | -4px lift / straighten, 160ms                                   | No movement                                         |
-| Flip                     | 500ms, 800px perspective, face swap at 90 degrees               | 150ms crossfade                                     |
-| Deal into puzzle adapter | 350ms fade/scale fallback                                       | 150ms fade                                          |
-| Piece restoration        | 700ms opacity + static edge bloom                               | 150ms opacity                                       |
-| Last piece               | 900ms lead brightening / cream sweep, then 350ms tilt and sheen | No sweep/tilt; completion follows the 150ms restore |
+| Interaction              | Default                                                           | Reduced motion                                      |
+| ------------------------ | ----------------------------------------------------------------- | --------------------------------------------------- |
+| Idle mini/halo           | 6s vertical float, 0 to -4px and back; 4s breathing / halo .25–.5 | Off                                                 |
+| Sparkle                  | One crossing per 8s                                               | Off                                                 |
+| Press                    | -4px lift / straighten, 160ms                                     | No movement                                         |
+| Flip                     | 500ms, 800px perspective, face swap at 90 degrees                 | 150ms crossfade                                     |
+| Deal into puzzle adapter | 350ms fade/scale fallback                                         | 150ms fade                                          |
+| Piece restoration        | 700ms opacity + static edge bloom                                 | 150ms opacity                                       |
+| Last piece               | 900ms lead brightening / cream sweep, then 350ms tilt and sheen   | No sweep/tilt; completion follows the 150ms restore |
 
 Only opacity and transform are animated. The ghost desaturation and edge drop-shadow are static. No audio asset or extra dependency was added.
 
@@ -98,7 +98,7 @@ No new image/audio files. The star field is a fixed ten-point inline SVG. Each M
 
 ## Checks and review
 
-Local checks: TypeScript, ESLint, Prettier, **529 existing tests**, **57 V4 tests** (23 deck + 34 new calendar/geometry/ritual tests), library build, package-consumer smoke check and Storybook build (**342 entries**). Focused tests were run under `TZ=America/Denver`, covering spring/autumn DST boundaries. All test/config additions remain within V4; the temporary Vitest runner config is outside the repository, with include patterns for V4 month/ritual/deck tests and jsdom. Normal repository test includes remain unchanged.
+Local checks: TypeScript, ESLint, Prettier, **529 existing tests**, **58 V4 tests** (23 deck + 35 new calendar/geometry/ritual tests), library build, package-consumer smoke check and Storybook build (**342 entries**). Focused tests were run under `TZ=America/Denver`, covering spring/autumn DST boundaries. All test/config additions remain within V4; the temporary Vitest runner config is outside the repository, with include patterns for V4 month/ritual/deck tests and jsdom. Normal repository test includes remain unchanged.
 
 Before merge/adoption:
 

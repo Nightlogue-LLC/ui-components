@@ -158,8 +158,9 @@ export function createRitualDraw(options: RitualDrawOptions = {}) {
   const art = createMonthArt(manifest, options.restoredDates, daily.date);
   art.element.setAttribute('aria-hidden', 'true');
   front.append(art.element);
+  const float = el('span', { className: 'gg-v4-ritual-float' }, [rotor]);
   rotor.append(back, front);
-  mini.append(rotor);
+  mini.append(float);
   const eyebrow = el('span', { className: 'gg-v4-ritual-eyebrow', text: 'TONIGHT’S DRAW' });
   const phase = el('span', { className: 'gg-v4-ritual-phase' });
   const detail = el('span', { className: 'gg-v4-ritual-detail' });
@@ -182,6 +183,15 @@ export function createRitualDraw(options: RitualDrawOptions = {}) {
     () =>
       state === 'unplayed' && !busy
         ? [
+            {
+              node: float,
+              frames: [
+                { transform: 'translateY(0)' },
+                { transform: 'translateY(-4px)' },
+                { transform: 'translateY(0)' },
+              ],
+              duration: 6000,
+            },
             {
               node: rotor,
               frames: [
