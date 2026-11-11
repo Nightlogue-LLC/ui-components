@@ -1,0 +1,103 @@
+/* Add the secondary label in the compact header's existing upper space. */
+.gg-v4-tarot-header.nl-grim-glimmer-game-header--compact {
+  box-sizing: border-box;
+  min-height: 88px;
+  height: auto;
+  padding: 8px 12px;
+  gap: 8px;
+}
+.gg-v4-tarot-header .nl-grim-glimmer-game-header__heading {
+  position: relative;
+}
+.gg-v4-tarot-header .gg-v4-tarot-identity {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: -4px;
+  right: -4px;
+  margin: 0;
+  color: var(--nl-color-accent);
+  font: 600 0.75rem/1.1 var(--nl-font-family-label);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.gg-v4-tarot-header .gg-v4-tarot-identity[hidden] {
+  display: none;
+}
+.gg-v4-tarot-header.nl-grim-glimmer-game-header--compact .nl-grim-glimmer-game-header__title {
+  display: block;
+  overflow: visible;
+  margin: 0;
+  font: 500 clamp(1.65rem, 7vw, 1.8rem)/1.1 var(--nl-font-family-heading);
+}
+.gg-v4-tarot-header .nl-grim-glimmer-game-header__status {
+  margin: 2px 0 0;
+  font: 600 0.6875rem/1.25 var(--nl-font-family);
+  letter-spacing: 0.09em;
+}
+.gg-v4-identity-screen.nl-grim-glimmer-screen--compact {
+  height: 100dvh;
+  min-height: 650px;
+  max-width: 440px;
+}
+.gg-v4-identity-screen.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__header {
+  flex: 0 0 88px;
+}
+.gg-v4-identity-screen.nl-grim-glimmer-screen--compact .nl-grim-glimmer-screen__board {
+  flex: 1 1 0;
+  padding-inline: 8px;
+}
+.gg-v4-identity-screen.nl-grim-glimmer-screen--compact .gg-v4-board-card {
+  width: min(100%, calc(100dvh - 224px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  max-width: 448px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.gg-v4-glyph-specimens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  font-family: var(--nl-font-family);
+  color: var(--nl-color-text);
+}
+.gg-v4-glyph-specimens figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.gg-v4-camper-glyph {
+  display: inline-block;
+  width: var(--gg-v4-specimen-size, 64px);
+  height: var(--gg-v4-specimen-size, 64px);
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+.gg-v4-camper-glyph--tent {
+  color: var(--nl-moonlit-star);
+  mask-image: url('./assets/camper-tent.svg');
+  mask-size: 170%;
+}
+.gg-v4-camper-glyph--tree {
+  color: var(--nl-moonlit-spire);
+  mask-image: url('./assets/camper-tree.svg');
+  mask-size: 125%;
+}
+/* Preview opt-in only: existing board states and all other stories keep their current artwork. */
+.gg-v4-camper-glyphs .nl-grim-glimmer-board__cell--fixed::before {
+  mask-image: url('./assets/camper-tree.svg');
+  mask-size: 125%;
+}
+.gg-v4-camper-glyphs .nl-grim-glimmer-board__cell--placed::before {
+  mask-image: url('./assets/camper-tent.svg');
+  mask-size: 170%;
+}
+.gg-v4-camper-glyphs .nl-grim-glimmer-glyph--star {
+  mask-image: url('./assets/camper-tent.svg');
+  mask-size: 170%;
+}

@@ -4,7 +4,16 @@ import { compareModes } from '../../lib/stage.js';
 import { createHeaderPreview, type SupportOptions } from './home-support.js';
 const meta = {
   title: 'Projects/Grim & Glimmer/V4/Header/PuzzleHeader',
-  parameters: { nlTheme: 'moonlit-oxblood', nlStage: 'bleed' },
+  parameters: {
+    nlTheme: 'moonlit-oxblood',
+    nlStage: 'bleed',
+    docs: {
+      description: {
+        component:
+          'Historical Phase 7 header/progress reference. The current three-line naming proposal and supplied glyph review are in Header / TarotGameplayHeader. This comparison is retained without changing its original layout.',
+      },
+    },
+  },
   args: {
     reducedMotion: false,
     placed: 2,
@@ -23,7 +32,7 @@ const meta = {
 } satisfies Meta<SupportOptions>;
 export default meta;
 type Story = StoryObj<SupportOptions>;
-export const Playground: Story = {};
+export const Playground: Story = { name: 'Earlier header comparison' };
 export const ReducedMotion: Story = { args: { reducedMotion: true } };
 export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },
