@@ -12,7 +12,7 @@
   container-type: size;
   flex: 1 1 0;
   min-height: 0;
-  max-height: 460px;
+  max-height: calc(var(--gg-v4-deck-max-height, 420px) + 40px);
   isolation: isolate;
 }
 .gg-v4-deck-card {
@@ -20,9 +20,14 @@
   --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 46%, var(--nl-color-surface));
   position: absolute;
   top: 0;
-  width: min(280px, calc((100cqh - 40px) * 2 / 3));
-  left: calc(50% - min(280px, calc((100cqh - 40px) * 2 / 3)) / 2);
-  height: min(420px, calc(100cqh - 40px));
+  --gg-v4-deck-width: min(
+    var(--gg-v4-deck-max-width, 280px),
+    calc(100cqw - 56px),
+    calc((100cqh - 40px) * 2 / 3)
+  );
+  width: var(--gg-v4-deck-width);
+  left: calc(50% - var(--gg-v4-deck-width) / 2);
+  height: calc(var(--gg-v4-deck-width) * 3 / 2);
   box-sizing: border-box;
   transform-origin: 50% 65%;
 }
@@ -140,13 +145,7 @@
   }
 }
 
-/* Rounded physical edges and accent paper separate the supplied art from the page. */
-.gg-v4-deck-card[data-card='1'] {
-  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 60%, var(--nl-color-surface));
-}
-.gg-v4-deck-card[data-card='2'] {
-  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 34%, var(--nl-color-surface));
-}
+/* One accent-paper treatment for all three supplied illustrations. */
 .gg-v4-deck-vector > [data-art-part='canvas'] {
   fill: var(--gg-v4-card-paper);
 }
@@ -154,7 +153,9 @@
   position: absolute;
   z-index: 0;
   left: 50%;
-  top: calc(min(420px, 100cqh - 40px) + 24px);
+  top: calc(
+    min(var(--gg-v4-deck-max-height, 420px), (100cqw - 56px) * 3 / 2, 100cqh - 40px) + 24px
+  );
   width: min(250px, 70%);
   height: 20px;
   transform: translateX(-50%);
@@ -174,4 +175,12 @@
 }
 [data-nl-mode='dark'] .gg-v4-deck-ground-shadow {
   background: radial-gradient(ellipse, rgb(9 3 6 / 0.85), rgb(9 3 6 / 0.3) 45%, transparent 74%);
+}
+
+/* Current Home gives the ritual the header space and uses the recovered height for art. */
+.gg-v4-home.gg-v4-stack-home {
+  --gg-v4-deck-max-width: 336px;
+  --gg-v4-deck-max-height: 504px;
+  gap: 24px;
+  padding-top: max(24px, env(safe-area-inset-top));
 }

@@ -2,7 +2,14 @@ import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import { createDeck } from './deck.js';
 import { createStackHome } from './deck-fixtures.js';
 import { createCardIllustration } from './deck-card.js';
-import { dragPoses, fan, dismisses, springDisplacement, deckBudget } from './deck-model.js';
+import {
+  dragPoses,
+  fan,
+  dismisses,
+  springDisplacement,
+  deckBudget,
+  stackHomeBudget,
+} from './deck-model.js';
 let media: EventTarget & { matches: boolean };
 const decks: ReturnType<typeof createDeck>[] = [];
 let original: PropertyDescriptor | undefined;
@@ -100,6 +107,8 @@ describe('deck model', () => {
   it('has a unit-mass 400/30 spring and default-font size budgets', () => {
     expect(springDisplacement(0)).toBe(1);
     expect(Math.abs(springDisplacement(0.6))).toBeLessThan(0.001);
+    expect(stackHomeBudget(393, 852)).toMatchObject({ width: 336, height: 504 });
+    expect(stackHomeBudget(360, 780)).toMatchObject({ width: 302, height: 453 });
     expect(deckBudget(393, 852)).toMatchObject({ width: 280, height: 420 });
     expect(deckBudget(360, 780)).toMatchObject({ width: 266, height: 399 });
   });
@@ -332,9 +341,10 @@ it('keeps numeral groups, isolates the raven tint, and namespaces references acr
 it('removes duplicate stack-home copy/stats and keeps one decorative grounding shadow', () => {
   const root = createStackHome({ launch: 'return', reducedMotion: true });
   document.body.append(root);
+  expect(root.querySelector('.gg-v4-home-logo')).toBeNull();
   expect(root.querySelector('.gg-v4-home-tagline')).toBeNull();
   expect(root.querySelector('.gg-v4-home-status')).toBeNull();
   expect(root.querySelectorAll('.gg-v4-deck-ground-shadow[aria-hidden="true"]')).toHaveLength(1);
   expect(root.querySelectorAll('.gg-v4-deck-vector [data-art-part="canvas"]')).toHaveLength(3);
-  expect(root.querySelector('.gg-v4-daily')).not.toBeNull();
+  expect(root.querySelector('.gg-v4-ritual')).not.toBeNull();
 });

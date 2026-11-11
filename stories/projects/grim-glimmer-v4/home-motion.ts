@@ -175,7 +175,11 @@ export function createLoopMotion(
         iterations: Infinity,
         easing: 'ease-in-out',
       });
-      if (job) jobs.add(job);
+      if (job) {
+        jobs.add(job);
+        // Cancellation is expected when a preview unmounts or the OS requests less motion.
+        void job.finished.catch(() => undefined);
+      }
     }
   }
   function visibility() {
