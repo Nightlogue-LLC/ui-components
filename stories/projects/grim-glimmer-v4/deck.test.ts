@@ -246,7 +246,7 @@ describe('accessibility and reduced motion', () => {
     expect(deck.selected()).toBe(1);
     expect(document.activeElement).toBe(hit(deck));
     expect(deck.element.querySelector('[role="status"]')?.textContent).toBe(
-      'Card 2 of 3: locked puzzle',
+      'Card 2 of 3: The Arbiter, locked puzzle',
     );
     expect(deck.element.querySelectorAll('[aria-pressed="true"]')).toHaveLength(1);
   });

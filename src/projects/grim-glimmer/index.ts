@@ -80,3 +80,10 @@ export type { GameControlState, EditorialControlsOptions } from './editorial-con
 
 export { createGameplayMotion, GAMEPLAY_MOTION, dissolveTiming } from './gameplay-motion.js';
 export type { GameplayMotionOptions } from './gameplay-motion.js';
+
+export { createTarotDeckCard, updateTarotDeckCard } from './tarot-card.js';
+export type { TarotCard, TarotCardState, TarotDeckCardOptions } from './tarot-card.js';
+export { createTarotDeck } from './tarot-deck.js';
+export type { TarotDeckOptions, TarotDeckState } from './tarot-deck.js';
+export { createTarotHome } from './tarot-home.js';
+export type { TarotHomeOptions, TarotHomeState } from './tarot-home.js';

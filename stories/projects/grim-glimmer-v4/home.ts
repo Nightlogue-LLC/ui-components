@@ -24,7 +24,7 @@ class HomeHost extends HTMLElement {
 if (!customElements.get('gg-v4-home-host')) customElements.define('gg-v4-home-host', HomeHost);
 export function homeHost(className: string) {
   const node = document.createElement('gg-v4-home-host') as HomeHost;
-  node.className = `gg-v4-scope ${className}`;
+  node.className = `nl-grim-glimmer-v4 gg-v4-scope ${className}`;
   return node;
 }
 export interface HomeOptions extends CarouselOptions {
