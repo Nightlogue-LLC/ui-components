@@ -81,6 +81,8 @@ void [createBottomNav, updateBottomNav];
 const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
 void picker;
 import {
+  createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
+  createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
   createMainScreen,
   updateMainScreen,
   createBoard,
@@ -90,6 +92,14 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+const header = createTarotGameplayHeader({ tarotNumeral: 'I', archetypeTitle: 'The Camper', puzzleName: 'Trees & Tents', difficulty: 'Easy', columns: 6, rows: 6 });
+const board = createCluedBoard({ label: 'Board', size: 1, mode: 'interactive', presentation: 'editorial', cells: ['empty'], rowClues: [0], columnClues: [0] });
+updateCluedBoard(board, { cells: ['excluded'], rowFeedback: [{status: 'satisfied', confirmed: 0}] });
+const controlState = { mode: 'tent' as const, canUndo: false };
+const row = createGameControlRow({ ...controlState, showHint: false, onRestart: () => {} });
+const toggle = createGameToolToggle(controlState);
+updateGameControlRow(row, controlState); updateGameToolToggle(toggle, controlState);
+void header;
 const cellState: BoardCellState = 'fixed';
 const outcome: TutorialOutcome = 'skip';
 void [createMainScreen, updateMainScreen, createBoard, createPuzzleCollectionCard, createTutorialDialog, cellState, outcome];
@@ -165,6 +175,10 @@ const specs = [
   '${name}/theme-assets/moonlit-oxblood/fonts/inter-latin-400-normal.woff2',
 ];
 for (const s of specs) import.meta.resolve(s);
+const project = await import('${name}/projects/grim-glimmer');
+for (const fn of ['createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+  if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
+}
 const lib = await import('${name}');
 for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect','createBottomNav','updateBottomNav']) {
   if (typeof lib[fn] !== 'function') throw new Error(fn + ' missing');
@@ -214,6 +228,10 @@ document.body.append(createButton({ label: 'Smoke' }));
     '[data-nl-theme=neutral]',
     '[data-nl-theme=moonlit-oxblood]',
     '.nl-grim-glimmer-board',
+    '.nl-grim-glimmer-v4',
+    '.gg-v4-tool-indicator',
+    '.gg-v4-tarot-identity',
+    'v4-tentative-star',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
   }

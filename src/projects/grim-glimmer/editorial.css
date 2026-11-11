@@ -1,0 +1,348 @@
+/* Accepted editorial aliases; canonical theme roles remain the source. */
+:is(.nl-grim-glimmer-v4, .gg-v4-scope) {
+  --gg-v4-bg: var(--nl-color-bg);
+  --gg-v4-surface: var(--nl-color-surface);
+  --gg-v4-ink: var(--nl-color-text);
+  --gg-v4-accent: var(--nl-color-accent);
+  --gg-v4-star: var(--nl-moonlit-star);
+  --gg-v4-spire: var(--nl-moonlit-spire);
+  --gg-v4-error: var(--nl-grim-glimmer-v4-error, var(--nl-color-text));
+  --gg-v4-fixed: var(--nl-grim-glimmer-cell-fixed-bg);
+  --gg-v4-placed: var(--nl-grim-glimmer-cell-star-bg);
+  --gg-v4-line: color-mix(in oklab, var(--gg-v4-ink) 20%, transparent);
+  --gg-v4-line-strong: color-mix(in oklab, var(--gg-v4-ink) 32%, transparent);
+  --gg-v4-hairline: color-mix(in srgb, var(--gg-v4-accent) 14%, transparent);
+  --gg-v4-edge: color-mix(in srgb, var(--gg-v4-accent) 40%, transparent);
+  --gg-v4-strip: color-mix(in srgb, var(--gg-v4-accent) 5%, transparent);
+  --gg-v4-depth: rgb(60 20 30 / 0.2);
+  --gg-v4-shine: rgb(255 255 255 / 0.6);
+  --star: var(--gg-v4-star);
+  --spire: var(--gg-v4-spire);
+  color: var(--gg-v4-ink);
+}
+[data-nl-mode='dark'] :is(.nl-grim-glimmer-v4, .gg-v4-scope) {
+  --gg-v4-strip: rgb(255 255 255 / 0.04);
+  --gg-v4-depth: rgb(26 10 16 / 0.8);
+  --gg-v4-shine: rgb(255 255 255 / 0.05);
+}
+.nl-grim-glimmer-v4.gg-v4-board-card {
+  container-type: inline-size;
+  --gg-v4-grid-radius: 8px;
+  --hairline-strong: var(--gg-v4-edge);
+  grid-row: 2;
+  position: relative;
+  width: min(100%, calc(100dvh - 224px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  max-width: 448px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.nl-grim-glimmer-v4.gg-v4-board-card .nl-grim-glimmer-clued-board__body {
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 0;
+}
+.nl-grim-glimmer-v4.gg-v4-board-card .nl-grim-glimmer-clued-board__columns {
+  height: 24px;
+  margin: 0 0 0 24px;
+  padding-inline: 1px;
+  gap: 1px;
+}
+.nl-grim-glimmer-v4.gg-v4-board-card .nl-grim-glimmer-clued-board__rows {
+  grid-template-rows: repeat(var(--nl-grim-glimmer-clued-board-size), minmax(0, 1fr));
+  padding-block: 1px;
+  gap: 1px;
+}
+.nl-grim-glimmer-v4 .gg-v4-grid-frame {
+  position: relative;
+  min-width: 0;
+  border-radius: var(--gg-v4-grid-radius, 8px);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 var(--gg-v4-shine),
+    0 12px 28px -18px var(--gg-v4-depth);
+}
+.nl-grim-glimmer-v4 .gg-v4-grid-frame::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 7px;
+  box-shadow: inset 0 1px 0 var(--gg-v4-shine);
+  pointer-events: none;
+  z-index: 3;
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board {
+  --nl-grim-glimmer-board-gap: 1px;
+  box-sizing: border-box;
+  gap: 1px;
+  border: 1px solid var(--hairline-strong, var(--gg-v4-edge));
+  overflow: hidden;
+  border-radius: var(--gg-v4-grid-radius, 8px);
+  background: var(--gg-v4-line);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board .nl-grim-glimmer-board__cell {
+  --nl-grim-glimmer-cell-bg: var(--gg-v4-surface);
+  border: 0;
+  border-radius: 0;
+  background: var(--nl-grim-glimmer-cell-bg);
+  box-shadow:
+    var(--gg-v4-conflict-ring, inset 0 0 0 0 transparent),
+    inset 0 0 0 100px var(--gg-v4-guide-ink, transparent);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board .nl-grim-glimmer-board__cell--fixed {
+  --nl-grim-glimmer-cell-bg: var(--gg-v4-fixed);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board .nl-grim-glimmer-board__cell--placed,
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board .nl-grim-glimmer-board__cell--tentative {
+  --nl-grim-glimmer-cell-bg: var(--gg-v4-placed);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell--fixed::before {
+  inset: 11%;
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell--placed::before,
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell--tentative::before {
+  inset: 15%;
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell.gg-v4-guide {
+  --gg-v4-guide-ink: var(--gg-v4-strip);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell.gg-v4-conflict {
+  --gg-v4-conflict-ring: inset 0 0 0 1px var(--gg-v4-error);
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell:hover,
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell:active {
+  background: var(--nl-grim-glimmer-cell-bg);
+}
+[data-nl-mode='dark']
+  .nl-grim-glimmer-v4[data-glow='true']
+  .nl-grim-glimmer-board__cell--placed::before {
+  filter: drop-shadow(0 0 6px rgb(255 235 243 / 0.5));
+}
+[data-nl-mode='dark'] .nl-grim-glimmer-v4[data-glow='true'] .nl-grim-glimmer-board__cell--placed {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--gg-v4-accent) 18%, transparent),
+    transparent 70%
+  );
+}
+.nl-grim-glimmer-v4 .gg-v4-hint {
+  position: absolute;
+  inset: 15%;
+  border: 1px solid var(--gg-v4-accent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4 .gg-v4-block-line {
+  position: absolute;
+  z-index: 2;
+  background: var(--gg-v4-line-strong);
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4 .gg-v4-block-line--column {
+  top: 0;
+  bottom: 0;
+  left: var(--gg-v4-cut);
+  width: 1.5px;
+  transform: translateX(-50%);
+}
+.nl-grim-glimmer-v4 .gg-v4-block-line--row {
+  left: 0;
+  right: 0;
+  top: var(--gg-v4-cut);
+  height: 1.5px;
+  transform: translateY(-50%);
+}
+.nl-grim-glimmer-v4.gg-v4-board-card .nl-grim-glimmer-clued-board__clue {
+  position: relative;
+  /* cqw follows this board's content box, including framed/height-constrained previews. */
+  --gg-v4-cell-size: calc(
+    (100cqw - 26px - (var(--nl-grim-glimmer-clued-board-size) - 1) * 1px) /
+      var(--nl-grim-glimmer-clued-board-size)
+  );
+  --gg-v4-clue-size: clamp(10px, calc(var(--gg-v4-cell-size) * 0.32), 20px);
+  --gg-v4-marker-size: clamp(7px, calc(var(--gg-v4-clue-size) * 0.5), 10px);
+  font: 600 var(--gg-v4-clue-size)/1 var(--nl-font-family);
+  overflow: visible;
+  font-variant-numeric: tabular-nums;
+  color: var(--gg-v4-ink);
+}
+.nl-grim-glimmer-v4.gg-v4-board-card
+  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied'] {
+  color: var(--gg-v4-accent);
+}
+/* Satisfied state: strike the numeral itself, preserving its spoken status. */
+.nl-grim-glimmer-v4.gg-v4-board-card
+  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied']
+  .gg-v4-clue-number {
+  opacity: 0.55;
+}
+.nl-grim-glimmer-v4.gg-v4-board-card
+  .nl-grim-glimmer-clued-board__clue[data-v4-status='satisfied']
+  .gg-v4-clue-number::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -0.12em;
+  width: calc(100% + 0.24em);
+  height: 1px;
+  background: currentColor;
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4.gg-v4-board-card .nl-grim-glimmer-clued-board__clue[data-v4-status='over'] {
+  color: var(--gg-v4-error);
+}
+.nl-grim-glimmer-v4 .gg-v4-clue-number {
+  position: relative;
+  display: inline-block;
+}
+.nl-grim-glimmer-v4 .gg-v4-clue-number:has(.gg-v4-clue-status) {
+  transform: translateX(calc((var(--gg-v4-marker-size) + 1px) / -2));
+}
+.nl-grim-glimmer-v4 .gg-v4-clue-status {
+  position: absolute;
+  left: calc(100% + 1px);
+  top: -0.35em;
+  width: var(--gg-v4-marker-size);
+  text-align: left;
+  font-size: var(--gg-v4-marker-size);
+  line-height: 1;
+}
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board__cell--tentative::before {
+  opacity: 1;
+  background: var(--gg-v4-accent);
+  mask-image: url('./assets/v4-tentative-star.svg');
+}
+/* Add the secondary label in the compact header's existing upper space. */
+.nl-grim-glimmer-v4.gg-v4-tarot-header.nl-grim-glimmer-game-header--compact {
+  box-sizing: border-box;
+  min-height: 88px;
+  height: auto;
+  padding: 8px 12px;
+  gap: 8px;
+}
+.nl-grim-glimmer-v4.gg-v4-tarot-header .nl-grim-glimmer-game-header__heading {
+  position: relative;
+}
+.nl-grim-glimmer-v4.gg-v4-tarot-header .gg-v4-tarot-identity {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: -4px;
+  right: -4px;
+  margin: 0;
+  color: var(--nl-color-accent);
+  font: 600 0.75rem/1.1 var(--nl-font-family-label);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.nl-grim-glimmer-v4.gg-v4-tarot-header .gg-v4-tarot-identity[hidden] {
+  display: none;
+}
+.nl-grim-glimmer-v4.gg-v4-tarot-header.nl-grim-glimmer-game-header--compact
+  .nl-grim-glimmer-game-header__title {
+  display: block;
+  overflow: visible;
+  margin: 0;
+  font: 500 clamp(1.65rem, 7vw, 1.8rem)/1.1 var(--nl-font-family-heading);
+}
+.nl-grim-glimmer-v4.gg-v4-tarot-header .nl-grim-glimmer-game-header__status {
+  margin: 2px 0 0;
+  font: 600 0.6875rem/1.25 var(--nl-font-family);
+  letter-spacing: 0.09em;
+}
+.nl-grim-glimmer-v4.gg-v4-control-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding-bottom: max(env(safe-area-inset-bottom), 16px);
+}
+.nl-grim-glimmer-v4.gg-v4-tools,
+.nl-grim-glimmer-v4 .gg-v4-control-actions {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+.nl-grim-glimmer-v4.gg-v4-tools {
+  isolation: isolate;
+}
+.nl-grim-glimmer-v4 .gg-v4-tool-indicator {
+  position: absolute;
+  z-index: -1;
+  left: 2px;
+  top: 2px;
+  box-sizing: border-box;
+  width: 52px;
+  height: 52px;
+  border: 1.5px solid var(--nl-color-accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--nl-color-accent) 8%, transparent);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4.gg-v4-tools[data-tool='exclude'] .gg-v4-tool-indicator {
+  transform: translateX(64px);
+}
+.nl-grim-glimmer-v4 .gg-v4-control.nl-icon-button {
+  --nl-icon-button-size: 56px;
+  --nl-icon-button-radius: 4px;
+  position: relative;
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: transform 90ms ease-out;
+}
+.nl-grim-glimmer-v4 .gg-v4-control::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--nl-color-border) 35%, transparent);
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4.gg-v4-tools .gg-v4-control::before {
+  border-color: transparent;
+}
+.nl-grim-glimmer-v4 .gg-v4-control:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.nl-grim-glimmer-v4 .gg-v4-control:disabled {
+  color: var(--nl-color-disabled-text);
+  opacity: 0.55;
+}
+.nl-grim-glimmer-v4 .gg-v4-control[aria-pressed='true'] {
+  color: var(--nl-color-accent);
+}
+.nl-grim-glimmer-v4 .gg-v4-control[data-hint='available']::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--nl-color-accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-v4 .gg-v4-tool-indicator,
+  .nl-grim-glimmer-v4 .gg-v4-control.nl-icon-button {
+    transition: none;
+  }
+  .nl-grim-glimmer-v4 .gg-v4-control:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.nl-grim-glimmer-v4[data-reduced-motion='true'] .gg-v4-tool-indicator,
+.nl-grim-glimmer-v4[data-reduced-motion='true'] .gg-v4-control.nl-icon-button {
+  transition: none;
+}
+.nl-grim-glimmer-v4[data-reduced-motion='true'] .gg-v4-control:active:not(:disabled) {
+  transform: none;
+}
