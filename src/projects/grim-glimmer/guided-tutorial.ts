@@ -2,13 +2,17 @@ import { createButton } from '../../components/button/index.js';
 import {
   closeDialog,
   createDialog,
+  destroyDialog,
   getDialogActions,
   getDialogBody,
 } from '../../components/dialog/index.js';
 import { createBoard, createCluedBoard, updateBoard, type BoardCellState } from './board.js';
+import { createGameplayMotion } from './gameplay-motion.js';
 import type { TutorialOutcome } from './dialogs.js';
 
 export interface TutorialLesson {
+  /** Optional app-owned gesture/other visual, cloned without parsing text as markup. */
+  illustration?: Node;
   title: string;
   instruction: string;
   boardLabel: string;
@@ -30,14 +34,21 @@ export interface TutorialLesson {
 }
 
 export interface GuidedTutorialOptions {
+  /** Opt into approved editorial dots and shared transform/opacity guidance pulse. */
+  presentation?: 'editorial';
+  reducedMotion?: boolean;
+  animations?: boolean;
+  stateLabels?: Partial<Record<BoardCellState, string>>;
   title: string;
   lessons: readonly TutorialLesson[];
   /** Storybook can open directly at a lesson for visual iteration. Default 0. */
   initialLesson?: number;
-  /** Pause before the glow begins. Outlines appear immediately. Default 0ms. */
+  /** Pause before the legacy CSS glow begins. Outlines appear immediately. Default 0ms. */
   glowDelay?: number;
   onDone: (outcome: TutorialOutcome) => void;
 }
+
+const cleanups = new WeakMap<HTMLDialogElement, () => void>();
 
 /** Presentation and local practice progress only. Lesson content belongs to the caller. */
 export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTMLDialogElement {
@@ -70,8 +81,20 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
   );
   const progress = options.lessons.map(() => 0);
   let outcome: TutorialOutcome = 'skip';
-  const dialog = createDialog({ title: options.title, onClose: () => options.onDone(outcome) });
+  let destroyed = false;
+  const editorial = options.presentation === 'editorial';
+  const dialog = createDialog({
+    title: options.title,
+    onClose: () => {
+      closed();
+      if (!destroyed && dialog.isConnected) options.onDone(outcome);
+    },
+  });
   dialog.classList.add('nl-grim-glimmer-guided-tutorial');
+  if (editorial) dialog.classList.add('nl-grim-glimmer-guided-tutorial--editorial');
+  dialog.dataset.reducedMotion = String(
+    options.reducedMotion === true || options.animations === false,
+  );
   dialog.style.setProperty(
     '--nl-grim-glimmer-tutorial-glow-delay',
     `${Math.max(0, options.glowDelay ?? 0)}ms`,
@@ -99,6 +122,7 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
     label: 'Back',
     variant: 'secondary',
     onClick: () => {
+      if (destroyed) return;
       current -= 1;
       paint(true);
     },
@@ -106,7 +130,7 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
   const next = createButton({
     label: 'Next',
     onClick: () => {
-      if (next.disabled) return;
+      if (destroyed || next.disabled) return;
       if (current === options.lessons.length - 1) {
         outcome = 'finish';
         closeDialog(dialog);
@@ -120,6 +144,8 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
   getDialogActions(dialog).append(skip, back, next);
 
   function paint(moveFocus = false): void {
+    if (destroyed) return;
+    stopPulse();
     const lesson = options.lessons[current]!;
     const practice = lesson.practice;
     let done = progress[current]!;
@@ -150,9 +176,10 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
         placed: 'confirmed star',
         tentative: 'tentative star',
         excluded: 'excluded',
+        ...options.stateLabels,
       },
       onCellActivate: (index: number) => {
-        if (index !== practice?.index || done >= practice.sequence.length) return;
+        if (destroyed || index !== practice?.index || done >= practice.sequence.length) return;
         squareCells[index] = practice.sequence[done]!.state;
         done += 1;
         progress[current] = done;
@@ -160,7 +187,7 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
         sync();
         // updateBoard resets aria-disabled; restore this lesson's restricted practice target.
         restrict();
-        if (!next.disabled) next.focus();
+        if (!next.disabled) next.focus({ preventScroll: true });
       },
     };
     const shell =
@@ -209,11 +236,93 @@ export function createGuidedTutorialDialog(options: GuidedTutorialOptions): HTML
     }
     restrict();
     visual.replaceChildren(shell);
+    if (lesson.illustration) visual.append(lesson.illustration.cloneNode(true));
+    syncEditorial();
     if (moveFocus) {
-      if (practice && next.disabled) (board.children[practice.index] as HTMLElement).focus();
-      else heading.focus();
+      if (practice && next.disabled)
+        (board.children[practice.index] as HTMLElement).focus({ preventScroll: true });
+      else heading.focus({ preventScroll: true });
     }
   }
+
+  let pulse: ReturnType<typeof createGameplayMotion> | undefined;
+  let ring: HTMLElement | undefined;
+  const dots = document.createElement('div');
+  dots.className = 'gg-v4-step-dots';
+  dots.setAttribute('role', 'status');
+  dots.setAttribute('aria-live', 'polite');
+  dots.setAttribute('aria-atomic', 'true');
+  if (editorial) {
+    counter.hidden = true;
+    counter.setAttribute('aria-hidden', 'true');
+    counter.after(dots);
+  }
+  function stopPulse() {
+    pulse?.dispose();
+    pulse = undefined;
+    ring?.remove();
+    ring = undefined;
+  }
+  function syncEditorial() {
+    if (!editorial) return;
+    dots.replaceChildren();
+    const spoken = document.createElement('span');
+    spoken.className = 'nl-grim-glimmer-visually-hidden';
+    spoken.textContent = `Step ${current + 1} of ${options.lessons.length}`;
+    dots.append(spoken);
+    options.lessons.forEach((_, index) => {
+      const dot = document.createElement('span');
+      dot.className = 'gg-v4-step-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      if (index === current) dot.dataset.current = 'true';
+      dots.append(dot);
+    });
+    if (!dialog.open) return;
+    const target = visual.querySelector<HTMLElement>(
+      '.nl-grim-glimmer-board__cell.nl-grim-glimmer-guided-tutorial__highlight',
+    );
+    if (!target) return;
+    ring = document.createElement('span');
+    ring.className = 'nl-grim-glimmer-tutorial-ring';
+    ring.setAttribute('aria-hidden', 'true');
+    target.append(ring);
+    pulse = createGameplayMotion({
+      hint: ring,
+      reducedMotion: options.reducedMotion,
+      animations: options.animations,
+    });
+    pulse.mount();
+  }
+  const removal = new MutationObserver(() => {
+    if (!dialog.isConnected) destroyGuidedTutorialDialog(dialog);
+  });
+  const opened = () => {
+    if (destroyed || !editorial) return;
+    stopPulse();
+    syncEditorial();
+    removal.observe(document.documentElement, { childList: true, subtree: true });
+  };
+  const closed = () => {
+    stopPulse();
+    removal.disconnect();
+  };
+  dialog.addEventListener('nl-dialog-open', opened);
+  dialog.addEventListener('close', closed);
+  cleanups.set(dialog, () => {
+    destroyed = true;
+    closed();
+    dialog.removeEventListener('nl-dialog-open', opened);
+    dialog.removeEventListener('close', closed);
+  });
   paint();
   return dialog;
+}
+
+/** Terminal teardown: no skipped/finished outcome is emitted during screen unmount. */
+export function destroyGuidedTutorialDialog(dialog: HTMLDialogElement): void {
+  const cleanup = cleanups.get(dialog);
+  if (!cleanup) return;
+  cleanup();
+  cleanups.delete(dialog);
+  destroyDialog(dialog);
 }

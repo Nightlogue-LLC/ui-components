@@ -1,0 +1,46 @@
+dialog.nl-grim-glimmer-guided-tutorial--editorial::backdrop {
+  background: rgb(26 10 16 / 0.38);
+  backdrop-filter: none;
+}
+dialog.nl-grim-glimmer-guided-tutorial--editorial {
+  border-radius: 16px;
+  box-shadow: 0 20px 48px -16px rgb(40 10 20 / 0.35);
+}
+.nl-grim-glimmer-guided-tutorial--editorial .nl-grim-glimmer-tutorial__step[hidden] {
+  display: none;
+}
+.gg-v4-step-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-block: 8px 16px;
+}
+.gg-v4-step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--nl-color-accent);
+}
+.gg-v4-step-dot[data-current='true'] {
+  background: var(--nl-color-accent);
+}
+.nl-grim-glimmer-guided-tutorial--editorial .nl-grim-glimmer-guided-tutorial__highlight {
+  animation: none;
+}
+.nl-grim-glimmer-guided-tutorial--editorial[data-reduced-motion='true'][open] {
+  animation: none;
+}
+.nl-grim-glimmer-guided-tutorial--editorial .nl-grim-glimmer-tutorial-ring {
+  position: absolute;
+  inset: 15%;
+  border: 1px solid var(--nl-color-accent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.nl-grim-glimmer-guided-tutorial[data-reduced-motion='true'][open],
+.nl-grim-glimmer-guided-tutorial[data-reduced-motion='true']
+  .nl-grim-glimmer-guided-tutorial__highlight {
+  animation: none;
+}
