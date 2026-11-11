@@ -77,3 +77,6 @@ export {
   updateGameControlRow,
 } from './editorial-controls.js';
 export type { GameControlState, EditorialControlsOptions } from './editorial-controls.js';
+
+export { createGameplayMotion, GAMEPLAY_MOTION, dissolveTiming } from './gameplay-motion.js';
+export type { GameplayMotionOptions } from './gameplay-motion.js';

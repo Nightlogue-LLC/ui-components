@@ -1,0 +1,36 @@
+.nl-grim-glimmer-v4 .nl-grim-glimmer-board .nl-grim-glimmer-board__cell.gg-v4-motion-overlay {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4 .gg-v4-motion-hidden::before,
+.nl-grim-glimmer-v4 .gg-v4-motion-hidden::after {
+  opacity: 0 !important;
+}
+.nl-grim-glimmer-v4 .gg-v4-placement-ring {
+  position: absolute;
+  inset: 15%;
+  border: 1px solid var(--gg-v4-accent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.nl-grim-glimmer-v4 .gg-v4-motion-x-axis {
+  position: absolute;
+  top: 48%;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  pointer-events: none;
+  opacity: var(--nl-grim-glimmer-exclusion-opacity, 0.5);
+}
+.nl-grim-glimmer-v4 .gg-v4-motion-x-stroke {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--star, var(--nl-color-text));
+  border-radius: 2px;
+  transform-origin: left center;
+}
