@@ -23,56 +23,9 @@
   width: 100%;
   margin: 24px auto;
 }
-.gg-v4-interaction .gg-v4-pointer-viewport {
-  aspect-ratio: 1;
-  touch-action: none;
-  overscroll-behavior: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.gg-v4-interaction .nl-grim-glimmer-board--interactive .nl-grim-glimmer-board__cell {
-  touch-action: none;
-}
-.gg-v4-zoom-content {
-  position: relative;
-  width: 100%;
-  transform-origin: top left;
-}
-.gg-v4-zoom-content .gg-v4-block-line {
-  z-index: 2;
-}
-.gg-v4-column-window {
-  margin-left: 24px;
-  height: 24px;
-  overflow: hidden;
-}
-.gg-v4-row-window {
-  min-height: 0;
-  overflow: hidden;
-}
-.gg-v4-interaction .gg-v4-board-card .nl-grim-glimmer-clued-board__columns {
-  margin: 0;
-  width: 100%;
-  transform-origin: top left;
-}
-.gg-v4-interaction .nl-grim-glimmer-clued-board__rows {
-  height: 100%;
-  transform-origin: top left;
-}
-.gg-v4-column-window .nl-grim-glimmer-clued-board__clue {
-  transform: scaleX(var(--gg-v4-inverse-zoom, 1));
-}
-.gg-v4-row-window .nl-grim-glimmer-clued-board__clue {
-  transform: scaleY(var(--gg-v4-inverse-zoom, 1));
-}
 .gg-v4-zoom-tools {
   display: flex;
   justify-content: center;
   gap: 8px;
   margin-bottom: 12px;
-}
-
-.gg-v4-interaction .nl-grim-glimmer-clued-board__columns,
-.gg-v4-interaction .nl-grim-glimmer-clued-board__rows {
-  box-sizing: border-box;
 }

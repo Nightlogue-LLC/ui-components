@@ -1,0 +1,49 @@
+.nl-grim-glimmer-board-interactions .nl-grim-glimmer-pointer-viewport {
+  aspect-ratio: 1;
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.nl-grim-glimmer-board-interactions
+  .nl-grim-glimmer-board--interactive
+  .nl-grim-glimmer-board__cell {
+  touch-action: none;
+}
+.nl-grim-glimmer-zoom-content {
+  position: relative;
+  width: 100%;
+  transform-origin: top left;
+}
+.nl-grim-glimmer-zoom-content .gg-v4-block-line {
+  z-index: 2;
+}
+.nl-grim-glimmer-column-window {
+  margin-left: 24px;
+  height: 24px;
+  overflow: hidden;
+}
+.nl-grim-glimmer-row-window {
+  min-height: 0;
+  overflow: hidden;
+}
+.nl-grim-glimmer-board-interactions.gg-v4-board-card .nl-grim-glimmer-clued-board__columns {
+  margin: 0;
+  width: 100%;
+  transform-origin: top left;
+}
+.nl-grim-glimmer-board-interactions .nl-grim-glimmer-clued-board__rows {
+  height: 100%;
+  transform-origin: top left;
+}
+.nl-grim-glimmer-column-window .nl-grim-glimmer-clued-board__clue {
+  transform: scaleX(var(--nl-grim-glimmer-inverse-zoom, 1));
+}
+.nl-grim-glimmer-row-window .nl-grim-glimmer-clued-board__clue {
+  transform: scaleY(var(--nl-grim-glimmer-inverse-zoom, 1));
+}
+
+.nl-grim-glimmer-board-interactions .nl-grim-glimmer-clued-board__columns,
+.nl-grim-glimmer-board-interactions .nl-grim-glimmer-clued-board__rows {
+  box-sizing: border-box;
+}

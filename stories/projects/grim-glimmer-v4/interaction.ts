@@ -1,20 +1,13 @@
 import {
   createBoard,
   updateBoard,
+  createBoardInteractions,
   type BoardCellState,
 } from '../../../src/projects/grim-glimmer/index.js';
 import { createButton } from '../../../src/components/button/index.js';
 import { createControlRow, type Tool } from './controls.js';
 import { createV4Board, fixture, type Size } from './board.js';
-import {
-  InteractionModel,
-  clampView,
-  interpolate,
-  pinchView,
-  type Point,
-  type View,
-  type SelectionAdapter,
-} from './interaction-model.js';
+import { InteractionModel, clampView, type SelectionAdapter } from './interaction-model.js';
 import { el } from '../../lib/dom.js';
 import './interaction.css';
 
@@ -87,23 +80,9 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     cell.dataset.c = String(index % size);
     cell.tabIndex = index === 0 ? 0 : -1;
   });
-  const content = el('div', { className: 'gg-v4-zoom-content' });
-  content.append(...frame.childNodes);
-  frame.append(content);
-  frame.classList.add('gg-v4-pointer-viewport');
-  // Clipping windows are fixed; the tracks follow only their own pan axis.
-  const columns = board.querySelector<HTMLElement>('.nl-grim-glimmer-clued-board__columns')!;
-  const rows = board.querySelector<HTMLElement>('.nl-grim-glimmer-clued-board__rows')!;
-  const columnWindow = el('div', { className: 'gg-v4-column-window' });
-  columns.replaceWith(columnWindow);
-  columnWindow.append(columns);
-  const rowWindow = el('div', { className: 'gg-v4-row-window' });
-  rows.replaceWith(rowWindow);
-  rowWindow.append(rows);
   const status = el('p');
   status.setAttribute('role', 'status');
   const controlHost = el('div');
-  let view: View = { scale: 1, x: 0, y: 0 };
   let rendering = false;
   let previousCells = fixture(size);
   const model = new InteractionModel({
@@ -116,15 +95,6 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     onTransaction: options.onTransaction,
   });
   model.tool = options.tool ?? 'star';
-  const pointers = new Map<number, Point>();
-  let multi = false;
-  let previous: Point | undefined;
-  let pinch: { view: View; points: [Point, Point] } | undefined;
-  const pair = () => [...pointers.values()].slice(0, 2) as [Point, Point];
-  const local = (point: Point) => {
-    const rect = frame.getBoundingClientRect();
-    return { x: point.x - rect.left, y: point.y - rect.top };
-  };
   function tick() {
     if (options.haptics && options.adapter) {
       options.adapter.selectionStart();
@@ -140,7 +110,7 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     updateBoard(grid, { cells: model.cells });
     if (before.some((state, index) => state !== model.cells[index]))
       options.onCellsChange?.(grid, before, model.cells);
-    status.textContent = `${model.history.length} undo entries · ${Math.round(view.scale * 100)}% zoom${model.painting ? ' · painting' : ''}`;
+    status.textContent = `${model.history.length} undo entries · ${Math.round(interactions.getView().scale * 100)}% zoom${model.painting ? ' · painting' : ''}`;
     // Do not replace controls during a stroke or after tool selection.
     const undo = controlHost.querySelector<HTMLButtonElement>('[aria-label="Undo move"]');
     if (undo) {
@@ -151,181 +121,24 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
           .querySelector<HTMLButtonElement>('[aria-label="Restart board"]')
           ?.focus({ preventScroll: true });
     }
-    content.style.transform = `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.scale})`;
-    columns.style.transform = `translate3d(${view.x}px, 0, 0) scaleX(${view.scale})`;
-    rows.style.transform = `translate3d(0, ${view.y}px, 0) scaleY(${view.scale})`;
-    board.style.setProperty('--gg-v4-inverse-zoom', String(1 / view.scale));
     rendering = false;
   }
-  function indexAt(point: Point): number | undefined {
-    const hit = document
-      .elementFromPoint(point.x, point.y)
-      ?.closest<HTMLElement>('[data-r][data-c]');
-    if (hit && grid.contains(hit)) return Number(hit.dataset.r) * size + Number(hit.dataset.c);
-    // Internal one-pixel grid gaps still map to the nearest cell, never outside the viewport.
-    const viewport = frame.getBoundingClientRect();
-    if (
-      point.x < viewport.left ||
-      point.x >= viewport.right ||
-      point.y < viewport.top ||
-      point.y >= viewport.bottom
-    )
-      return;
-    const rect = grid.getBoundingClientRect();
-    const col = Math.floor(((point.x - rect.left) / rect.width) * size);
-    const row = Math.floor(((point.y - rect.top) / rect.height) * size);
-    if (row >= 0 && row < size && col >= 0 && col < size) return row * size + col;
-    return;
-  }
-  function cancel() {
-    model.cancel();
-    const captured = [...pointers.keys()];
-    pointers.clear();
-    for (const id of captured) if (frame.hasPointerCapture?.(id)) frame.releasePointerCapture(id);
-    previous = undefined;
-    pinch = undefined;
-    multi = false;
-  }
-  function paintSegment(point: Point) {
-    const rect = grid.getBoundingClientRect();
-    for (const sample of interpolate(previous ?? point, point, rect.width / size / 3)) {
-      const index = indexAt(sample);
-      if (index !== undefined) model.visit(index);
-    }
-    previous = point;
-  }
-  frame.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    event.preventDefault();
-    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    if (event.isTrusted) frame.setPointerCapture?.(event.pointerId);
-    if (pointers.size >= 2) {
-      model.cancel();
-      multi = true;
-      previous = undefined;
-      if (size === 15) pinch = { view: { ...view }, points: pair().map(local) as [Point, Point] };
-      return;
-    }
-    if (multi) return;
-    previous = { x: event.clientX, y: event.clientY };
-    const index = indexAt(previous);
-    if (index !== undefined) model.begin(index);
+  const interactions = createBoardInteractions({
+    board,
+    size,
+    stroke: model,
+    zoom: size === 15,
+    onViewChange: () => render(),
   });
-  frame.addEventListener('pointermove', (event) => {
-    if (!pointers.has(event.pointerId)) return;
-    event.preventDefault();
-    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    if (multi) {
-      if (size === 15 && pointers.size === 2 && pinch) {
-        const rect = frame.getBoundingClientRect();
-        view = pinchView(
-          pinch.view,
-          pinch.points,
-          pair().map(local) as [Point, Point],
-          rect.width,
-          rect.height,
-        );
-        render();
-      }
-      return;
-    }
-    for (const point of event.getCoalescedEvents?.() ?? [event])
-      paintSegment({ x: point.clientX, y: point.clientY });
-    paintSegment({ x: event.clientX, y: event.clientY });
-  });
-  frame.addEventListener('pointerup', (event) => {
-    if (!pointers.has(event.pointerId)) return;
-    if (!multi) {
-      paintSegment({ x: event.clientX, y: event.clientY });
-      model.commit();
-    }
-    pointers.delete(event.pointerId);
-    if (pointers.size === 0) {
-      multi = false;
-      previous = undefined;
-      pinch = undefined;
-    } else if (pointers.size === 2 && size === 15)
-      pinch = { view: { ...view }, points: pair().map(local) as [Point, Point] };
-  });
-  frame.addEventListener('pointercancel', cancel);
-  frame.addEventListener('lostpointercapture', (event) => {
-    if (pointers.has(event.pointerId)) cancel();
-  });
-  // Native Enter/Space clicks have detail 0. Pointer-generated clicks never paint twice.
-  grid.addEventListener('click', (event) => {
-    if (event.detail !== 0 || pointers.size || multi) return;
-    const cell =
-      event.target instanceof Element ? event.target.closest<HTMLElement>('[data-index]') : null;
-    if (cell) {
-      model.begin(Number(cell.dataset.index));
-      model.commit();
-    }
-  });
-  grid.addEventListener('keydown', (event) => {
-    const cell =
-      event.target instanceof Element ? event.target.closest<HTMLElement>('[data-index]') : null;
-    if (!cell) return;
-    const index = Number(cell.dataset.index);
-    let next: number;
-    if (event.key === 'ArrowRight') next = Math.min(size * size - 1, index + 1);
-    else if (event.key === 'ArrowLeft') next = Math.max(0, index - 1);
-    else if (event.key === 'ArrowDown') next = Math.min(size * size - 1, index + size);
-    else if (event.key === 'ArrowUp') next = Math.max(0, index - size);
-    else if (event.key === 'Home') next = Math.floor(index / size) * size;
-    else if (event.key === 'End') next = Math.floor(index / size) * size + size - 1;
-    else return;
-    event.preventDefault();
-    cell.tabIndex = -1;
-    const target = grid.children[next] as HTMLElement;
-    target.tabIndex = 0;
-    target.focus({ preventScroll: true });
-    // Keep a keyboard-selected cell inside the zoom viewport, without scrolling the page.
-    const rect = frame.getBoundingClientRect();
-    const unitX = (rect.width / size) * view.scale;
-    const unitY = (rect.height / size) * view.scale;
-    const left = (next % size) * unitX + view.x;
-    const top = Math.floor(next / size) * unitY + view.y;
-    view = clampView(
-      {
-        ...view,
-        x:
-          left < 0
-            ? view.x - left
-            : left + unitX > rect.width
-              ? view.x - (left + unitX - rect.width)
-              : view.x,
-        y:
-          top < 0
-            ? view.y - top
-            : top + unitY > rect.height
-              ? view.y - (top + unitY - rect.height)
-              : view.y,
-      },
-      rect.width,
-      rect.height,
-    );
-    render();
-  });
-  const visibility = () => {
-    if (document.hidden) cancel();
-  };
-  const resize = () => {
-    cancel();
-    view = { scale: 1, x: 0, y: 0 };
-    render();
-  };
+  // Compatibility hooks used by the review story plays; behavior/CSS live in src.
+  frame.classList.add('gg-v4-pointer-viewport');
+  const cancel = () => interactions.cancel();
   root.connect = () => {
+    interactions.mount();
     options.onMount?.();
-    window.addEventListener('blur', cancel);
-    document.addEventListener('visibilitychange', visibility);
-    window.addEventListener('resize', resize);
   };
   root.disconnect = () => {
-    cancel();
-    view = { scale: 1, x: 0, y: 0 };
-    window.removeEventListener('blur', cancel);
-    document.removeEventListener('visibilitychange', visibility);
-    window.removeEventListener('resize', resize);
+    interactions.unmount();
     options.onDispose?.();
   };
   controlHost.append(
@@ -354,7 +167,7 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     label: 'Reset view',
     variant: 'ghost',
     size: 'sm',
-    onClick: resize,
+    onClick: () => interactions.resetView(),
   });
   const zoomIn = createButton({
     label: 'Zoom in',
@@ -363,15 +176,18 @@ export function createInteractionDemo(options: InteractionOptions = {}) {
     onClick: () => {
       cancel();
       const rect = frame.getBoundingClientRect();
+      const view = interactions.getView();
       const scale = Math.min(1.8, view.scale + 0.2);
-      view = clampView(
-        {
-          scale,
-          x: rect.width / 2 - ((rect.width / 2 - view.x) * scale) / view.scale,
-          y: rect.height / 2 - ((rect.height / 2 - view.y) * scale) / view.scale,
-        },
-        rect.width,
-        rect.height,
+      interactions.setView(
+        clampView(
+          {
+            scale,
+            x: rect.width / 2 - ((rect.width / 2 - view.x) * scale) / view.scale,
+            y: rect.height / 2 - ((rect.height / 2 - view.y) * scale) / view.scale,
+          },
+          rect.width,
+          rect.height,
+        ),
       );
       render();
     },

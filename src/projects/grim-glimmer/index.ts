@@ -87,3 +87,7 @@ export { createTarotDeck } from './tarot-deck.js';
 export type { TarotDeckOptions, TarotDeckState } from './tarot-deck.js';
 export { createTarotHome } from './tarot-home.js';
 export type { TarotHomeOptions, TarotHomeState } from './tarot-home.js';
+
+export { createBoardInteractions } from './board-interactions.js';
+export type { BoardStrokeAdapter, BoardInteractionOptions } from './board-interactions.js';
+export type { View as BoardView } from './board-view.js';
