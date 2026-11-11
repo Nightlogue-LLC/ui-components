@@ -88,6 +88,7 @@ void [createBottomNav, updateBottomNav];
 const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
 void picker;
 import {
+  createGuidedTutorialDialog, destroyGuidedTutorialDialog,
   createTarotDeck, createTarotDeckCard, updateTarotDeckCard, createTarotHome, type TarotCard,
   createGameplayMotion, GAMEPLAY_MOTION,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
@@ -101,6 +102,8 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+const tutorial = createGuidedTutorialDialog({title:'Help',presentation:'editorial',reducedMotion:true,stateLabels:{fixed:'tree'},lessons:[{title:'Practice',instruction:'Try a mark.',boardLabel:'Example',size:1,cells:['empty']}],onDone:()=>{}});
+destroyGuidedTutorialDialog(tutorial);
 function sampleArt(): SVGSVGElement { return document.createElementNS('http://www.w3.org/2000/svg','svg'); }
 const deckCards: [TarotCard, TarotCard, TarotCard] = [
  {id:'first',title:'First',artwork:sampleArt()}, {id:'second',title:'Second',artwork:sampleArt(),locked:true}, {id:'third',title:'Third',artwork:sampleArt(),locked:true},
@@ -200,7 +203,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const project = await import('${name}/projects/grim-glimmer');
-for (const fn of ['createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+for (const fn of ['createGuidedTutorialDialog','destroyGuidedTutorialDialog','createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
   if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
 }
 const lib = await import('${name}');
@@ -258,6 +261,8 @@ document.body.append(createButton({ label: 'Smoke' }));
     '.nl-switch__thumb',
     '.nl-grim-glimmer-menu-sheet--popover',
     '.gg-v4-motion-overlay',
+    '.nl-grim-glimmer-guided-tutorial--editorial',
+    '.nl-grim-glimmer-tutorial-ring',
     '.nl-grim-glimmer-tarot-home',
     '.gg-v4-deck-ground-shadow',
     'v4-tentative-star',

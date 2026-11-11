@@ -192,6 +192,7 @@ export function openDialog(dialog: HTMLDialogElement, options: { history?: boole
   if (typeof dialog.showModal === 'function') {
     dialog.showModal();
     enter(dialog, state);
+    dialog.dispatchEvent(new Event('nl-dialog-open'));
     return;
   }
 
@@ -217,6 +218,7 @@ export function openDialog(dialog: HTMLDialogElement, options: { history?: boole
     dialog.tabIndex = -1;
     dialog.focus({ preventScroll: true });
   }
+  dialog.dispatchEvent(new Event('nl-dialog-open'));
 }
 
 /** Closes the dialog from app code (works for non-dismissible dialogs too). */
