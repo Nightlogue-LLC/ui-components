@@ -33,7 +33,7 @@ export function createArchFrame(content: Node) {
   frame.append(content);
   return frame;
 }
-export function createHomeLogo() {
+export function createHomeLogo(options: { tagline?: boolean } = {}) {
   const root = el('header', { className: 'gg-v4-home-logo' });
   const mark = el('div', { className: 'sb-gg-wordmark' });
   mark.setAttribute('role', 'img');
@@ -56,7 +56,9 @@ export function createHomeLogo() {
     );
     mark.append(svg);
   }
-  root.append(mark, el('p', { className: 'gg-v4-home-tagline', text: 'The Puzzle Collection' }));
+  root.append(mark);
+  if (options.tagline !== false)
+    root.append(el('p', { className: 'gg-v4-home-tagline', text: 'The Puzzle Collection' }));
   return root;
 }
 export function createStatusLine(solved = 0, streak = 0) {

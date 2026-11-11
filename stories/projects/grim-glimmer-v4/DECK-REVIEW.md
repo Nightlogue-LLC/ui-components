@@ -2,7 +2,8 @@
 
 Current direction: use the selected supplied illustrations as the entire visual object.
 Preserve the built-in title and border. Remove the added HTML title, difficulty/status,
-extra numeral, editorial plate, physical card background and extra frame. The Camper
+extra numeral, editorial plate and extra frame. Accent-tinted outer canvas and static
+shadows now separate the illustrations from the page. The Camper
 is the working title of the playable Trees & Tents puzzle. The Arbiter and The Architect
 are locked illustrative upcoming entries; this does not choose or implement their engines.
 
@@ -40,7 +41,8 @@ metadata. Inkscape renders were inspected for numeral consistency and isolated c
 ## Presentation and runtime
 
 `createCardIllustration()` composes trusted local SVG with a shared native Card tap
-target. No added visible title/numeral/status/frame. Accessible labels are Play/Continue
+target. No added visible title/numeral/status/frame. Rounded clipping and outer-canvas color
+are presentation styles, not new artwork layers. Accessible labels are Play/Continue
 The Camper, The Arbiter locked, The Architect locked. Resume is an accessible outcome;
 there is no new puzzle button painted over the artwork. Navigation remains injected.
 
@@ -55,11 +57,43 @@ follows that supplied art rather than forcing the earlier 5:8 raster/plate layou
 | Default-font viewport | Hero envelope | Fan reserve |
 | --------------------- | ------------- | ----------- |
 | 393×852               | 280×420px     | 40px        |
-| 360×780               | ~243.33×365px | 40px        |
+| 360×780               | 266×399px     | 40px        |
 
 These are arithmetic budgets, not browser measurements. Architect is contained at
 its natural aspect ratio with a little side breathing room. Both Home themes retain
-the supplied art colors. The 96px logo and shared navigation remain unchanged.
+the supplied illustration colors, with only the outer canvas tinted from theme roles.
+The 96px logo and shared navigation remain unchanged.
+
+## Soft edges, separation and Home spacing revision
+
+StackHome removes the extra HTML “The Puzzle Collection” line: the approved wordmark
+already includes its own subtitle. It removes the solved/streak row and its story
+props instead of hiding them behind an empty placeholder. The old Home/Carousel
+comparison and standalone StatusLine story retain their original presentation.
+`createHomeLogo({tagline:false})` reuses the existing logo without altering PNGs.
+
+The outer card corner radius is 7% horizontally /4.667% vertically: about 20px at
+280×420, so its curvature follows the illustrated inner border. Clipping applies
+to artwork/sheen and the focus target; the shadow is outside the clip. The accent focus ring has a contrasting surface
+backing so it stays visible against tinted paper. No SVG path
+geometry, numeral, title or figure was edited in this revision.
+
+Only the SVG's first full-canvas background path receives a runtime `canvas` role.
+Canvas paper mixes canonical accent/surface roles at 46% (Camper), 60% (Arbiter),
+34% (Architect), giving the fanned edges distinct accent-based separation in both
+modes. The inner scene and built-in ivory borders/title blocks retain their colors.
+Stored SVG bytes are unchanged. This replaces the earlier strict fixed-canvas-color
+presentation in response to the owner's request for separation from the dark page.
+
+Each card has static warm depth, with a subtle accent edge in dark mode. A single
+aria-hidden, pointer-transparent radial shadow sits below the whole stack, leaving
+a visible gap that grounds the floating deck. Shadows/filter colors are not animated;
+there is no repeated floating/bobbing effect or live blur animation.
+
+Removing stats releases 34px at 360×780; the hero grows from ~243.33×365 to 266×399px.
+At 393×852 it remains 280×420px. These remain default-font arithmetic budgets; safe
+areas, browser fonts and real device overflow still need review. Today's Draw retains
+its current 64px placeholder strip; its redesign remains a separate owner review.
 
 ## Preserved deck behavior
 

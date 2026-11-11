@@ -48,6 +48,7 @@ export function createCardIllustration(options: DeckCardOptions) {
     }
   });
   svg.classList.add('gg-v4-deck-vector');
+  svg.querySelector(':scope > path')?.setAttribute('data-art-part', 'canvas');
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('focusable', 'false');
   svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');

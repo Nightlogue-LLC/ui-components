@@ -12,8 +12,6 @@ const meta = {
     firstVisit: true,
     launch: 'cold',
     dailyEnabled: true,
-    solved: 14,
-    streak: 3,
     tick: fn(),
     onPlay: fn(),
     onResume: fn(),

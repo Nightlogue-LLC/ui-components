@@ -101,7 +101,7 @@ describe('deck model', () => {
     expect(springDisplacement(0)).toBe(1);
     expect(Math.abs(springDisplacement(0.6))).toBeLessThan(0.001);
     expect(deckBudget(393, 852)).toMatchObject({ width: 280, height: 420 });
-    expect(deckBudget(360, 780)).toMatchObject({ width: 243.33333333333334, height: 365 });
+    expect(deckBudget(360, 780)).toMatchObject({ width: 266, height: 399 });
   });
 });
 describe('deck pointers and outcomes', () => {
@@ -327,4 +327,14 @@ it('keeps numeral groups, isolates the raven tint, and namespaces references acr
   const clip = repeat.querySelector('[fill="#681F35"]')!.getAttribute('clip-path')!;
   const id = clip.slice(5, -1);
   expect([...repeat.querySelectorAll('[id]')].some((node) => node.id === id)).toBe(true);
+});
+
+it('removes duplicate stack-home copy/stats and keeps one decorative grounding shadow', () => {
+  const root = createStackHome({ launch: 'return', reducedMotion: true });
+  document.body.append(root);
+  expect(root.querySelector('.gg-v4-home-tagline')).toBeNull();
+  expect(root.querySelector('.gg-v4-home-status')).toBeNull();
+  expect(root.querySelectorAll('.gg-v4-deck-ground-shadow[aria-hidden="true"]')).toHaveLength(1);
+  expect(root.querySelectorAll('.gg-v4-deck-vector [data-art-part="canvas"]')).toHaveLength(3);
+  expect(root.querySelector('.gg-v4-daily')).not.toBeNull();
 });

@@ -1,4 +1,4 @@
-/* Artwork carries its own colors, title, numeral and border. No extra card skin. */
+/* Artwork retains its title and border; reviewed deck roles tint only the outer canvas. */
 .gg-v4-deck {
   display: flex;
   flex: 1 1 0;
@@ -16,6 +16,8 @@
   isolation: isolate;
 }
 .gg-v4-deck-card {
+  --gg-v4-deck-radius: 7% / 4.667%;
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 46%, var(--nl-color-surface));
   position: absolute;
   top: 0;
   width: min(280px, calc((100cqh - 40px) * 2 / 3));
@@ -34,9 +36,15 @@
 }
 .gg-v4-deck-shell {
   transition: transform 160ms ease-out;
+  border-radius: var(--gg-v4-deck-radius);
+  box-shadow:
+    0 16px 26px -12px rgb(26 10 16 / 0.5),
+    0 2px 4px rgb(26 10 16 / 0.22);
 }
 .gg-v4-deck-body {
   pointer-events: none;
+  border-radius: var(--gg-v4-deck-radius);
+  overflow: hidden;
 }
 .gg-v4-deck-vector {
   display: block;
@@ -55,7 +63,7 @@
   background: transparent;
   border: 0;
   padding: 0;
-  border-radius: 0;
+  border-radius: var(--gg-v4-deck-radius);
   box-shadow: none;
   touch-action: pan-y;
   transition: none;
@@ -63,6 +71,7 @@
 .gg-v4-deck-hit.nl-card:focus-visible {
   outline: 2px solid var(--nl-color-focus-ring);
   outline-offset: -4px;
+  box-shadow: inset 0 0 0 6px var(--nl-color-surface);
 }
 .gg-v4-deck-card[data-top='true']:has(.gg-v4-deck-hit:active) .gg-v4-deck-shell {
   transform: translateY(-6px);
@@ -72,6 +81,7 @@
   transition: none !important;
 }
 .gg-v4-deck-sheen {
+  border-radius: var(--gg-v4-deck-radius);
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -127,4 +137,40 @@
     transform: none;
     transition: none;
   }
+}
+
+/* Rounded physical edges and accent paper separate the supplied art from the page. */
+.gg-v4-deck-card[data-card='1'] {
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 60%, var(--nl-color-surface));
+}
+.gg-v4-deck-card[data-card='2'] {
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 34%, var(--nl-color-surface));
+}
+.gg-v4-deck-vector > [data-art-part='canvas'] {
+  fill: var(--gg-v4-card-paper);
+}
+.gg-v4-deck-ground-shadow {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: calc(min(420px, 100cqh - 40px) + 24px);
+  width: min(250px, 70%);
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgb(26 10 16 / 0.4),
+    rgb(26 10 16 / 0.12) 45%,
+    transparent 74%
+  );
+  pointer-events: none;
+}
+[data-nl-mode='dark'] .gg-v4-deck-shell {
+  box-shadow:
+    0 20px 32px -12px rgb(9 3 6 / 0.85),
+    0 0 0 1px color-mix(in srgb, var(--nl-color-accent) 20%, transparent);
+}
+[data-nl-mode='dark'] .gg-v4-deck-ground-shadow {
+  background: radial-gradient(ellipse, rgb(9 3 6 / 0.85), rgb(9 3 6 / 0.3) 45%, transparent 74%);
 }

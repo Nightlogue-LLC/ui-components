@@ -56,17 +56,16 @@ export function springDisplacement(time: number) {
 export function deckBudget(
   width: number,
   height: number,
-  { daily = true, status = true, safeTop = 0, safeBottom = 0 } = {},
+  { daily = true, safeTop = 0, safeBottom = 0 } = {},
 ) {
   const gap = height <= 740 ? 8 : 16,
-    blocks = 3 + Number(daily) + Number(status);
+    blocks = 3 + Number(daily);
   const fixed =
     Math.max(16, safeTop) +
     96 +
     53 +
     Math.max(4, safeBottom) +
     (blocks - 1) * gap +
-    (status ? 18 : 0) +
     (daily ? (height <= 740 ? 56 : 64) : 0) +
     60 +
     40;

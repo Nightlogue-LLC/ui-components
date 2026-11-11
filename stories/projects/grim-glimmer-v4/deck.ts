@@ -94,7 +94,9 @@ export function createDeck(options: DeckOptions = {}) {
     }),
   );
   indicators.append(...dots);
-  stage.append(...cards);
+  const ground = el('span', { className: 'gg-v4-deck-ground-shadow' });
+  ground.setAttribute('aria-hidden', 'true');
+  stage.append(ground, ...cards);
   const sources = new Set(cards.map((card) => card.querySelector<HTMLImageElement>('img')!.src));
   for (const source of sources) {
     const preload = document.createElement('link');

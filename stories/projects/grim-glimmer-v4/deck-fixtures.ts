@@ -1,11 +1,9 @@
 import { createDeck, type DeckOptions } from './deck.js';
 import { homeHost, createAtmosphere } from './home.js';
-import { createHomeLogo, createDailyDraw, createStatusLine, createHomeNav } from './home-parts.js';
+import { createHomeLogo, createDailyDraw, createHomeNav } from './home-parts.js';
 import { createHomeMotion } from './home-motion.js';
 export interface StackHomeOptions extends DeckOptions {
   dailyEnabled?: boolean;
-  solved?: number;
-  streak?: number;
   onNavigate?: (page: string) => void;
 }
 export function createStackPreview(options: DeckOptions = {}) {
@@ -23,8 +21,7 @@ export function createStackHome(options: StackHomeOptions = {}) {
   root.dataset.reducedMotion = String(options.reducedMotion ?? false);
   root.append(
     createAtmosphere(),
-    createHomeLogo(),
-    createStatusLine(options.solved ?? 14, options.streak ?? 3),
+    createHomeLogo({ tagline: false }),
     createDailyDraw({
       date: '2026-11-10',
       state: options.dailyEnabled === false ? 'hidden' : 'unplayed',
