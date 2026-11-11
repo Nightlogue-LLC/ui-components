@@ -74,7 +74,9 @@ comparison and standalone StatusLine story retain their original presentation.
 
 The outer card corner radius is 7% horizontally /4.667% vertically: about 20px at
 280×420, so its curvature follows the illustrated inner border. Clipping applies
-to artwork/sheen and the focus target; the shadow is outside the clip. The accent focus ring has a contrasting surface
+to artwork/sheen and the focus target; the shadow is outside the clip. The shell has the same opaque paper fill as the SVG
+canvas, preventing the narrower Architect aspect ratio from revealing lower cards
+at its sides; the artwork stays contained, not stretched or cropped. The accent focus ring has a contrasting surface
 backing so it stays visible against tinted paper. No SVG path
 geometry, numeral, title or figure was edited in this revision.
 
