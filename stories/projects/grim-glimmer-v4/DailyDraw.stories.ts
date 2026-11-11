@@ -5,7 +5,16 @@ import { type HomeOptions } from './home.js';
 import { createDailyDraw } from './home-parts.js';
 const meta = {
   title: 'Projects/Grim & Glimmer/V4/Home/DailyDraw',
-  parameters: { nlTheme: 'moonlit-oxblood', nlStage: 'bleed' },
+  parameters: {
+    nlTheme: 'moonlit-oxblood',
+    nlStage: 'bleed',
+    docs: {
+      description: {
+        component:
+          'Earlier Phase 7 strip retained for comparison. The current monthly proposal is V4 / DailyDraw / Ritual; StackHome uses that ritual.',
+      },
+    },
+  },
   args: {
     reducedMotion: false,
     haptics: true,
@@ -41,7 +50,7 @@ const meta = {
 } satisfies Meta<HomeOptions>;
 export default meta;
 type Story = StoryObj<HomeOptions>;
-export const Playground: Story = {};
+export const Playground: Story = { name: 'Legacy strip comparison' };
 export const ReducedMotion: Story = { args: { reducedMotion: true } };
 export const LightDarkComparison: Story = {
   parameters: { nlStage: 'self' },

@@ -336,5 +336,5 @@ it('removes duplicate stack-home copy/stats and keeps one decorative grounding s
   expect(root.querySelector('.gg-v4-home-status')).toBeNull();
   expect(root.querySelectorAll('.gg-v4-deck-ground-shadow[aria-hidden="true"]')).toHaveLength(1);
   expect(root.querySelectorAll('.gg-v4-deck-vector [data-art-part="canvas"]')).toHaveLength(3);
-  expect(root.querySelector('.gg-v4-daily')).not.toBeNull();
+  expect(root.querySelector('.gg-v4-ritual')).not.toBeNull();
 });
