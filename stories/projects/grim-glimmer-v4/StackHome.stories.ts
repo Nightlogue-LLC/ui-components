@@ -37,6 +37,8 @@ export const LightDarkComparison: Story = {
     compareModes(context, () => createStackHome(args), { theme: 'moonlit-oxblood', bleed: true }),
 };
 
+export const DailyDisabled: Story = { args: { dailyEnabled: false } };
+
 export const DailyRevealed: Story = { args: { draw: { state: 'revealed-unstarted' } } };
 export const DailyInProgress: Story = { args: { draw: { state: 'in-progress', progress: 0.4 } } };
 export const DailySolved: Story = { args: { draw: { state: 'solved', streak: 3 } } };

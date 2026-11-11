@@ -88,6 +88,7 @@ void [createBottomNav, updateBottomNav];
 const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
 void picker;
 import {
+  createTarotDeck, createTarotDeckCard, updateTarotDeckCard, createTarotHome, type TarotCard,
   createGameplayMotion, GAMEPLAY_MOTION,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
   createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
@@ -100,6 +101,15 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+function sampleArt(): SVGSVGElement { return document.createElementNS('http://www.w3.org/2000/svg','svg'); }
+const deckCards: [TarotCard, TarotCard, TarotCard] = [
+ {id:'first',title:'First',artwork:sampleArt()}, {id:'second',title:'Second',artwork:sampleArt(),locked:true}, {id:'third',title:'Third',artwork:sampleArt(),locked:true},
+];
+const deck = createTarotDeck({cards:deckCards,onActivate:()=>{}});
+deck.update({cards:deckCards,animations:false}); deck.dispose();
+const illustration = createTarotDeckCard(deckCards[0]); updateTarotDeckCard(illustration,{id:'first',inProgress:true});
+const home = createTarotHome({deck:{cards:deckCards,onActivate:()=>{}},navigation:{label:'Pages',value:'home',items:[{value:'home',label:'Home',icon:sampleArt()}],onNavigate:()=>{}}});
+home.dispose();
 const motion = createGameplayMotion({animations: false});
 motion.mount(); motion.setAnimations(false); motion.dispose(); void GAMEPLAY_MOTION;
 const header = createTarotGameplayHeader({ tarotNumeral: 'I', archetypeTitle: 'The Camper', puzzleName: 'Trees & Tents', difficulty: 'Easy', columns: 6, rows: 6 });
@@ -190,7 +200,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const project = await import('${name}/projects/grim-glimmer');
-for (const fn of ['createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+for (const fn of ['createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
   if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
 }
 const lib = await import('${name}');
@@ -248,6 +258,8 @@ document.body.append(createButton({ label: 'Smoke' }));
     '.nl-switch__thumb',
     '.nl-grim-glimmer-menu-sheet--popover',
     '.gg-v4-motion-overlay',
+    '.nl-grim-glimmer-tarot-home',
+    '.gg-v4-deck-ground-shadow',
     'v4-tentative-star',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);
