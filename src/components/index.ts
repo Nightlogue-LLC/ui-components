@@ -12,3 +12,4 @@ export * from './select/index.js';
 export * from './bottom-nav/index.js';
 export * from './icon/index.js';
 export * from './bottom-sheet/index.js';
+export * from './switch/index.js';

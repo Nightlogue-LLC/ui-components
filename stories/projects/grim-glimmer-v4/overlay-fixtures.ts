@@ -203,63 +203,19 @@ export function createOverlayPreview(
         }),
     }),
   );
-  let animation: Animation | undefined;
-  let version = 0;
-  let nextAction: (() => void) | undefined;
   const menu = createGameMenuSheet({
     trigger,
     content,
     history: false,
-    animations: () => false,
-    onOpenChange: (open) => {
-      const token = ++version;
-      if (open) nextAction = undefined;
-      animation?.cancel();
-      animation = undefined;
-      if (disposed) return;
-      trigger.dataset.animations = reduced() ? 'off' : 'on';
-      menu.element.dataset.closing = String(!open);
-      menu.element.hidden = false;
-      const finish = () => {
-        if (disposed || version !== token) return;
-        animation?.cancel();
-        animation = undefined;
-        menu.element.hidden = !menu.isOpen;
-        if (!open) {
-          const action = nextAction;
-          nextAction = undefined;
-          action?.();
-        }
-      };
-      if (reduced() || typeof panel.animate !== 'function') finish();
-      else {
-        animation = panel.animate(
-          open
-            ? [
-                { transform: 'scale(.92)', opacity: 0 },
-                { transform: 'scale(1)', opacity: 1 },
-              ]
-            : [
-                { transform: 'scale(1)', opacity: 1 },
-                { transform: 'scale(.92)', opacity: 0 },
-              ],
-          { duration: 160, easing: 'ease-out', fill: 'both' },
-        );
-        void animation.finished.then(finish, finish);
-      }
-    },
+    presentation: 'popover',
+    animations: () => !reduced(),
   });
   menu.element.classList.add('gg-v4-popover');
-  menu.element.querySelector('.nl-grim-glimmer-menu-sheet__handle')?.remove();
-  const panel = menu.element.querySelector<HTMLElement>('.nl-grim-glimmer-menu-sheet__panel')!;
   function navigate(action: () => void) {
     tick();
-    if (!menu.isOpen) {
-      action();
-      return;
-    }
-    nextAction = action;
-    menu.close();
+    menu.close(() => {
+      if (!disposed) action();
+    });
   }
   const opener = createButton({
     label:
@@ -292,9 +248,6 @@ export function createOverlayPreview(
   root.append(header, board, status, review, controls, menu.element);
   root.cleanup = () => {
     disposed = true;
-    version++;
-    animation?.cancel();
-    nextAction = undefined;
     menu.destroy();
     [...pending].forEach((destroy) => destroy());
   };

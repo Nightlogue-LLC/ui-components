@@ -77,10 +77,18 @@ import { createDialog, openDialog, closeDialog, getDialogBody, type DialogCloseR
 import { createBadge } from '${name}/components/badge';
 import { createSelect } from '${name}/components/select';
 import { createBottomNav, updateBottomNav } from '${name}/components/bottom-nav';
+import { createSwitch, updateSwitch } from '${name}/components/switch';
+import { createBottomSheet, destroyBottomSheet } from '${name}/components/bottom-sheet';
+import { destroyDialog } from '${name}/components/dialog';
+import { animatePopover, POPOVER_MOTION } from '${name}/core';
+void [createBottomSheet, destroyBottomSheet, destroyDialog, animatePopover, POPOVER_MOTION];
+const setting = createSwitch({ label: 'Animations', checked: true, onChange: () => {} });
+updateSwitch(setting, {label: 'Animations', checked: false});
 void [createBottomNav, updateBottomNav];
 const picker: HTMLElement = createSelect({ label: 'Mode', value: 'a', options: [{ value: 'a', label: 'A' }] });
 void picker;
 import {
+  createGameplayMotion, GAMEPLAY_MOTION,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
   createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
   createMainScreen,
@@ -92,6 +100,8 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+const motion = createGameplayMotion({animations: false});
+motion.mount(); motion.setAnimations(false); motion.dispose(); void GAMEPLAY_MOTION;
 const header = createTarotGameplayHeader({ tarotNumeral: 'I', archetypeTitle: 'The Camper', puzzleName: 'Trees & Tents', difficulty: 'Easy', columns: 6, rows: 6 });
 const board = createCluedBoard({ label: 'Board', size: 1, mode: 'interactive', presentation: 'editorial', cells: ['empty'], rowClues: [0], columnClues: [0] });
 updateCluedBoard(board, { cells: ['excluded'], rowFeedback: [{status: 'satisfied', confirmed: 0}] });
@@ -164,6 +174,10 @@ const specs = [
   '${name}/components/badge.css',
   '${name}/components/select',
   '${name}/components/select.css',
+  '${name}/components/switch',
+  '${name}/components/switch.css',
+  '${name}/components/bottom-sheet',
+  '${name}/components/bottom-sheet.css',
   '${name}/components/bottom-nav',
   '${name}/components/bottom-nav.css',
   '${name}/components/dialog',
@@ -176,11 +190,11 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const project = await import('${name}/projects/grim-glimmer');
-for (const fn of ['createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+for (const fn of ['createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
   if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
 }
 const lib = await import('${name}');
-for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect','createBottomNav','updateBottomNav']) {
+for (const fn of ['createButton','createIconButton','createCard','createSegmentedControl','createDialog','createBadge','createSelect','createBottomNav','updateBottomNav','createSwitch','updateSwitch','destroyDialog','destroyBottomSheet','animatePopover']) {
   if (typeof lib[fn] !== 'function') throw new Error(fn + ' missing');
 }
 `,
@@ -231,6 +245,9 @@ document.body.append(createButton({ label: 'Smoke' }));
     '.nl-grim-glimmer-v4',
     '.gg-v4-tool-indicator',
     '.gg-v4-tarot-identity',
+    '.nl-switch__thumb',
+    '.nl-grim-glimmer-menu-sheet--popover',
+    '.gg-v4-motion-overlay',
     'v4-tentative-star',
   ]) {
     if (!both.css.includes(needle)) throw new Error(`bundled consumer CSS is missing ${needle}`);

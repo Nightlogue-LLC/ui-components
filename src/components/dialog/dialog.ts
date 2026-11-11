@@ -23,6 +23,8 @@ export interface DialogOptions {
 }
 
 interface State {
+  destroyed?: boolean;
+  pendingNotification?: () => void;
   dismissible: boolean;
   motion?: 'sheet';
   animations?: boolean;
@@ -117,6 +119,7 @@ export function createDialog(options: DialogOptions): HTMLDialogElement {
 
   // Native close (fires asynchronously after dialog.close()).
   dialog.addEventListener('close', () => {
+    if (state.destroyed) return;
     const reason = state.pendingReason;
     state.pendingReason = undefined;
     if (reason) {
@@ -150,6 +153,7 @@ function part(dialog: HTMLDialogElement, selector: string): HTMLElement {
 /** Opens the dialog modally. It must already be attached to the document. No-op if open. */
 export function openDialog(dialog: HTMLDialogElement, options: { history?: boolean } = {}): void {
   const state = stateOf(dialog);
+  if (state.destroyed) throw new Error('Cannot open a destroyed dialog');
   if (dialog.hasAttribute('open')) return;
   if (!dialog.isConnected) {
     throw new Error(
@@ -220,6 +224,30 @@ export function closeDialog(dialog: HTMLDialogElement): void {
   finish(dialog, 'programmatic');
 }
 
+/** Terminal teardown: removes motion, history/fallback listeners and pending callbacks. */
+export function destroyDialog(dialog: HTMLDialogElement): void {
+  const state = stateOf(dialog);
+  if (state.destroyed) return;
+  state.destroyed = true;
+  state.pendingReason = undefined;
+  state.onClose = undefined;
+  state.animation?.cancel();
+  state.animation = undefined;
+  if (state.fallbackKeydown) document.removeEventListener('keydown', state.fallbackKeydown);
+  state.fallbackKeydown = undefined;
+  if (state.pendingNotification) window.removeEventListener('popstate', state.pendingNotification);
+  state.pendingNotification = undefined;
+  state.releaseHistory?.();
+  state.releaseHistory = undefined;
+  if (dialog.open && typeof dialog.close === 'function') dialog.close();
+  dialog.removeAttribute('open');
+  delete dialog.dataset.nlEntering;
+  dialog.remove();
+  const back = state.returnFocus;
+  state.returnFocus = null;
+  if (back instanceof HTMLElement && back.isConnected) back.focus({ preventScroll: true });
+}
+
 function stateOf(dialog: HTMLDialogElement): State {
   const state = states.get(dialog);
   if (!state) throw new Error('Not a dialog made by createDialog');
@@ -251,14 +279,14 @@ function enter(dialog: HTMLDialogElement, state: State): void {
 
 function finish(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
   const state = stateOf(dialog);
-  if (!dialog.hasAttribute('open') || state.closing) return;
+  if (state.destroyed || !dialog.hasAttribute('open') || state.closing) return;
   state.closing = true;
   state.pendingReason = reason;
   state.animation?.cancel();
   const commit = () => {
     state.animation?.cancel();
     state.animation = undefined;
-    if (!dialog.hasAttribute('open')) return;
+    if (state.destroyed || !dialog.hasAttribute('open')) return;
     if (typeof dialog.close === 'function') dialog.close();
     else {
       dialog.removeAttribute('open');
@@ -292,7 +320,11 @@ function complete(dialog: HTMLDialogElement, reason: DialogCloseReason): void {
   const release = state.releaseHistory;
   state.releaseHistory = undefined;
   if (release) {
-    const notify = () => state.onClose?.(reason);
+    const notify = () => {
+      state.pendingNotification = undefined;
+      if (!state.destroyed) state.onClose?.(reason);
+    };
+    state.pendingNotification = notify;
     window.addEventListener('popstate', notify, { once: true });
     if (!release()) {
       window.removeEventListener('popstate', notify);

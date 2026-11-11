@@ -23,3 +23,24 @@ export function animateSheet(
     fill: 'both',
   });
 }
+
+/** Matched popover entry/exit. Uses the same reduced-motion gate as shared sheets. */
+export const POPOVER_MOTION = { duration: 160, easing: 'ease-out' } as const;
+export function animatePopover(
+  element: HTMLElement,
+  direction: 'enter' | 'exit',
+  options: { animations?: boolean } = {},
+): Animation | undefined {
+  if (
+    options.animations === false ||
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ||
+    typeof element.animate !== 'function'
+  )
+    return;
+  const hidden = { transform: 'scale(.92)', opacity: 0 };
+  const visible = { transform: 'scale(1)', opacity: 1 };
+  return element.animate(direction === 'enter' ? [hidden, visible] : [visible, hidden], {
+    ...POPOVER_MOTION,
+    fill: 'both',
+  });
+}

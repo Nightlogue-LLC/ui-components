@@ -1,8 +1,10 @@
-import { animateSheet } from '../../core/motion.js';
+import { animateSheet, animatePopover } from '../../core/motion.js';
 import { uniqueId } from '../../core/id.js';
 import { createIcon } from '../../components/icon/index.js';
 
 export interface GameMenuSheetOptions {
+  /** Default sheet keeps its current placement; opt in to the accepted top-right popover. */
+  presentation?: 'popover';
   trigger: HTMLButtonElement;
   content: HTMLElement;
   label?: string;
@@ -58,49 +60,64 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
   opened.className = 'nl-grim-glimmer-menu-toggle__opened';
   opened.append(createIcon('close'));
   holder.replaceChildren(closed, opened);
+  const popover = options.presentation === 'popover';
+  if (popover) {
+    root.classList.add('nl-grim-glimmer-menu-sheet--popover');
+    handle.remove();
+  }
   let active = false;
+  let destroyed = false;
+  let closing = false;
+  let motionDone = true;
   let motionVersion = 0;
   let animation: Animation | undefined;
   let historyEntry = false;
   let pendingHistory = false;
+  let historyWaiter: (() => void) | undefined;
   let requestedOpen = false;
+  let pendingAction: (() => void) | undefined;
   let pointer: { id: number; x: number; y: number } | undefined;
   let restoreInert: (() => void) | undefined;
   const marker = panel.id;
   const historyEnabled = options.history !== false;
+  function finishClose() {
+    if (destroyed || active || !motionDone || pendingHistory) return;
+    closing = false;
+    root.hidden = true;
+    observer.disconnect();
+    const action = pendingAction;
+    pendingAction = undefined;
+    action?.();
+  }
   const setOpen = (next: boolean, fromHistory = false, afterClose?: () => void) => {
+    if (destroyed) return;
     if (pendingHistory) {
       requestedOpen = next;
-      if (!next && afterClose) window.addEventListener('popstate', afterClose, { once: true });
+      pendingAction = next ? undefined : afterClose;
       return;
     }
     if (active === next) {
-      afterClose?.();
+      if (!next) {
+        pendingAction = afterClose;
+        finishClose();
+      }
       return;
     }
     active = next;
+    closing = !next;
+    pendingAction = next ? undefined : afterClose;
     animation?.cancel();
     const version = ++motionVersion;
     root.hidden = false;
-    animation = animateSheet(panel, next ? 'enter' : 'exit', {
-      animations: options.animations?.() !== false,
-    });
-    const done = () => {
-      if (version !== motionVersion) return;
-      animation?.cancel();
-      animation = undefined;
-      root.hidden = !active;
-    };
-    if (animation) animation.finished.then(done, done);
-    else done();
-    trigger.setAttribute('aria-expanded', String(next));
+    root.dataset.closing = String(!next);
     const motion = options.animations?.() !== false;
     root.dataset.animations = motion ? 'on' : 'off';
     trigger.dataset.animations = motion ? 'on' : 'off';
+    trigger.setAttribute('aria-expanded', String(next));
+    motionDone = false;
     if (next) {
       content.hidden = false;
       observer.observe(document.documentElement, { childList: true, subtree: true });
-      // The board/controls cannot receive focus behind the modal. Keep both headers available.
       const inertNodes = [
         ...(root.parentElement?.querySelectorAll<HTMLElement>(
           ':scope > [data-slot="board"], :scope > [data-slot="controls"], :scope > [data-slot="difficulty"]',
@@ -127,7 +144,6 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       (panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus({ preventScroll: true });
     } else {
       content.dispatchEvent(new Event('game-menu-close'));
-      observer.disconnect();
       restoreInert?.();
       restoreInert = undefined;
       document.removeEventListener('keydown', keydown);
@@ -138,28 +154,34 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
         (window.history.state as { nlGameMenu?: unknown } | null)?.nlGameMenu === marker
       ) {
         pendingHistory = true;
-        window.addEventListener(
-          'popstate',
-          () => {
-            pendingHistory = false;
-            afterClose?.();
-            if (requestedOpen) {
-              requestedOpen = false;
-              setOpen(true);
-            }
-          },
-          { once: true },
-        );
+        historyWaiter = () => {
+          historyWaiter = undefined;
+          pendingHistory = false;
+          if (destroyed) return;
+          if (requestedOpen) {
+            requestedOpen = false;
+            pendingAction = undefined;
+            setOpen(true);
+          } else finishClose();
+        };
+        window.addEventListener('popstate', historyWaiter, { once: true });
         window.history.back();
       }
-      const waitForHistory =
-        !fromHistory &&
-        historyEntry &&
-        (window.history.state as { nlGameMenu?: unknown } | null)?.nlGameMenu === marker;
       historyEntry = false;
       if (trigger.isConnected) trigger.focus({ preventScroll: true });
-      if (!waitForHistory) afterClose?.();
     }
+    const animate = popover ? animatePopover : animateSheet;
+    const current = animate(panel, next ? 'enter' : 'exit', { animations: motion });
+    animation = current;
+    const done = () => {
+      if (destroyed || version !== motionVersion) return;
+      current?.cancel();
+      animation = undefined;
+      motionDone = true;
+      if (!active) finishClose();
+    };
+    if (current) void current.finished.then(done, done);
+    else done();
     options.onOpenChange?.(next);
   };
   function popstate(): void {
@@ -187,6 +209,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
   trigger.addEventListener('click', toggle);
   scrim.addEventListener('click', () => setOpen(false));
   panel.addEventListener('pointerdown', (event) => {
+    if (popover || destroyed) return;
     pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
   });
   panel.addEventListener('pointerup', (event) => {
@@ -205,6 +228,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
   panel.addEventListener(
     'touchstart',
     (event) => {
+      if (popover || destroyed) return;
       const start = event.touches[0];
       touch = start && panel.scrollTop === 0 ? { x: start.clientX, y: start.clientY } : undefined;
     },
@@ -234,9 +258,40 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
     touch = undefined;
   });
 
-  // Route replacements detach a screen; release any document listeners and inert state.
+  function destroy() {
+    if (destroyed) return;
+    destroyed = true;
+    motionVersion++;
+    pendingAction = undefined;
+    requestedOpen = false;
+    animation?.cancel();
+    animation = undefined;
+    observer.disconnect();
+    restoreInert?.();
+    restoreInert = undefined;
+    document.removeEventListener('keydown', keydown);
+    window.removeEventListener('popstate', popstate);
+    if (historyWaiter) window.removeEventListener('popstate', historyWaiter);
+    historyWaiter = undefined;
+    pendingHistory = false;
+    if (
+      historyEntry &&
+      (window.history.state as { nlGameMenu?: unknown } | null)?.nlGameMenu === marker
+    )
+      window.history.back();
+    historyEntry = false;
+    trigger.removeEventListener('click', toggle);
+    trigger.setAttribute('aria-expanded', 'false');
+    const wasOpen = active;
+    active = false;
+    closing = false;
+    root.remove();
+    if (wasOpen) options.onOpenChange?.(false);
+  }
+  // Removal during entry, exit or history unwind must suppress queued routes.
   const observer = new MutationObserver(() => {
-    if (active && !trigger.isConnected) setOpen(false);
+    if ((active || closing || pendingHistory) && (!trigger.isConnected || !root.isConnected))
+      destroy();
   });
   return {
     element: root,
@@ -246,11 +301,6 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
     open: () => setOpen(true),
     close: (afterClose) => setOpen(false, false, afterClose),
     toggle,
-    destroy: () => {
-      setOpen(false);
-      observer.disconnect();
-      trigger.removeEventListener('click', toggle);
-      root.remove();
-    },
+    destroy,
   };
 }
