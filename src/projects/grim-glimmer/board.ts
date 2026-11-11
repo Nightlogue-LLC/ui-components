@@ -1,3 +1,11 @@
+import {
+  applyEditorialBoard,
+  paintBoardFeedback,
+  validateBoardFeedback,
+  type CluedBoardFeedback,
+  type CluedBoardUpdate,
+} from './board-presentation.js';
+
 /**
  * A square board of cells for previews, tutorials and mock flows.
  *
@@ -128,16 +136,21 @@ export function updateBoard(root: HTMLElement, props: BoardProps): void {
 }
 
 /** Clue counts are supplied by the game, never derived from presentation state. */
-export interface CluedBoardOptions extends BoardOptions {
+export interface CluedBoardOptions extends BoardOptions, CluedBoardFeedback {
+  /** Opt-in accepted editorial geometry. Existing consumers retain their presentation. */
+  presentation?: 'editorial';
   rowClues: readonly number[];
   columnClues: readonly number[];
   rowClueLabel?: (row: number, value: number) => string;
   columnClueLabel?: (column: number, value: number) => string;
 }
 
+const cluedConfigs = new WeakMap<HTMLElement, CluedBoardOptions>();
+
 /** Engraved board with column counts above and row counts on the left. */
 export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   const { size, rowClues, columnClues } = options;
+  validateBoardFeedback(size, options);
   const valid = (values: readonly number[]) =>
     values.length === size && values.every((n) => Number.isInteger(n) && n >= 0 && n <= size);
   if (!valid(rowClues) || !valid(columnClues)) {
@@ -190,5 +203,25 @@ export function createCluedBoard(options: CluedBoardOptions): HTMLElement {
   body.className = 'nl-grim-glimmer-clued-board__body';
   body.append(rows, grid);
   shell.append(columns, body);
+  cluedConfigs.set(shell, { ...options, rowClues: [...rowClues], columnClues: [...columnClues] });
+  if (options.presentation === 'editorial') applyEditorialBoard(shell, size);
+  if (
+    options.presentation === 'editorial' ||
+    options.rowFeedback ||
+    options.columnFeedback ||
+    options.conflicts ||
+    options.hints
+  )
+    paintBoardFeedback(shell, options, options);
   return shell;
+}
+
+/** Full controlled update; omitted feedback resets to neutral. Cell nodes retain focus. */
+export function updateCluedBoard(root: HTMLElement, props: CluedBoardUpdate): void {
+  const options = cluedConfigs.get(root);
+  if (!options) throw new Error('updateCluedBoard: expected a clued board');
+  validateBoardFeedback(options.size, props);
+  const grid = root.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
+  updateBoard(grid, props);
+  paintBoardFeedback(root, options, props);
 }

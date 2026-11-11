@@ -1,6 +1,7 @@
 import {
   createBoard,
   createCluedBoard,
+  updateCluedBoard,
   updateBoard,
   type BoardCellState,
 } from '../../../src/projects/grim-glimmer/index.js';
@@ -58,7 +59,7 @@ export interface BoardOptions {
 }
 
 function scope(node: HTMLElement, palette: Palette) {
-  node.classList.add('gg-v4-scope');
+  node.classList.add('gg-v4-scope', 'nl-grim-glimmer-v4');
   node.dataset.palette = palette;
 }
 
@@ -78,6 +79,7 @@ export function createV4Board(options: BoardOptions): HTMLElement {
   const cells = [...(options.cells ?? fixture(size))];
   const values = Array.from({ length: size }, (_, i) => (i === 0 ? 0 : (i % 3) + 1));
   const root = createCluedBoard({
+    presentation: 'editorial',
     label: 'V4 Stars & Spires visual fixture — not a playable puzzle',
     size,
     mode: options.interactive === false ? 'readonly' : 'interactive',
@@ -105,49 +107,27 @@ export function createV4Board(options: BoardOptions): HTMLElement {
   root.dataset.framed = String(options.framed === true && size !== 15);
   root.dataset.glow = String(options.glow ?? true);
   const grid = root.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
-  const frame = el('div', { className: 'gg-v4-grid-frame' });
-  grid.replaceWith(frame);
-  frame.append(grid);
-  if (size === 15) {
-    for (const boundary of [5, 10]) {
-      for (const axis of ['row', 'column']) {
-        const line = el('span', { className: `gg-v4-block-line gg-v4-block-line--${axis}` });
-        line.setAttribute('aria-hidden', 'true');
-        line.dataset.boundary = String(boundary);
-        line.style.setProperty(
-          '--gg-v4-cut',
-          `calc(1px + (100% - 16px) * ${boundary / 15} + ${boundary - 0.5}px)`,
-        );
-        frame.append(line);
-      }
-    }
-  }
-  for (const [axis, states] of [
-    ['rows', options.rowStates],
-    ['columns', options.columnStates],
-  ] as const) {
-    root
-      .querySelectorAll<HTMLElement>(`.nl-grim-glimmer-clued-board__${axis} > *`)
-      .forEach((clue, i) => {
-        const state = states?.[i] ?? (i === 1 ? 'satisfied' : i === 2 ? 'over' : 'default');
-        clue.dataset.v4Status = state;
-        const count =
-          state === 'over'
-            ? values[i]! + 1
-            : state === 'satisfied'
-              ? values[i]!
-              : Math.max(0, values[i]! - 1);
-        clue.querySelector('.nl-grim-glimmer-visually-hidden')!.textContent =
-          `${axis === 'rows' ? 'Row' : 'Column'} ${i + 1}: requires ${values[i]}, ${count} confirmed; ${state === 'over' ? 'over count' : state === 'satisfied' ? 'satisfied' : 'not marked satisfied'}`;
-        const numeral = clue.querySelector<HTMLElement>("[aria-hidden='true']")!;
-        numeral.classList.add('gg-v4-clue-number');
-        if (state === 'over') {
-          const status = el('span', { className: 'gg-v4-clue-status', text: '!' });
-          status.setAttribute('aria-hidden', 'true');
-          numeral.append(status);
-        }
-      });
-  }
+  const reports = (states?: readonly ClueState[]) =>
+    values.map((value, i) => {
+      const status = states?.[i] ?? (i === 1 ? 'satisfied' : i === 2 ? 'over' : 'default');
+      return {
+        status,
+        confirmed:
+          status === 'over' ? value + 1 : status === 'satisfied' ? value : Math.max(0, value - 1),
+      };
+    });
+  updateCluedBoard(root, {
+    cells,
+    rowFeedback: reports(options.rowStates),
+    columnFeedback: reports(options.columnStates),
+  });
+  // Keep the older accessible sentence in the fixture comparison.
+  root.querySelectorAll('.nl-grim-glimmer-visually-hidden').forEach((description) => {
+    description.textContent = (description.textContent ?? '').replace(
+      /^(Row|Column) (\d+): (\d+);/,
+      '$1 $2: requires $3,',
+    );
+  });
   function paintAnnotations() {
     grid.querySelectorAll('.gg-v4-hint').forEach((node) => node.remove());
     grid

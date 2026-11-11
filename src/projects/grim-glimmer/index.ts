@@ -2,7 +2,7 @@ export { createPuzzleGlyph } from './glyphs.js';
 // Grim & Glimmer project-specific compositions. Import from
 // '@nightlogue-llc/ui-components/projects/grim-glimmer' (and its .css). Built from shared
 // components; contains no game engine, persistence, or final artwork.
-export { createBoard, updateBoard, createCluedBoard } from './board.js';
+export { createBoard, updateBoard, createCluedBoard, updateCluedBoard } from './board.js';
 export type {
   BoardCellState,
   BoardMode,
@@ -61,3 +61,19 @@ export { createGameMenuSheet } from './menu-sheet.js';
 export type { GameMenuSheet, GameMenuSheetOptions } from './menu-sheet.js';
 export { createSuccessSheet, createSuccessMessagePicker } from './success-sheet.js';
 export type { SuccessSheetOptions } from './success-sheet.js';
+
+export { createTarotGameplayHeader } from './tarot-header.js';
+export type { TarotHeaderOptions } from './tarot-header.js';
+export type {
+  ClueStatus,
+  ClueFeedback,
+  CluedBoardFeedback,
+  CluedBoardUpdate,
+} from './board-presentation.js';
+export {
+  createGameToolToggle,
+  updateGameToolToggle,
+  createGameControlRow,
+  updateGameControlRow,
+} from './editorial-controls.js';
+export type { GameControlState, EditorialControlsOptions } from './editorial-controls.js';
