@@ -1,7 +1,7 @@
 import { createIconButton } from '../../../src/components/icon-button/index.js';
 import { star } from './home-parts.js';
 import { el } from '../../lib/dom.js';
-import { createCardFrame } from './deck-card.js';
+import { createCardIllustration } from './deck-card.js';
 import {
   DECK_MOTION,
   fan,
@@ -69,7 +69,7 @@ export function createDeck(options: DeckOptions = {}) {
   let suppressClick = false;
   const jobs = new Map<HTMLElement, Animation>();
   const cards = Array.from({ length: 3 }, (_, index) =>
-    createCardFrame({
+    createCardIllustration({
       index,
       inProgress: options.inProgress,
       epithet: options.epithet,
@@ -161,7 +161,7 @@ export function createDeck(options: DeckOptions = {}) {
     dots.forEach((button, index) =>
       button.setAttribute('aria-pressed', String(index === selected)),
     );
-    live.textContent = `Card ${selected + 1} of 3: ${selected === 0 ? 'Trees & Tents, playable' : 'locked puzzle'}`;
+    live.textContent = `Card ${selected + 1} of 3: ${selected === 0 ? 'The Camper, playable' : 'locked puzzle'}`;
   }
   function interact() {
     release();

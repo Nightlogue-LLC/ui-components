@@ -1,13 +1,17 @@
-import { applyTheme } from '../../../src/core/theme.js';
 import { createCard } from '../../../src/components/card/index.js';
-import { createButton } from '../../../src/components/button/index.js';
+import { uniqueId } from '../../../src/core/id.js';
 import { el } from '../../lib/dom.js';
-import { star } from './home-parts.js';
+import camper from './assets/camper.svg?raw';
+import arbiter from './assets/arbiter.svg?raw';
+import architect from './assets/architect.svg?raw';
 import './deck.css';
-export const DECK_ART = new URL('./assets/trees-tents-card.png', import.meta.url).href;
-const emblem = star(8);
-emblem.setAttribute('fill', 'currentColor');
-export const DECK_EMBLEM = `data:image/svg+xml,${encodeURIComponent(new XMLSerializer().serializeToString(emblem))}`;
+export const DECK_ART = new URL('./assets/camper.svg', import.meta.url).href;
+export const DECK_IMAGES = [
+  DECK_ART,
+  new URL('./assets/arbiter.svg', import.meta.url).href,
+  new URL('./assets/architect.svg', import.meta.url).href,
+];
+export const DECK_NAMES = ['The Camper', 'The Arbiter', 'The Architect'] as const;
 export interface DeckCardOptions {
   index: number;
   inProgress?: boolean;
@@ -15,92 +19,58 @@ export interface DeckCardOptions {
   onOpen?: () => void;
   onNewPuzzle?: () => void;
 }
-/** Integrated artwork above a live editorial plate; no asset cropping or repainting. */
-export function createCardFrame(options: DeckCardOptions) {
-  const root = el('div', { className: 'gg-v4-deck-card' });
+/** Trusted local SVGs, with per-instance IDs for safe repeated comparison panes. */
+export function createCardIllustration(options: DeckCardOptions) {
+  const root = el('div', { className: 'gg-v4-deck-card gg-v4-vector-card' });
   root.dataset.card = String(options.index);
-  applyTheme(root, 'moonlit-oxblood', 'dark');
   const body = el('div', { className: 'gg-v4-deck-body' });
   body.setAttribute('aria-hidden', 'true');
-  const art = el('div', { className: 'gg-v4-deck-art' });
-  const image = document.createElement('img');
-  image.alt = '';
-  image.src = options.index === 0 ? DECK_ART : DECK_EMBLEM;
-  image.loading = 'eager';
-  image.decoding = 'async';
-  image.draggable = false;
-  image.fetchPriority = 'high';
-  if (options.index === 0) {
-    image.width = 961;
-    image.height = 1536;
-  } else {
-    art.style.setProperty('--deck-emblem', `url("${DECK_EMBLEM}")`);
-    image.width = 32;
-    image.height = 32;
-    image.className = 'gg-v4-deck-emblem';
-  }
-  art.append(image);
-  const numeral = el('span', {
-    className: 'gg-v4-deck-numeral',
-    text: ['I', 'II', 'III'][options.index],
+  const source = new DOMParser().parseFromString(
+    [camper, arbiter, architect][options.index]!,
+    'image/svg+xml',
+  );
+  const svg = document.importNode(source.documentElement, true) as unknown as SVGSVGElement;
+  const prefix = uniqueId('gg-v4-art');
+  const ids = new Map<string, string>();
+  svg.querySelectorAll('[id]').forEach((node) => {
+    const id = node.id;
+    ids.set(id, `${prefix}-${id}`);
+    node.id = `${prefix}-${id}`;
   });
-  const plate = el('div', { className: 'gg-v4-deck-plate' }, [
-    el('span', { className: 'gg-v4-deck-heading' }, [
-      numeral,
-      el('span', {
-        className: 'gg-v4-deck-title',
-        text: options.index === 0 ? 'Trees & Tents' : 'Unrevealed',
-      }),
-    ]),
-    el('span', {
-      className: 'gg-v4-deck-epithet',
-      text:
-        options.index === 0
-          ? (options.epithet ?? 'A quiet place to ponder')
-          : 'A puzzle yet to unfold',
-    }),
-    el('span', {
-      className: 'gg-v4-deck-status',
-      text:
-        options.index === 0
-          ? options.inProgress
-            ? 'Continue · Medium 8×8 · 03:12'
-            : 'Easy · Medium · Hard'
-          : 'Locked puzzle',
-    }),
-  ]);
-  if (options.index !== 0) {
-    plate.querySelector('.gg-v4-deck-epithet')?.remove();
-    plate.querySelector('.gg-v4-deck-status')?.remove();
-  }
-  body.append(art, plate);
+  svg.querySelectorAll('*').forEach((node) => {
+    for (const attr of [...node.attributes]) {
+      let value = attr.value;
+      for (const [id, next] of ids) {
+        value = value.split(`url(#${id})`).join(`url(#${next})`);
+        if (value === `#${id}`) value = `#${next}`;
+      }
+      if (value !== attr.value) node.setAttribute(attr.name, value);
+    }
+  });
+  svg.classList.add('gg-v4-deck-vector');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  const preload = document.createElement('img');
+  preload.hidden = true;
+  preload.className = 'gg-v4-vector-preload';
+  preload.alt = '';
+  preload.src = DECK_IMAGES[options.index]!;
+  preload.loading = 'eager';
+  preload.decoding = 'async';
+  body.append(preload, svg);
   const hit = createCard({
     interactive: true,
     label:
       options.index === 0
-        ? options.inProgress
-          ? 'Continue Trees & Tents, Medium 8 by 8'
-          : 'Play Trees & Tents'
-        : `Unrevealed puzzle ${options.index + 1}, locked`,
+        ? `${options.inProgress ? 'Continue' : 'Play'} The Camper`
+        : `${DECK_NAMES[options.index]}, locked`,
     onClick: options.onOpen,
   });
   hit.classList.add('gg-v4-deck-hit');
   if (options.index !== 0) hit.setAttribute('aria-disabled', 'true');
   const sheen = el('span', { className: 'gg-v4-deck-sheen' });
   sheen.setAttribute('aria-hidden', 'true');
-  const shell = el('div', { className: 'gg-v4-deck-shell' }, [body, hit, sheen]);
-  root.append(shell);
-  if (options.inProgress && options.index === 0) {
-    const wrap = el('div', { className: 'gg-v4-deck-new' }, [
-      createButton({
-        label: 'New puzzle',
-        variant: 'ghost',
-        size: 'sm',
-        onClick: options.onNewPuzzle,
-      }),
-    ]);
-    shell.append(wrap);
-    root.dataset.continue = 'true';
-  }
+  root.append(el('div', { className: 'gg-v4-deck-shell' }, [body, hit, sheen]));
   return root;
 }

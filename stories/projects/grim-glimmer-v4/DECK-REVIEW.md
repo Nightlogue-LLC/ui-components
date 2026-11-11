@@ -1,154 +1,103 @@
-# Phase 7 revision — Trees & Tents deck
+# Phase 7 — illustrated SVG deck revision
 
-This revision adds a separate pointer-driven Stack and StackHome under V4. The prior
-HomeScreen, CardCarousel, HeroCard and original Phase 7 stories remain unchanged for
-comparison. Trees & Tents is the new deck's playable title; historical comparison and
-V3/production names are not silently migrated. All edits in this revision are inside
-`stories/projects/grim-glimmer-v4/`. No src/, dependencies, production tokens, app,
-engine, saves, original carousel, old glyphs or approved branding changes.
+Current direction: use the selected supplied illustrations as the entire visual object.
+Preserve the built-in title and border. Remove the added HTML title, difficulty/status,
+extra numeral, editorial plate, physical card background and extra frame. The Camper
+is the working title of the playable Trees & Tents puzzle. The Arbiter and The Architect
+are locked illustrative upcoming entries; this does not choose or implement their engines.
 
-## Review entry points
+Only V4 story files change. V3, production tokens, src/, dependencies, engine, saves,
+app, approved brand assets and existing carousel comparison are untouched. No merge.
 
-`Projects/Grim & Glimmer/V4/Home/Stack`: Default, Mid Drag (dx slider), Face Down On
-Top, In Progress, Wrap Around, Reduced Motion, Keyboard And Indicators, Swipe Cycle,
-Light Dark Comparison. `Home/StackHome`: default, explicit 393×852 and 360×780 viewport
-stories, in progress, return, reduced and theme comparison.
+## Supplied artwork and authorized edits
 
-The new `createCardFrame()` in `deck-card.ts` owns the three physical-card surfaces,
-art layer, numeral/title/epithet/status plate and sibling shared Card/Button targets.
-`deck-model.ts` owns poses, thresholds, size budget and analytic spring. `deck.ts`
-owns pointers, animation lifecycle, accessibility and mock adapters. Fixtures reuse
-Home logo, status, Daily Draw, shared navigation and ambient controller. The existing
-carousel is not patched into a stack or given conflicting gesture handling.
+| Art                 | Uploaded source                                                          | Edit                                                           |
+| ------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| The Camper / I      | image.svg-1794372317173.svg                                              | I reduced 30%, centered at the same visual anchor.             |
+| The Arbiter / II    | image.svg-1794373567423.svg                                              | II matches the new I height/anchor; bird fill becomes #681F35. |
+| The Architect / III | tarot-card--the-architect--in-a-flat-handmade-lino.svg-1794373432638.svg | III matches the same numeral height/anchor.                    |
 
-## Artwork and frame decision
+All three numeral groups have a common visible height ~4.8897% of image height and
+common normalized center. Widths retain their natural I/II/III proportions. Architect
+and Arbiter scaling compensates for the slightly different source numeral sizes instead
+of assigning the same multiplier to three visibly different starting heights.
 
-The owner selected the later complete raster image and accepted preserving it with
-a dark editorial section underneath. This supersedes the earlier separate SVG/frame
-asset plan. The supplied 10102.png is copied byte-for-byte to
-`assets/trees-tents-card.png`. No recolor, crop, redraw, compression, replacement or
-SVG tracing. There is no SVGO fill stripping on a raster image.
+Paths remain vector shapes; no tracing, rasterization, font substitution or global
+palette changes. Source uploads remain unchanged. New derived SVGs live in assets/.
+XML groups/IDs provide isolated numeral and raven targets. Other artwork, including
+the built-in THE CAMPER / THE ARBITER / THE ARCHITECT titles, is retained.
 
-To preserve the whole 5:8 illustration AND fit live text inside a total 5:8 card, the
-art is **contained**, not full-width cropped. It occupies a 74% high area with dark
-side breathing room; resume uses 68% to keep a full 44px New puzzle target. The live
-numeral shares the title row in the bottom plate, followed by epithet/status. Nothing
-is painted over the tree, tent, moon or ornamental border. This means the visible
-illustration is smaller than the whole card; review mobile legibility before merge.
+The Arbiter's raven and its perch are one compound source path. A duplicated identical
+path with complementary clip regions changes **only the bird** to oxblood, preserving
+the cream perch and nearby scale details. Eye/foot detail stays intact. The tall robed
+figure remains cream: it is distinct from the raven and was not silently recolored.
+This distinction needs owner confirmation if “pillar of cream” meant the figure too.
 
-The physical body and lines are scoped local roles with exactly the two approved
-literal colors: `--deck-body: #1C1417`, `--deck-line: #B87A8C`. Both themes show the
-same dark card. Nested shared controls use the existing dark Moonlit scope. Theme
-switching affects the surrounding Home and indicators, not the artwork or card.
+The earlier raster/plate treatment is superseded. Its now-unused PNG is retired from
+the V4 branch; the original upload is not modified. SVGs retain source provenance
+metadata. Inkscape renders were inspected for numeral consistency and isolated color.
 
-Face-downs reuse CardFrame body/plate/inset hairline chrome with a centered eight-point
-SVG emblem image/mask based on the existing V4 decorative star. It is a provisional
-back design, not a claimed extraction of the floral border from the complete PNG.
-No separate frame SVG or dedicated face-down emblem was supplied. Visible face-down
-copy stays numeral + Unrevealed; the locked state is announced accessibly. The full
-floral frame cannot be token-recolored independently from the flattened illustration.
+## Presentation and runtime
 
-### Asset budget
+`createCardIllustration()` composes trusted local SVG with a shared native Card tap
+target. No added visible title/numeral/status/frame. Accessible labels are Play/Continue
+The Camper, The Arbiter locked, The Architect locked. Resume is an accessible outcome;
+there is no new puzzle button painted over the artwork. Navigation remains injected.
 
-- Original front PNG: **961×1536**, **562,113 bytes** (~549 KiB). Decoded RGBA estimate
-  ~5.63 MiB; actual GPU/cache memory is not measured.
-- Back emblem: small inline geometric SVG, one shared data URL reused for both backs.
-- Two unique image sources for three cards. Local image preload hints plus eager,
-  async-decoding image elements; no external art request. Original asset bytes remain
-  untouched. No new animation/framework package.
+Inline SVG IDs and url(#id) references receive unique per-instance prefixes, so gradient,
+clip and numeral IDs cannot collide in repeated/light-dark previews. Source art is
+shown with xMidYMid meet, not stretched or cropped. Hidden eager image resources and
+local preload hints cover the three SVGs. No external font or art request.
 
-## Stack and motion contract
+The Camper/Arbiter art is approximately 2:3 and The Architect 0.65. The presentation
+follows that supplied art rather than forcing the earlier 5:8 raster/plate layout:
 
-Three real card nodes only, no clones. Top: identity. Second: x -8, y12, scale .95,
-rotate -4°. Third: x+8, y24, scale .90, rotate +4°. Only `[data-top=true]` receives
-`will-change: transform`. Behind-card poses interpolate by
-`min(abs(dx)/(0.5*width),1)`. Top rotation is dx/width*14°. No stamps, color washes,
-filters or animated shadow.
+| Default-font viewport | Hero envelope | Fan reserve |
+| --------------------- | ------------- | ----------- |
+| 393×852               | 280×420px     | 40px        |
+| 360×780               | ~243.33×365px | 40px        |
 
-Horizontal pointer gesture on the shared Card target, `touch-action: pan-y`.
-Vertical intent releases without preventing scroll. Primary pointer only; pointer
-capture on press, with visual drag after 8px horizontal intent. Under 8px remains a normal native tap. A larger
-pointer gesture suppresses the subsequent click, whether it dismisses or snaps back.
-Cancel/lost capture releases and returns the existing card, without changing selection.
-The separate New puzzle button is not a drag handle and is never nested in a button.
+These are arithmetic budgets, not browser measurements. Architect is contained at
+its natural aspect ratio with a little side breathing room. Both Home themes retain
+the supplied art colors. The 96px logo and shared navigation remain unchanged.
 
-Dismiss if displacement >30% of width OR absolute recent velocity >500 CSSpx/s,
-with at least 8px displacement. Velocity uses consecutive movement samples; a pause
+## Preserved deck behavior
 
-> 100ms before release discards the stale flick. Both swipe directions advance to the
-> next card; fly-off follows the displacement direction. ArrowLeft cycles backward,
-> ArrowRight forward; indicators jump directly. This ordering policy is explicit.
+Three real card nodes, no clones; rear y12/scale.95/−4° and y24/scale.90/+4° with x peeks.
+Pointer pan-y, 8px tap threshold, dx/width×14° drag rotation, next-card interpolation,
+30% distance or 500 CSSpx/s recent-velocity dismissal. Both swipe directions advance;
+ArrowLeft goes backward, ArrowRight forward; three 44px indicators jump directly.
 
-Insufficient drag returns with the unit-mass stiffness400/damping30 closed-form
-underdamped spring, sampled over 600ms. No spring library. Fly-off is 220ms ease-out,
-then 160ms fade/scale re-entry. Normal forward cycling moves the dismissed card to
-the back; backward/jump navigation restores circular logical order. Each cycle emits
-one settled callback. Repeated indicators cancel stale animation completions.
+220ms fly-off and 160ms wrap re-entry. Insufficient drag uses the unit-mass 400/30
+analytic spring. One gated tick on threshold crossing (re-arm below both criteria),
+one on successful settle. Locked activation shakes ±3px over 200ms and never routes.
+Large drags suppress their click; cancel, vertical intent and lost capture are handled.
 
-Haptics use the injected existing selection-tick adapter, gated by `haptics`; no native
-plugin import or stronger effect. One tick on entering the dismiss-qualified region;
-re-arm after returning below both displacement/velocity thresholds. One tick after
-successful cycle settle. Locked top tap: ±3px /200ms shake + one gated tick, no route.
-Playable tap: injected play/resume callback. The body retains a 160ms press lift.
+Deck group/roledescription, one exposed current native button, inert hidden lower art,
+settled live region and keyboard focus return remain. Only the top gets will-change.
+Cold deal 450ms/70ms stagger, top-only sheen/press lift, first-visit-prop nudge at1200ms.
+Reduced motion removes fan/tilt/shake/nudge and cycles via 150ms opacity crossfade.
+Visibility/OS changes and unmount cancel work/listeners. Existing ambient controller
+remains shared; no extra looping illustration animation is added in this edit.
 
-Reduced motion removes all fan displacement/tilt, shake, nudge and fly-off. Cycling
-uses a simultaneous **150ms opacity-only crossfade**. Static cards remain stacked at
-the same center; only the top is interactive/announced. OS changes cancel pending
-movement and restore stable poses immediately.
+## Story and validation guide
 
-Cold entrance deals from one centered pile to fan poses over 450ms, 70ms stagger
-(590ms last finish). Only the top gets the one-time sheen. First-visit prop enables
-one idle +14px/2° nudge at 1200ms, then back. Any interaction cancels it; reduced motion
-skips it. There is no storage write or new first-visit persistence. Return fixtures
-pass `firstVisit:false` and skip the cold deal. Backgrounding cancels pending entrance,
-gesture/cycle/nudge work; unmount removes jobs, listeners, capture and callbacks.
+V4/Home/Stack: Default, Mid Drag dx slider, Locked Card On Top, Wrap Around, Reduced
+Motion, Keyboard And Indicators, Swipe Cycle and theme comparison.
+V4/Home/StackHome: default, 393×852, 360×780, return, resume and both modes.
+The original HomeScreen/CardCarousel stories remain available for comparison.
 
-## Accessibility and layout
+The normal `npm run check` validates lint, formatting, TypeScript, 529 existing tests,
+library/package build and Storybook. Story-local deck tests use an ephemeral Vitest
+config (root=repo, environment=jsdom, include=V4/deck.test.ts); no config change outside
+V4. Focused tests include vector-only presentation, namespace/clip references and
+existing gestures, focus, cancellation, motion and haptic contracts.
 
-Deck is a labelled role=group, aria-roledescription=deck. One labelled native top
-button; lower cards inert/aria-hidden/tabindex -1. Three 44px indicator buttons with
-pressed state. Live region: `Card 2 of 3: locked puzzle`. Keyboard cycles return focus
-to the new top; indicator jumps retain indicator focus. All presentation text remains
-live HTML; artwork is decorative and does not carry the accessible button name.
+Inkscape previews were rendered and visually inspected. Browser/Android screenshots,
+actual viewport fit, screen-reader/device gestures and mid-range WebView frame drops
+remain pending. Chromium in this session previously aborts at socket() Operation not
+permitted; an SVG render does not establish browser animation/frame-rate acceptance.
 
-Both optional strips visible, default16px root font, zero safe-area insets:
-
-| Viewport | Whole hero    | Fan reserve | Contained illustration (74%) |
-| -------- | ------------- | ----------- | ---------------------------- |
-| 393×852  | 262.5×420px   | 40px        | about 194.5×310.8px          |
-| 360×780  | 228.125×365px | 40px        | about 169×270.1px            |
-
-These are arithmetic budgets, not browser measurements. The 96px logo region and
-existing shared nav targets stay intact. No intentional page scroll at these default
-sizes. Browser font loading, safe areas, long epithets and accessibility text scaling
-still need device review; do not hide overflow to fake acceptance.
-
-## Validation and pending review
-
-The focused tests live inside V4 to honor the revision boundary. The repository's
-normal Vitest include does not collect story-local tests. Run them with an ephemeral
-config using root=<repository>, environment=jsdom,
-include=[stories/projects/grim-glimmer-v4/deck.test.ts]. No repository test/config
-change is included. Also run the full unchanged `npm run check` suite.
-
-Tests cover tap/sliding suppression, distance/velocity boundaries, threshold re-arm,
-vertical/cancel gestures, spring, three-cycle wrap, navigation gating, stale callback
-cancellation, keyboard/focus/live state, reduced/OS/background changes, deal, nudge,
-fixed dark scope and unchanged image reference. Story play demos are included for
-browser execution. Passing unit tests does not imply browser play passed.
-
-Browser launch was attempted. System Chromium aborts at process_singleton_posix
-with socket() Operation not permitted; no screenshot or frame-drop evidence can be
-collected here. Mid-range Android WebView hardware measurements remain pending.
-
-Owner/device checkpoint:
-
-- [ ] Both Home viewports/themes, actual art/text legibility, no page overflow.
-- [ ] Left/right swipe wrap, re-arm, short flick, snap-back, pointer cancel and pan-y.
-- [ ] Tap versus swipe: no accidental play/resume; locked shake/tick; New puzzle target.
-- [ ] Keyboard/indicators/live announcements and only one exposed card.
-- [ ] One deal, top-only sheen/tilt, one nudge, return/reduced/background behavior.
-- [ ] Capture comparable screenshots and measure dropped frames on Android.
-- [ ] Accept the contained-art size and provisional back chrome/emblem before merge.
-
-Stop for review. No automatic merge or app adoption.
+Review the I/II/III consistency, dark raven versus cream figure, natural art sizing,
+plain illustration presentation, keyboard/swipe/wrap and reduced motion before merge.
+Stop for owner review. No automatic merge or production adoption.

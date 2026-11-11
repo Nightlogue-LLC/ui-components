@@ -32,7 +32,7 @@ export default meta;
 type Story = StoryObj<DeckOptions>;
 export const Default: Story = {};
 export const MidDrag: Story = { args: { dx: 70, launch: 'return', firstVisit: false } };
-export const FaceDownOnTop: Story = { args: { initialCard: 1, launch: 'return' } };
+export const LockedCardOnTop: Story = { args: { initialCard: 1, launch: 'return' } };
 export const InProgress: Story = { args: { inProgress: true } };
 export const ReducedMotion: Story = { args: { reducedMotion: true } };
 export const LightDarkComparison: Story = {
@@ -59,17 +59,17 @@ export const KeyboardAndIndicators: Story = {
   args: { reducedMotion: true, launch: 'return', firstVisit: false },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    canvas.getByRole('button', { name: 'Play Trees & Tents' }).focus();
+    canvas.getByRole('button', { name: 'Play The Camper' }).focus();
     await userEvent.keyboard('{ArrowRight}');
     await waitFor(() =>
       expect(canvasElement.querySelector('[role="status"]')).toHaveTextContent(
         'Card 2 of 3: locked puzzle',
       ),
     );
-    await expect(canvas.getByRole('button', { name: 'Unrevealed puzzle 2, locked' })).toHaveFocus();
+    await expect(canvas.getByRole('button', { name: 'The Arbiter, locked' })).toHaveFocus();
     await userEvent.keyboard('{ArrowLeft}');
     await waitFor(() =>
-      expect(canvas.getByRole('button', { name: 'Play Trees & Tents' })).toHaveFocus(),
+      expect(canvas.getByRole('button', { name: 'Play The Camper' })).toHaveFocus(),
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Show card 3' }));
     await waitFor(() =>

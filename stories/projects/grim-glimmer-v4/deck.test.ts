@@ -1,7 +1,7 @@
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import { createDeck } from './deck.js';
 import { createStackHome } from './deck-fixtures.js';
-import { createCardFrame } from './deck-card.js';
+import { createCardIllustration } from './deck-card.js';
 import { dragPoses, fan, dismisses, springDisplacement, deckBudget } from './deck-model.js';
 let media: EventTarget & { matches: boolean };
 const decks: ReturnType<typeof createDeck>[] = [];
@@ -100,8 +100,8 @@ describe('deck model', () => {
   it('has a unit-mass 400/30 spring and default-font size budgets', () => {
     expect(springDisplacement(0)).toBe(1);
     expect(Math.abs(springDisplacement(0.6))).toBeLessThan(0.001);
-    expect(deckBudget(393, 852)).toMatchObject({ width: 262.5, height: 420 });
-    expect(deckBudget(360, 780)).toMatchObject({ width: 228.125, height: 365 });
+    expect(deckBudget(393, 852)).toMatchObject({ width: 280, height: 420 });
+    expect(deckBudget(360, 780)).toMatchObject({ width: 243.33333333333334, height: 365 });
   });
 });
 describe('deck pointers and outcomes', () => {
@@ -295,17 +295,36 @@ describe('entrance, art and idle hint', () => {
     await advance(2000);
     expect(records).toHaveLength(count);
   });
-  it('keeps fixed dark card scope, immutable art and separate live controls', () => {
-    const card = createCardFrame({ index: 0, inProgress: true });
-    expect(card.dataset.nlMode).toBe('dark');
-    expect(card.querySelector('img')?.getAttribute('src')).toContain('trees-tents-card.png');
+  it('uses the supplied SVG without added labels, plate or extra frame', () => {
+    const card = createCardIllustration({ index: 0, inProgress: true });
+    expect(card.querySelector('.gg-v4-deck-plate')).toBeNull();
+    expect(card.querySelector('img')?.getAttribute('src')).toContain('camper.svg');
     expect(card.querySelector('img')?.loading).toBe('eager');
     expect(card.querySelector('button button')).toBeNull();
-    expect(card.textContent).toContain('Trees & Tents');
+    expect(card.querySelector('svg [data-art-part="numeral"]')).not.toBeNull();
     expect(card.textContent).not.toContain('Stars & Spires');
     const home = createStackHome({ launch: 'return', reducedMotion: true });
     document.body.append(home);
     expect(home.querySelectorAll('.gg-v4-deck-card')).toHaveLength(3);
     expect(home.querySelector('.gg-v4-carousel')).toBeNull();
   });
+});
+
+it('keeps numeral groups, isolates the raven tint, and namespaces references across repeated art', () => {
+  const cards = [0, 1, 2].map((index) => createCardIllustration({ index }));
+  const repeat = createCardIllustration({ index: 1 });
+  cards.forEach((card) => {
+    expect(card.querySelectorAll('[data-art-part="numeral"]')).toHaveLength(1);
+    expect(card.querySelector('svg')?.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet');
+    expect(card.querySelector('.gg-v4-deck-title')).toBeNull();
+  });
+  const bird = cards[1]!.querySelector('[data-art-part="raven"]')!;
+  expect(bird.querySelector('[fill="#681F35"]')).not.toBeNull();
+  const ids = [...cards, repeat].flatMap((card) =>
+    [...card.querySelectorAll('[id]')].map((node) => node.id),
+  );
+  expect(new Set(ids).size).toBe(ids.length);
+  const clip = repeat.querySelector('[fill="#681F35"]')!.getAttribute('clip-path')!;
+  const id = clip.slice(5, -1);
+  expect([...repeat.querySelectorAll('[id]')].some((node) => node.id === id)).toBe(true);
 });

@@ -71,5 +71,5 @@ export function deckBudget(
     60 +
     40;
   const cardHeight = Math.min(420, Math.max(0, height - fixed));
-  return { width: Math.min(width - 56, (cardHeight * 5) / 8), height: cardHeight, reserve: 40 };
+  return { width: Math.min(width - 56, (cardHeight * 2) / 3), height: cardHeight, reserve: 40 };
 }
