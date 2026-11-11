@@ -142,6 +142,25 @@ for (const title of ['Sheet', 'SolvedBoard', 'Sequence']) {
   if (!entries.some((entry) => entry.title === `Projects/Grim & Glimmer/V4/Victory/${title}`))
     fail(`missing V4 victory section: ${title}`);
 }
+// Phase 7 review sections remain separate from the authoritative V3 product.
+for (const section of [
+  'Home/HomeScreen',
+  'Home/HeroCard',
+  'Home/FaceDownCard',
+  'Home/CardCarousel',
+  'Home/DailyDraw',
+  'Home/StatusLine',
+  'Home/EntranceSequence',
+  'Home/BottomNav',
+  'Header/PuzzleHeader',
+  'Progress/ConstellationPath',
+  'Atmosphere/Background',
+  'States/Loading',
+  'States/Empty',
+]) {
+  if (!titles.has(`Projects/Grim & Glimmer/V4/${section}`))
+    fail(`missing V4 Home review section: ${section}`);
+}
 const missingFonts = REQUIRED_FONTS.filter((stem) => !fonts.some((f) => f.includes(stem)));
 if (missingFonts.length > 0) fail(`missing bundled font file(s): ${missingFonts.join(', ')}`);
 if (/url\(\s*(https?:)?\/\/[^)]*\.woff2?/i.test(bundled)) fail('a font is loaded from the network');

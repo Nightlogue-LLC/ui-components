@@ -1,0 +1,177 @@
+/* Artwork retains its title and border; reviewed deck roles tint only the outer canvas. */
+.gg-v4-deck {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  gap: 16px;
+  position: relative;
+}
+.gg-v4-deck-stage {
+  position: relative;
+  container-type: size;
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: 460px;
+  isolation: isolate;
+}
+.gg-v4-deck-card {
+  --gg-v4-deck-radius: 7% / 4.667%;
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 46%, var(--nl-color-surface));
+  position: absolute;
+  top: 0;
+  width: min(280px, calc((100cqh - 40px) * 2 / 3));
+  left: calc(50% - min(280px, calc((100cqh - 40px) * 2 / 3)) / 2);
+  height: min(420px, calc(100cqh - 40px));
+  box-sizing: border-box;
+  transform-origin: 50% 65%;
+}
+.gg-v4-deck-card[data-top='true'] {
+  will-change: transform;
+}
+.gg-v4-deck-shell,
+.gg-v4-deck-body {
+  position: absolute;
+  inset: 0;
+}
+.gg-v4-deck-shell {
+  background: var(--gg-v4-card-paper);
+  transition: transform 160ms ease-out;
+  border-radius: var(--gg-v4-deck-radius);
+  box-shadow:
+    0 16px 26px -12px rgb(26 10 16 / 0.5),
+    0 2px 4px rgb(26 10 16 / 0.22);
+}
+.gg-v4-deck-body {
+  pointer-events: none;
+  border-radius: var(--gg-v4-deck-radius);
+  overflow: hidden;
+}
+.gg-v4-deck-vector {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.gg-v4-vector-preload {
+  display: none !important;
+}
+.gg-v4-deck-hit.nl-card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  border-radius: var(--gg-v4-deck-radius);
+  box-shadow: none;
+  touch-action: pan-y;
+  transition: none;
+}
+.gg-v4-deck-hit.nl-card:focus-visible {
+  outline: 2px solid var(--nl-color-focus-ring);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 6px var(--nl-color-surface);
+}
+.gg-v4-deck-card[data-top='true']:has(.gg-v4-deck-hit:active) .gg-v4-deck-shell {
+  transform: translateY(-6px);
+}
+.gg-v4-deck-card[data-dragging='true'] .gg-v4-deck-shell {
+  transform: none !important;
+  transition: none !important;
+}
+.gg-v4-deck-sheen {
+  border-radius: var(--gg-v4-deck-radius);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    color-mix(in srgb, var(--nl-color-text) 12%, transparent),
+    transparent 65%
+  );
+}
+.gg-v4-deck-indicators {
+  display: flex;
+  justify-content: center;
+  flex: none;
+  height: 44px;
+}
+.gg-v4-deck-indicators .nl-icon-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  transition: none;
+}
+.gg-v4-deck-indicators svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--nl-color-accent);
+  stroke-width: 1;
+}
+.gg-v4-deck-indicators [aria-pressed='true'] svg {
+  fill: var(--nl-color-accent);
+}
+.gg-v4-deck-review {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 393px;
+  height: 540px;
+  margin: auto;
+  padding-top: 16px;
+  box-sizing: border-box;
+}
+.gg-v4-deck[data-reduced-motion='true']
+  .gg-v4-deck-card[data-top='true']:has(.gg-v4-deck-hit:active)
+  .gg-v4-deck-shell {
+  transform: none;
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gg-v4-deck-card[data-top='true']:has(.gg-v4-deck-hit:active) .gg-v4-deck-shell {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Rounded physical edges and accent paper separate the supplied art from the page. */
+.gg-v4-deck-card[data-card='1'] {
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 60%, var(--nl-color-surface));
+}
+.gg-v4-deck-card[data-card='2'] {
+  --gg-v4-card-paper: color-mix(in srgb, var(--nl-color-accent) 34%, var(--nl-color-surface));
+}
+.gg-v4-deck-vector > [data-art-part='canvas'] {
+  fill: var(--gg-v4-card-paper);
+}
+.gg-v4-deck-ground-shadow {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: calc(min(420px, 100cqh - 40px) + 24px);
+  width: min(250px, 70%);
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgb(26 10 16 / 0.4),
+    rgb(26 10 16 / 0.12) 45%,
+    transparent 74%
+  );
+  pointer-events: none;
+}
+[data-nl-mode='dark'] .gg-v4-deck-shell {
+  box-shadow:
+    0 20px 32px -12px rgb(9 3 6 / 0.85),
+    0 0 0 1px color-mix(in srgb, var(--nl-color-accent) 20%, transparent);
+}
+[data-nl-mode='dark'] .gg-v4-deck-ground-shadow {
+  background: radial-gradient(ellipse, rgb(9 3 6 / 0.85), rgb(9 3 6 / 0.3) 45%, transparent 74%);
+}
