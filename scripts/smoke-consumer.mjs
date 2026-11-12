@@ -105,6 +105,8 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+const dailyPuzzle = createRitualDraw({enabled:true,puzzle:{title:'6 × 6 Trees & Tents',action:'Resume'},state:'in-progress',onOpenPuzzle:()=>{}});
+void dailyPuzzle;
 const stroke: BoardStrokeAdapter = {begin:()=>{},visit:()=>{},commit:()=>{},cancel:()=>{}};
 const interactiveBoard = createCluedBoard({presentation:'editorial',size:1,mode:'interactive',label:'Board',cells:['empty'],rowClues:[0],columnClues:[0]});
 const interactions = createBoardInteractions({board:interactiveBoard,size:1,stroke,zoom:true,onActivate:()=>{}});

@@ -31,6 +31,35 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 describe('production Daily Draw contract', () => {
+  it('uses real puzzle actions without monthly artwork or restoration claims', async () => {
+    const onBegin = vi.fn();
+    const root = createRitualDraw({
+      enabled: true,
+      puzzle: { title: '6 × 6 Trees & Tents', action: 'Replay' },
+      onOpenPuzzle: onBegin,
+    });
+    document.body.append(root);
+    expect(root.textContent).toContain('Replay');
+    expect(root.textContent).not.toMatch(/Piece|streak/);
+    root.querySelector('button')!.click();
+    await flush();
+    expect(onBegin).toHaveBeenCalledTimes(1);
+  });
+  it('keeps an unavailable puzzle visible and blocks activation', async () => {
+    const onBegin = vi.fn();
+    const root = createRitualDraw({
+      enabled: true,
+      puzzle: { title: 'Daily puzzle', action: 'unavailable' },
+      onOpenPuzzle: onBegin,
+    });
+    document.body.append(root);
+    expect(root.hidden).toBe(false);
+    expect(root.querySelector('button')!.getAttribute('aria-disabled')).toBe('true');
+    expect(root.textContent).toContain('Unavailable');
+    root.querySelector('button')!.click();
+    await flush();
+    expect(onBegin).not.toHaveBeenCalled();
+  });
   it('defaults off with no clock interval or live navigation', () => {
     const onBegin = vi.fn(),
       root = createRitualDraw({ manifest, clock: () => new Date(2026, 10, 10), onBegin });
