@@ -32,6 +32,7 @@ function homeHost(name: string) {
 import { createMonthArt } from './month-art.js';
 import {
   archiveMonth,
+  localDateKey,
   monthDates,
   type MonthManifest,
   type MonthProgress,
@@ -53,6 +54,8 @@ export interface MonthCardOptions {
   previewReplay?: boolean;
   manifest: MonthManifest;
   localDate: string;
+  /** Activation guard; the app supplies its live local clock. */
+  clock?: () => Date;
   restoredDates?: readonly string[];
   restoreDate?: string;
   showGrid?: boolean;
@@ -112,7 +115,12 @@ export function createMonthCard(options: MonthCardOptions) {
       variant: 'ghost',
       onClick: () => {
         const state = archiveMonth(options.localDate, restored, options.manifest.monthKey)[index]!;
-        if (!disposed && state.canPlay) options.onPlayDate?.(date);
+        if (
+          !disposed &&
+          (!options.clock || localDateKey(options.clock()) === options.localDate) &&
+          state.canPlay
+        )
+          options.onPlayDate?.(date);
       },
     });
     button.tabIndex = index === 0 ? 0 : -1;
@@ -252,6 +260,7 @@ export function createMonthCard(options: MonthCardOptions) {
     const date = options.restoreDate;
     if (
       !date ||
+      (options.clock && localDateKey(options.clock()) !== options.localDate) ||
       busy ||
       disposed ||
       restored.includes(date) ||
@@ -278,7 +287,11 @@ export function createMonthCard(options: MonthCardOptions) {
       [{ opacity: 0 }, { opacity: 1 }],
       motion.reduced() ? 150 : 700,
     );
-    if (!finished || disposed) {
+    if (
+      !finished ||
+      disposed ||
+      (options.clock && localDateKey(options.clock()) !== options.localDate)
+    ) {
       busy = false;
       replay.disabled = false;
       art.update(restored);
