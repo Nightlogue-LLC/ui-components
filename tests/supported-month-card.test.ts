@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createMonthCard, type MonthManifest } from '../src/projects/grim-glimmer/index.js';
+import {
+  createMonthCard,
+  type MonthProgress,
+  type MonthManifest,
+} from '../src/projects/grim-glimmer/index.js';
 const manifest: MonthManifest = {
   monthKey: '2026-11',
   title: 'Caller supplied',
@@ -33,7 +37,7 @@ describe('supported monthly card boundary', () => {
     expect(document.activeElement).toBe(days[6]);
   });
   it('restores only once through the explicit method and suppresses work after teardown', async () => {
-    const onStorage = vi.fn();
+    const onStorage = vi.fn<(progress: MonthProgress) => void>();
     const root = createMonthCard({
       manifest,
       localDate: '2026-11-01',
