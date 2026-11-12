@@ -21,6 +21,10 @@ beforeEach(() => {
   );
   vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
   originalAnimate = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'animate');
+  Object.defineProperty(HTMLElement.prototype, 'animate', {
+    configurable: true,
+    value: () => ({ finished: Promise.resolve(), cancel: vi.fn() }),
+  });
 });
 afterEach(async () => {
   document.querySelectorAll('dialog').forEach(closeDialog);
