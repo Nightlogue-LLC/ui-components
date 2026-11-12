@@ -102,3 +102,6 @@ export * from './month-geometry.js';
 
 export { createMonthArt } from './month-art.js';
 export { createMonthCollection } from './month-collection.js';
+
+export { createMonthCard } from './month-card.js';
+export type { MonthCardOptions } from './month-card.js';
