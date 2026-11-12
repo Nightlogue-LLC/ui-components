@@ -1,6 +1,5 @@
 import { createButton } from '../../../src/components/button/index.js';
-import { createIconButton } from '../../../src/components/icon-button/index.js';
-import { createIcon } from '../../../src/components/icon/index.js';
+import { createGameplayMenuHeader } from '../../../src/projects/grim-glimmer/gameplay-menu-header.js';
 import { createGameMenuSheet } from '../../../src/projects/grim-glimmer/menu-sheet.js';
 import {
   getDialogBody,
@@ -47,21 +46,15 @@ export function createOverlayPreview(
   const tick = () => {
     if (state.haptics) options.tick?.();
   };
-  const trigger = createIconButton({ label: 'Game menu', icon: createIcon('more') });
   const status = el('p', {
     className: 'gg-v4-overlay-note',
     text: 'Overlay preview · local state only',
   });
   status.setAttribute('role', 'status');
-  const header = el('header', { className: 'gg-v4-overlay-header' }, [
-    createIconButton({
-      label: 'Return Home',
-      icon: createIcon('back'),
-      onClick: () => navigate(() => options.onNavigate?.('home')),
-    }),
-    el('h1', { text: 'Stars & Spires' }),
-    trigger,
-  ]);
+  const { element: header, menuTrigger: trigger } = createGameplayMenuHeader({
+    title: 'Stars & Spires',
+    onBack: () => navigate(() => options.onNavigate?.('home')),
+  });
   const board = el('div', {}, [
     createV4Board({ size: 6, interactive: false, conflict: false, hint: false }),
   ]);

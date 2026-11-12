@@ -95,7 +95,7 @@ import {
   createRitualDraw, createMonthCard, createMonthArt, createMonthCollection, type MonthManifest,
   createCompletionSheet, createCompletionSequence, COMPLETION_TIMING,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
-  createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
+  createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle, createGameplayMenuHeader,
   createMainScreen,
   updateMainScreen,
   createBoard,
@@ -105,6 +105,8 @@ import {
   type TutorialOutcome,
 } from '${name}/projects/grim-glimmer';
 
+const compactHeader = createGameplayMenuHeader({title:'Trees & Tents',onBack:()=>{}});
+void compactHeader;
 const dailyPuzzle = createRitualDraw({enabled:true,puzzle:{title:'6 × 6 Trees & Tents',action:'Resume'},state:'in-progress',onOpenPuzzle:()=>{}});
 void dailyPuzzle;
 const stroke: BoardStrokeAdapter = {begin:()=>{},visit:()=>{},commit:()=>{},cancel:()=>{}};
