@@ -105,3 +105,6 @@ export { createMonthCollection } from './month-collection.js';
 
 export { createMonthCard } from './month-card.js';
 export type { MonthCardOptions } from './month-card.js';
+
+export { createRitualDraw, DRAW_STATES } from './ritual-draw.js';
+export type { RitualDrawOptions, DailyDrawIdentity, DrawState } from './ritual-draw.js';

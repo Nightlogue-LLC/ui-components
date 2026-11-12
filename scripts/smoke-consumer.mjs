@@ -92,6 +92,7 @@ import {
   createGuidedTutorialDialog, destroyGuidedTutorialDialog,
   createTarotDeck, createTarotDeckCard, updateTarotDeckCard, createTarotHome, type TarotCard,
   createGameplayMotion, GAMEPLAY_MOTION,
+  createRitualDraw, createMonthCard, createMonthArt, createMonthCollection, type MonthManifest,
   createCompletionSheet, createCompletionSequence, COMPLETION_TIMING,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
   createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
@@ -122,6 +123,10 @@ home.dispose();
 const completionSheet = createCompletionSheet({title:'Complete',message:'Done',onNewGame:()=>{},onReturnHome:()=>{},onClose:()=>{}});
 const completion = createCompletionSequence({host:document.body,board:interactiveBoard,size:1,title:'Complete',message:'Done',onNewGame:()=>{},onReturnHome:()=>{},onClose:()=>{}});
 completion.start({celebration:false}); completion.setAnimations(false); completion.cancel(); completion.dispose(); void [completionSheet,COMPLETION_TIMING];
+const suppliedMonth: MonthManifest = {monthKey:'2026-11',title:'Caller artwork',imageUrl:'/art.webp',altText:'Art',focalPoint:{x:.5,y:.5},seed:'caller'};
+const draw = createRitualDraw({manifest:suppliedMonth,clock:()=>new Date(2026,10,10),enabled:false});
+const month = createMonthCard({manifest:suppliedMonth,localDate:'2026-11-10',clock:()=>new Date(2026,10,10)});
+void [draw,month,createMonthArt(suppliedMonth),createMonthCollection({manifests:[],progress:[]})];
 const motion = createGameplayMotion({animations: false});
 motion.mount(); motion.setAnimations(false); motion.dispose(); void GAMEPLAY_MOTION;
 const header = createTarotGameplayHeader({ tarotNumeral: 'I', archetypeTitle: 'The Camper', puzzleName: 'Trees & Tents', difficulty: 'Easy', columns: 6, rows: 6 });
@@ -212,7 +217,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const project = await import('${name}/projects/grim-glimmer');
-for (const fn of ['createCompletionSheet','createCompletionSequence','createBoardInteractions','createGuidedTutorialDialog','destroyGuidedTutorialDialog','createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+for (const fn of ['createRitualDraw','createMonthCard','createMonthArt','createMonthCollection','createCompletionSheet','createCompletionSequence','createBoardInteractions','createGuidedTutorialDialog','destroyGuidedTutorialDialog','createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
   if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
 }
 const lib = await import('${name}');

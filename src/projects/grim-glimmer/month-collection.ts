@@ -10,14 +10,27 @@ function homeHost(name: string) {
   return node;
 }
 import { createMonthArt } from './month-art.js';
-import { type MonthManifest, type MonthProgress } from './month-calendar.js';
+import { monthDates, type MonthManifest, type MonthProgress } from './month-calendar.js';
 
 export function createMonthCollection(options: {
   manifests: readonly MonthManifest[];
   progress: readonly MonthProgress[];
   onOpen?: (month: MonthManifest) => void;
 }) {
-  if (!options.progress.some((entry) => entry.restoredDates.length)) {
+  const datesFor = (manifest: MonthManifest) => {
+    const valid = monthDates(manifest.monthKey);
+    return (
+      options.progress
+        .find(
+          (entry) =>
+            entry.version === 1 &&
+            entry.monthKey === manifest.monthKey &&
+            entry.seed === manifest.seed,
+        )
+        ?.restoredDates.filter((date) => valid.includes(date)) ?? []
+    );
+  };
+  if (!options.manifests.some((manifest) => datesFor(manifest).length)) {
     const empty = homeHost('gg-v4-month-empty');
     empty.append(el('p', { text: 'No pieces restored yet' }));
     return empty;
@@ -25,13 +38,14 @@ export function createMonthCollection(options: {
   const root = homeHost('gg-v4-month-collection');
   root.setAttribute('aria-label', 'Past monthly artworks');
   options.manifests.forEach((manifest) => {
-    const restored =
-      options.progress.find((entry) => entry.monthKey === manifest.monthKey)?.restoredDates ?? [];
+    const restored = datesFor(manifest);
     const art = createMonthArt(manifest, restored);
     const card = createCard({
       interactive: options.onOpen !== undefined,
       label: `${manifest.title}. ${art.count()} of ${art.layout.shards.length} pieces restored.`,
-      onClick: () => options.onOpen?.(manifest),
+      onClick: () => {
+        if (card.isConnected) options.onOpen?.(manifest);
+      },
     });
     card.classList.add('gg-v4-month-thumb');
     art.element.setAttribute('aria-hidden', 'true');
