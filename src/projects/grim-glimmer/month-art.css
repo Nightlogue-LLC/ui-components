@@ -1,0 +1,62 @@
+/* V4-only physical night objects. These two aliases are the canonical dark roles. */
+.gg-v4-ritual,
+.gg-v4-month-art,
+.gg-v4-month-picture {
+  --gg-v4-night: #1c1417;
+  --gg-v4-rose: #b87a8c;
+  --gg-v4-lantern: var(--nl-color-on-accent);
+}
+[data-nl-mode='dark'] .gg-v4-ritual,
+[data-nl-mode='dark'] .gg-v4-month-art,
+[data-nl-mode='dark'] .gg-v4-month-picture {
+  --gg-v4-lantern: var(--nl-color-text);
+}
+.gg-v4-month-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 8;
+  border-radius: inherit;
+  background: var(--gg-v4-night);
+}
+.gg-v4-month-leads {
+  stroke: var(--gg-v4-rose);
+  opacity: 0.35;
+}
+.gg-v4-month-today {
+  stroke: var(--gg-v4-rose);
+  stroke-dasharray: 3 2;
+}
+.gg-v4-month-flash {
+  stroke: var(--gg-v4-lantern);
+  filter: drop-shadow(0 0 4px var(--gg-v4-lantern));
+}
+
+.gg-v4-month-collection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 393px;
+  margin: auto;
+  padding: 16px;
+  color: var(--nl-color-text);
+}
+.gg-v4-month-thumb.nl-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  width: 100%;
+  font: 400 0.75rem/1.4 var(--nl-font-family);
+}
+.gg-v4-month-thumb .gg-v4-month-art {
+  max-width: 120px;
+  border-radius: 8px;
+}
+.gg-v4-month-empty {
+  padding: 48px 24px;
+  text-align: center;
+  font: 400 1rem/1.5 var(--nl-font-family);
+  color: var(--nl-color-text);
+}

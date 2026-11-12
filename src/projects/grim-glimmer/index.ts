@@ -99,3 +99,6 @@ export type { CompletionSequenceOptions } from './completion-sequence.js';
 
 export * from './month-calendar.js';
 export * from './month-geometry.js';
+
+export { createMonthArt } from './month-art.js';
+export { createMonthCollection } from './month-collection.js';
