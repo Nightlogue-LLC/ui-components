@@ -91,3 +91,8 @@ export type { TarotHomeOptions, TarotHomeState } from './tarot-home.js';
 export { createBoardInteractions } from './board-interactions.js';
 export type { BoardStrokeAdapter, BoardInteractionOptions } from './board-interactions.js';
 export type { View as BoardView } from './board-view.js';
+
+export { createCompletionSheet } from './completion-sheet.js';
+export type { CompletionSheetOptions, CompletionStatistic } from './completion-sheet.js';
+export { createCompletionSequence, COMPLETION_TIMING } from './completion-sequence.js';
+export type { CompletionSequenceOptions } from './completion-sequence.js';

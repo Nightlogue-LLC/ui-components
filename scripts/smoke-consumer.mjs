@@ -92,6 +92,7 @@ import {
   createGuidedTutorialDialog, destroyGuidedTutorialDialog,
   createTarotDeck, createTarotDeckCard, updateTarotDeckCard, createTarotHome, type TarotCard,
   createGameplayMotion, GAMEPLAY_MOTION,
+  createCompletionSheet, createCompletionSequence, COMPLETION_TIMING,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
   createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle,
   createMainScreen,
@@ -118,6 +119,9 @@ deck.update({cards:deckCards,animations:false}); deck.dispose();
 const illustration = createTarotDeckCard(deckCards[0]); updateTarotDeckCard(illustration,{id:'first',inProgress:true});
 const home = createTarotHome({deck:{cards:deckCards,onActivate:()=>{}},navigation:{label:'Pages',value:'home',items:[{value:'home',label:'Home',icon:sampleArt()}],onNavigate:()=>{}}});
 home.dispose();
+const completionSheet = createCompletionSheet({title:'Complete',message:'Done',onNewGame:()=>{},onReturnHome:()=>{},onClose:()=>{}});
+const completion = createCompletionSequence({host:document.body,board:interactiveBoard,size:1,title:'Complete',message:'Done',onNewGame:()=>{},onReturnHome:()=>{},onClose:()=>{}});
+completion.start({celebration:false}); completion.setAnimations(false); completion.cancel(); completion.dispose(); void [completionSheet,COMPLETION_TIMING];
 const motion = createGameplayMotion({animations: false});
 motion.mount(); motion.setAnimations(false); motion.dispose(); void GAMEPLAY_MOTION;
 const header = createTarotGameplayHeader({ tarotNumeral: 'I', archetypeTitle: 'The Camper', puzzleName: 'Trees & Tents', difficulty: 'Easy', columns: 6, rows: 6 });
@@ -208,7 +212,7 @@ const specs = [
 ];
 for (const s of specs) import.meta.resolve(s);
 const project = await import('${name}/projects/grim-glimmer');
-for (const fn of ['createBoardInteractions','createGuidedTutorialDialog','destroyGuidedTutorialDialog','createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
+for (const fn of ['createCompletionSheet','createCompletionSequence','createBoardInteractions','createGuidedTutorialDialog','destroyGuidedTutorialDialog','createTarotDeck','createTarotDeckCard','updateTarotDeckCard','createTarotHome','createGameplayMotion','createTarotGameplayHeader','createCluedBoard','updateCluedBoard','createGameControlRow','updateGameControlRow','createGameToolToggle','updateGameToolToggle']) {
   if (typeof project[fn] !== 'function') throw new Error(fn + ' missing');
 }
 const lib = await import('${name}');
@@ -266,6 +270,7 @@ document.body.append(createButton({ label: 'Smoke' }));
     '.nl-switch__thumb',
     '.nl-grim-glimmer-menu-sheet--popover',
     '.gg-v4-motion-overlay',
+    '.gg-v4-victory-sheet',
     '.nl-grim-glimmer-guided-tutorial--editorial',
     '.nl-grim-glimmer-tutorial-ring',
     '.nl-grim-glimmer-pointer-viewport',
