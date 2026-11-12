@@ -301,7 +301,7 @@ export function createRitualDraw(options: RitualDrawOptions) {
       String(
         busy ||
           dateChanged ||
-          (puzzle &&
+          (puzzle !== undefined &&
             (puzzle.action === 'unavailable' ||
               !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
           state === 'solved' ||
@@ -337,7 +337,7 @@ export function createRitualDraw(options: RitualDrawOptions) {
     streak.textContent = puzzle ? '' : `${Math.trunc(options.streak ?? 0)}-night streak`;
     chevron.hidden =
       dateChanged ||
-      (puzzle &&
+      (puzzle !== undefined &&
         (puzzle.action === 'unavailable' || !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
       (state !== 'unplayed' && !(puzzle ? options.onOpenPuzzle : options.onBegin)) ||
       !['unplayed', 'revealed-unstarted', 'in-progress'].includes(state);
@@ -385,7 +385,7 @@ export function createRitualDraw(options: RitualDrawOptions) {
   async function press() {
     if (
       !mounted ||
-      (puzzle &&
+      (puzzle !== undefined &&
         (puzzle.action === 'unavailable' || !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
       busy ||
       dateChanged ||
@@ -443,9 +443,10 @@ export function createRitualDraw(options: RitualDrawOptions) {
       );
       busy = false;
       paint();
-      if (finished && mounted && !disposed && localDateKey(clock()) === daily.date)
-        puzzle ? options.onOpenPuzzle?.() : options.onBegin?.(daily);
-      else if (mounted) updateClock();
+      if (finished && mounted && !disposed && localDateKey(clock()) === daily.date) {
+        if (puzzle) options.onOpenPuzzle?.();
+        else options.onBegin?.(daily);
+      } else if (mounted) updateClock();
     }
   }
   function updateClock() {
