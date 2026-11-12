@@ -15,17 +15,6 @@
   font: 500 2rem/1.2 var(--nl-font-family-heading);
   text-align: center;
 }
-.gg-v4-overlay-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 11;
-  gap: 8px;
-}
-.gg-v4-overlay-header h1 {
-  font: 500 1.5rem/1.2 var(--nl-font-family-heading);
-}
 .gg-v4-game-overlay-preview > [data-slot='board'] {
   margin: 24px 0;
 }
