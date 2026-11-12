@@ -17,7 +17,7 @@ const meta = {
   render: (args) => createRitualDraw(args),
 } satisfies Meta<RitualDrawOptions>;
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<RitualDrawOptions>;
 export const Begin: Story = {};
 export const Resume: Story = {
   args: { puzzle: { title: '8 × 8 Trees & Tents', action: 'Resume' }, state: 'in-progress' },
