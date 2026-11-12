@@ -96,3 +96,6 @@ export { createCompletionSheet } from './completion-sheet.js';
 export type { CompletionSheetOptions, CompletionStatistic } from './completion-sheet.js';
 export { createCompletionSequence, COMPLETION_TIMING } from './completion-sequence.js';
 export type { CompletionSequenceOptions } from './completion-sequence.js';
+
+export * from './month-calendar.js';
+export * from './month-geometry.js';

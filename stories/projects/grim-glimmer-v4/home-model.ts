@@ -1,3 +1,5 @@
+import { canonicalDate } from '../../../src/projects/grim-glimmer/month-calendar.js';
+export { canonicalDate } from '../../../src/projects/grim-glimmer/month-calendar.js';
 /** UI-only daily contract. Calendar/timezone selection belongs to the future host. */
 export const DAILY_DRAW_ENABLED = false;
 export type DailyState = 'hidden' | 'unplayed' | 'in-progress' | 'solved';
@@ -6,13 +8,6 @@ export interface DailyPlaceholder {
   seed: string;
   puzzle: null;
   status: 'placeholder';
-}
-export function canonicalDate(date: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Expected canonical YYYY-MM-DD');
-  const instant = new Date(`${date}T00:00:00.000Z`);
-  if (!Number.isFinite(instant.getTime()) || instant.toISOString().slice(0, 10) !== date)
-    throw new Error('Expected a real calendar date');
-  return instant;
 }
 export function getDailySeed(date: string): string {
   canonicalDate(date);
