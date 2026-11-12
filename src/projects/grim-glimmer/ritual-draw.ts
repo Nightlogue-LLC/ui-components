@@ -72,7 +72,12 @@ export interface DailyDrawIdentity {
   total: number;
 }
 export interface RitualDrawOptions {
-  manifest: MonthManifest;
+  /** Supply exactly one source. Puzzle mode keeps the approved card back and claims no restoration rewards. */
+  manifest?: MonthManifest;
+  puzzle?: {
+    title: string;
+    action: 'Begin' | 'Resume' | 'Replay' | 'unavailable';
+  };
   state?: DrawState;
   enabled?: boolean;
   clock?: () => Date;
@@ -88,6 +93,8 @@ export interface RitualDrawOptions {
   flipSound?: () => void;
   onReveal?: (daily: DailyDrawIdentity) => void;
   onBegin?: (daily: DailyDrawIdentity) => void;
+  /** Puzzle-only activation; monthly identity and rewards are not involved. */
+  onOpenPuzzle?: () => void;
   onDayChange?: (date: string) => void;
 }
 function moonEmblem(bucket: number, progress: number, solved: boolean) {
@@ -155,17 +162,20 @@ function moonEmblem(bucket: number, progress: number, solved: boolean) {
 /** Isolated preview: no generator, native bridge, persistence or routes are called here. */
 export function createRitualDraw(options: RitualDrawOptions) {
   const manifest = options.manifest;
+  const puzzle = options.puzzle;
+  if (Boolean(manifest) === Boolean(puzzle))
+    throw new Error('Supply exactly one Daily Draw source: manifest or puzzle');
   const clock = options.clock ?? (() => new Date());
   const now = clock();
   const date = localDateKey(now);
-  if (date.slice(0, 7) !== manifest.monthKey)
+  if (manifest && date.slice(0, 7) !== manifest.monthKey)
     throw new Error('Daily clock must match manifest month');
   const daily: DailyDrawIdentity = {
     date,
-    monthKey: manifest.monthKey,
-    title: manifest.title,
+    monthKey: manifest?.monthKey ?? date.slice(0, 7),
+    title: manifest?.title ?? puzzle!.title,
     piece: Number(date.slice(8)),
-    total: daysInMonth(manifest.monthKey),
+    total: daysInMonth(date.slice(0, 7)),
   };
   let state: DrawState = (options.enabled ?? false) ? (options.state ?? 'unplayed') : 'hidden';
   let stable: DrawState = state === 'revealing' ? 'unplayed' : state;
@@ -208,9 +218,11 @@ export function createRitualDraw(options: RitualDrawOptions) {
   const rotor = el('span', { className: 'gg-v4-ritual-rotor' });
   const back = el('span', { className: 'gg-v4-ritual-back' });
   const front = el('span', { className: 'gg-v4-ritual-front' });
-  const art = createMonthArt(manifest, options.restoredDates, daily.date);
-  art.element.setAttribute('aria-hidden', 'true');
-  front.append(art.element);
+  if (manifest) {
+    const art = createMonthArt(manifest, options.restoredDates, daily.date);
+    art.element.setAttribute('aria-hidden', 'true');
+    front.append(art.element);
+  }
   const float = el('span', { className: 'gg-v4-ritual-float' }, [rotor]);
   rotor.append(back, front);
   mini.append(float);
@@ -289,10 +301,13 @@ export function createRitualDraw(options: RitualDrawOptions) {
       String(
         busy ||
           dateChanged ||
+          (puzzle !== undefined &&
+            (puzzle.action === 'unavailable' ||
+              !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
           state === 'solved' ||
           state === 'revealing' ||
           state === 'hidden' ||
-          (state !== 'unplayed' && !options.onBegin),
+          (state !== 'unplayed' && !(puzzle ? options.onOpenPuzzle : options.onBegin)),
       ),
     );
     button.setAttribute('aria-busy', String(busy || state === 'revealing'));
@@ -306,19 +321,25 @@ export function createRitualDraw(options: RitualDrawOptions) {
             ? 'Continue'
             : state === 'solved'
               ? `NEXT DRAW IN ${time.hours}H ${time.remainder}M`
-              : options.onBegin
+              : (puzzle ? options.onOpenPuzzle : options.onBegin)
                 ? 'Begin'
                 : 'Draw revealed';
     detail.textContent = dateChanged
       ? 'A new draw is ready.'
       : state === 'unplayed' || state === 'revealing'
         ? `Piece ${daily.piece} of ${daily.total} · ${action}`
-        : `${manifest.title} · Piece ${daily.piece} of ${daily.total} · ${action}`;
-    streak.hidden = state !== 'solved' || (options.streak ?? 0) < 2;
-    streak.textContent = `${Math.trunc(options.streak ?? 0)}-night streak`;
+        : `${daily.title} · Piece ${daily.piece} of ${daily.total} · ${action}`;
+    if (puzzle)
+      detail.textContent = dateChanged
+        ? 'A new draw is ready.'
+        : `${puzzle.title} · ${puzzle.action === 'unavailable' || !(puzzle ? options.onOpenPuzzle : options.onBegin) ? 'Unavailable' : puzzle.action}`;
+    streak.hidden = Boolean(puzzle) || state !== 'solved' || (options.streak ?? 0) < 2;
+    streak.textContent = puzzle ? '' : `${Math.trunc(options.streak ?? 0)}-night streak`;
     chevron.hidden =
       dateChanged ||
-      (state !== 'unplayed' && !options.onBegin) ||
+      (puzzle !== undefined &&
+        (puzzle.action === 'unavailable' || !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
+      (state !== 'unplayed' && !(puzzle ? options.onOpenPuzzle : options.onBegin)) ||
       !['unplayed', 'revealed-unstarted', 'in-progress'].includes(state);
     back.replaceChildren(
       moonEmblem(
@@ -327,7 +348,7 @@ export function createRitualDraw(options: RitualDrawOptions) {
         state === 'solved',
       ),
     );
-    const frontShowing = !['unplayed', 'hidden'].includes(state);
+    const frontShowing = !puzzle && !['unplayed', 'hidden'].includes(state);
     const scrub =
       state === 'revealing'
         ? Math.min(1, Math.max(0, options.revealProgress ?? 0.5))
@@ -351,12 +372,21 @@ export function createRitualDraw(options: RitualDrawOptions) {
             ? `Tonight’s draw, ${moon.name}. Tap to draw. Piece ${daily.piece} of ${daily.total}.`
             : state === 'revealing'
               ? `Tonight’s draw, ${moon.name}. Revealing.`
-              : `Drawn: ${manifest.title}. Piece ${daily.piece} of ${daily.total}. ${action}.`,
+              : `Drawn: ${daily.title}. Piece ${daily.piece} of ${daily.total}. ${action}.`,
     );
+    if (puzzle)
+      button.setAttribute(
+        'aria-label',
+        dateChanged
+          ? 'A new draw is ready.'
+          : `Tonight’s draw, ${moon.name}. ${detail.textContent}.`,
+      );
   }
   async function press() {
     if (
       !mounted ||
+      (puzzle !== undefined &&
+        (puzzle.action === 'unavailable' || !(puzzle ? options.onOpenPuzzle : options.onBegin))) ||
       busy ||
       dateChanged ||
       !['unplayed', 'revealed-unstarted', 'in-progress'].includes(state)
@@ -368,7 +398,7 @@ export function createRitualDraw(options: RitualDrawOptions) {
       return;
     }
     if (options.haptics) options.light?.();
-    if (state === 'unplayed') {
+    if (state === 'unplayed' && !puzzle) {
       busy = true;
       state = 'revealing';
       paint();
@@ -394,10 +424,10 @@ export function createRitualDraw(options: RitualDrawOptions) {
       stable = state = 'revealed-unstarted';
       paint();
       if (options.haptics) options.medium?.();
-      live.textContent = `Drawn: ${manifest.title}. Piece ${daily.piece} of ${daily.total}. Begin.`;
+      live.textContent = `Drawn: ${daily.title}. Piece ${daily.piece} of ${daily.total}. Begin.`;
       options.onReveal?.(daily);
     } else {
-      if (!options.onBegin) return;
+      if (!(puzzle ? options.onOpenPuzzle : options.onBegin)) return;
       busy = true;
       paint();
       refreshLoops();
@@ -413,9 +443,10 @@ export function createRitualDraw(options: RitualDrawOptions) {
       );
       busy = false;
       paint();
-      if (finished && mounted && !disposed && localDateKey(clock()) === daily.date)
-        options.onBegin?.(daily);
-      else if (mounted) updateClock();
+      if (finished && mounted && !disposed && localDateKey(clock()) === daily.date) {
+        if (puzzle) options.onOpenPuzzle?.();
+        else options.onBegin?.(daily);
+      } else if (mounted) updateClock();
     }
   }
   function updateClock() {
