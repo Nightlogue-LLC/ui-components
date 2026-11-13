@@ -54,8 +54,8 @@
   padding: 2px;
   border-radius: var(--nl-radius-md);
   overflow: hidden;
-  background: var(--nl-color-accent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--nl-color-accent) 45%, transparent);
+  background: var(--nl-button-primary-background, var(--nl-color-accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--nl-color-text) 18%, transparent);
 }
 .nl-grim-glimmer-menu-content__surprise-shell::before {
   content: '';
@@ -65,9 +65,9 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg 190deg,
-    var(--nl-color-accent) 240deg,
-    color-mix(in srgb, var(--nl-color-accent) 30%, var(--nl-color-surface)) 285deg,
-    var(--nl-color-accent) 330deg,
+    var(--nl-color-text) 240deg,
+    var(--nl-color-surface) 285deg,
+    var(--nl-color-text) 330deg,
     transparent 360deg
   );
   animation: nl-game-menu-surprise-glow 3s linear infinite;
@@ -80,7 +80,7 @@
   min-height: 44px;
   border: 0;
   border-radius: calc(var(--nl-radius-md) - 1px);
-  background: var(--nl-color-accent);
+  background: var(--nl-button-primary-background, var(--nl-color-accent));
   color: var(--nl-color-on-accent);
 }
 .nl-grim-glimmer-menu-content__surprise .nl-icon-button__icon {

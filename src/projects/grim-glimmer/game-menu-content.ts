@@ -49,8 +49,8 @@ export function createGameMenuContent(options: GameMenuContentOptions): GameMenu
   root.className = 'nl-grim-glimmer-menu-content';
   const section = document.createElement('section');
   const heading = document.createElement('h2');
-  heading.id = uniqueId('nl-new-game');
-  heading.textContent = 'New Game';
+  heading.id = uniqueId('nl-game-menu-heading');
+  heading.textContent = 'Game Menu';
   section.setAttribute('aria-labelledby', heading.id);
   const groups: {
     element: HTMLElement;

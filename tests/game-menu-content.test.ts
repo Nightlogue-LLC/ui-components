@@ -171,6 +171,7 @@ describe('required Game Menu selections and independent Surprise Me', () => {
   it('keeps meaningful accessible groups and real navigation callbacks, without random body copy', () => {
     const s = setup();
     s.menu.open();
+    expect(s.content.element.querySelector('h2')?.textContent).toBe('Game Menu');
     expect(s.content.element.querySelectorAll('[role=radiogroup]')).toHaveLength(2);
     expect(s.content.element.querySelectorAll('input:checked')).toHaveLength(2);
     expect(s.content.element.textContent).not.toContain('No selection means random');

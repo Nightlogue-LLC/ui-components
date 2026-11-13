@@ -12,7 +12,7 @@ The planning previews live together under **Projects / Grim & Glimmer / Feature 
 
 **New Game** submits the draft selection through `onStart(selection)`. **Surprise Me** is a separate Phosphor magic-wand icon button calling `onSurprise()` with no filters. Its random request must not overwrite the selected or committed preferences. The app owns random puzzle choice, eligibility, repeat avoidance, save preservation and navigation.
 
-The button row uses 4:1 tracks (80/20 of the space after the gap), with a 48px minimum surprise track to retain a 44px target and border glow. The surprise button uses the active mode's accent and on-accent colors. A conic accent glow rotates through a transform-only animation around its edge; the icon itself remains still. Reduced motion, `animations: () => false`, disabled availability, and a hidden menu stop the animation. Reduced motion retains a static accent treatment.
+The button row uses 4:1 tracks (80/20 of the space after the gap), with a 48px minimum surprise track to retain a 44px target and border glow. The section is titled **Game Menu**. Surprise Me matches New Game using the same primary-button background and foreground hooks, leaving accent color for selected options. A soft neutral conic shimmer rotates through a transform-only animation around its edge; the icon itself remains still. Reduced motion, `animations: () => false`, disabled availability, and a hidden menu stop the animation. Reduced motion retains a static neutral treatment.
 
 ## Controlled lifecycle and availability
 
