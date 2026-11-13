@@ -1,26 +1,32 @@
 import { createButton } from '../../../src/components/button/index.js';
 import { createGameplayMenuHeader } from '../../../src/projects/grim-glimmer/gameplay-menu-header.js';
 import { createGameMenuSheet } from '../../../src/projects/grim-glimmer/menu-sheet.js';
-import { openDialog, closeDialog } from '../../../src/components/dialog/index.js';
 import {
-  createGameMenuContent,
-  type GameMenuSelection,
-  type GameMenuAvailability,
-} from '../../../src/projects/grim-glimmer/game-menu-content.js';
+  getDialogBody,
+  getDialogActions,
+  openDialog,
+  closeDialog,
+} from '../../../src/components/dialog/index.js';
+import {
+  createSegmentedControl,
+  updateSegmentedControl,
+} from '../../../src/components/segmented-control/index.js';
 import { createV4Board } from './board.js';
 import { createControlRow } from './controls.js';
-import { overlayHost, type SheetProposal } from './overlay-primitives.js';
+import {
+  createSwitch,
+  createProposalSheet,
+  overlayHost,
+  type SheetProposal,
+} from './overlay-primitives.js';
 import { DEFAULT_PREFERENCES, type OverlayOptions } from './settings-proposal.js';
 import { createHowTo } from './howto-proposal.js';
 import { el } from '../../lib/dom.js';
 export interface FlowOptions extends OverlayOptions {
-  difficulty?: 'easy' | 'medium' | 'hard' | null;
-  size?: GameMenuSelection['size'];
-  availability?: GameMenuAvailability['status'];
-  initiallyOpen?: boolean;
+  difficulty?: 'easy' | 'medium' | 'hard';
   initialLesson?: number;
   longContent?: boolean;
-  onNewGame?: (selection: GameMenuSelection) => void;
+  onNewGame?: (difficulty: string) => void;
   onTutorial?: (outcome: string) => void;
 }
 export function createOverlayPreview(
@@ -31,11 +37,8 @@ export function createOverlayPreview(
   root.classList.add('gg-v4-game-overlay-preview');
   root.dataset.reducedMotion = String(options.reducedMotion ?? false);
   let disposed = false;
-  const state = { ...DEFAULT_PREFERENCES, ...options.state };
-  let committed: GameMenuSelection = {
-    size: options.size ?? null,
-    difficulty: options.difficulty ?? null,
-  };
+  let state = { ...DEFAULT_PREFERENCES, ...options.state };
+  let difficulty = options.difficulty ?? 'easy';
   const reduced = () =>
     options.reducedMotion === true ||
     !state.animations ||
@@ -58,6 +61,7 @@ export function createOverlayPreview(
   board.dataset.slot = 'board';
   const controls = createControlRow({ disabled: true });
   controls.dataset.slot = 'controls';
+  const content = el('div');
   const pending = new Set<() => void>();
   function manage(make: (done: () => void) => SheetProposal) {
     let finished = false;
@@ -97,37 +101,104 @@ export function createOverlayPreview(
       };
     });
   }
-  const content = createGameMenuContent({
-    selection: committed,
-    getAvailability: () => ({ status: options.availability ?? 'ready' }),
-    onSelectionChange: () => tick(),
-    onStart: (selection) => {
-      committed = selection;
-      content.reset(committed);
-      navigate(() => {
-        options.onNewGame?.(selection);
-        status.textContent = `New game requested: ${selection.size ?? 'random size'} · ${selection.difficulty ?? 'random difficulty'}`;
+  function difficultySheet() {
+    if (disposed) return;
+    let action: 'help' | 'new' | undefined;
+    manage((done) => {
+      const part = createProposalSheet({
+        title: 'New Game',
+        animations: !reduced(),
+        onClose: () => {
+          done();
+          if (disposed) return;
+          if (action === 'help') tutorial(difficultySheet);
+          else if (action === 'new') {
+            tick();
+            options.onNewGame?.(difficulty);
+            status.textContent = `New ${difficulty} game requested`;
+          }
+        },
       });
-    },
-    onHowToPlay: () => navigate(() => tutorial()),
-    onGameSettings: () =>
-      navigate(() => {
-        status.textContent =
-          'Game Settings requested · app supplies supported puzzle-specific settings';
-        options.onNavigate?.('game-settings');
-      }),
-  });
-  if (options.longContent) {
-    for (let i = 0; i < 8; i++)
-      content.element.append(
-        el('p', {
-          text: 'Story-only tall-content fixture. Puzzle-specific options are supplied by the application.',
-        }),
+      const choices = [
+        { value: 'easy', label: 'Easy' },
+        { value: 'medium', label: 'Medium' },
+        { value: 'hard', label: 'Hard' },
+      ];
+      const selector = createSegmentedControl({
+        label: 'Difficulty',
+        options: choices,
+        value: difficulty,
+        onChange: (value) => {
+          difficulty = value as typeof difficulty;
+          updateSegmentedControl(selector, { label: 'Difficulty', options: choices, value });
+          tick();
+        },
+      });
+      getDialogBody(part.dialog).append(
+        el('p', { text: 'Choose the challenge for your next puzzle.' }),
+        selector,
       );
+      if (options.longContent)
+        for (let i = 0; i < 10; i++)
+          getDialogBody(part.dialog).append(
+            el('p', {
+              text: 'Every spire pairs with one neighboring star. Stars cannot touch, including at corners. Row and column clues count confirmed stars.',
+            }),
+          );
+      const start = createButton({
+        label: 'New Game',
+        onClick: () => {
+          action = 'new';
+          closeDialog(part.dialog);
+        },
+      });
+      start.autofocus = true;
+      getDialogActions(part.dialog).append(
+        createButton({
+          label: 'How to Play',
+          variant: 'secondary',
+          onClick: () => {
+            action = 'help';
+            closeDialog(part.dialog);
+          },
+        }),
+        start,
+      );
+      return part;
+    });
   }
+  for (const [key, label] of [
+    ['sound', 'Sound effects'],
+    ['music', 'Music'],
+    ['haptics', 'Haptic feedback'],
+  ] as const)
+    content.append(
+      createSwitch(label, state[key], (value) => {
+        state = { ...state, [key]: value };
+        tick();
+        options.onChange?.({ ...state });
+      }),
+    );
+  content.append(
+    createButton({ label: 'New Game', variant: 'ghost', onClick: () => navigate(difficultySheet) }),
+    createButton({
+      label: 'How to Play',
+      variant: 'ghost',
+      onClick: () => navigate(() => tutorial()),
+    }),
+    createButton({
+      label: 'Settings',
+      variant: 'ghost',
+      onClick: () =>
+        navigate(() => {
+          status.textContent = 'Settings requested';
+          options.onNavigate?.('settings');
+        }),
+    }),
+  );
   const menu = createGameMenuSheet({
     trigger,
-    content: content.element,
+    content,
     history: false,
     presentation: 'popover',
     animations: () => !reduced(),
@@ -142,14 +213,15 @@ export function createOverlayPreview(
   const opener = createButton({
     label:
       entry === 'difficulty'
-        ? 'Open New Game menu'
+        ? 'Open difficulty sheet'
         : entry === 'howto'
           ? 'Open guided tutorial'
           : 'Open game menu',
     variant: 'secondary',
     onClick: () => {
       opener.focus({ preventScroll: true });
-      if (entry === 'howto') tutorial();
+      if (entry === 'difficulty') difficultySheet();
+      else if (entry === 'howto') tutorial();
       else menu.open();
     },
   });
@@ -167,10 +239,6 @@ export function createOverlayPreview(
   ]);
   review.setAttribute('aria-label', 'Story review controls');
   root.append(header, board, status, review, controls, menu.element);
-  if (options.initiallyOpen)
-    queueMicrotask(() => {
-      if (!disposed && root.isConnected) menu.open();
-    });
   root.cleanup = () => {
     disposed = true;
     menu.destroy();

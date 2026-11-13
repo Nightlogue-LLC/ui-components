@@ -46,7 +46,7 @@ const REQUIRED_TITLES = [
 const obsolete = [...titles].filter(
   (title) =>
     title.startsWith('Projects/Grim & Glimmer') &&
-    !/^Projects\/Grim & Glimmer\/V[34]\//.test(title),
+    !/^Projects\/Grim & Glimmer\/(V[34]|Feature Expansion)\//.test(title),
 );
 if (obsolete.length) fail(`obsolete project sections: ${obsolete.join(', ')}`);
 const missingTitles = REQUIRED_TITLES.filter((t) => !titles.has(t));

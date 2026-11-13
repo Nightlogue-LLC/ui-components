@@ -106,7 +106,7 @@ import {
 } from '${name}/projects/grim-glimmer';
 
 const compactHeader = createGameplayMenuHeader({title:'Trees & Tents',onBack:()=>{}});
-const menuContent = createGameMenuContent({selection:{size:null,difficulty:null},getAvailability:()=>({status:'ready'}),onStart:()=>{},onHowToPlay:()=>{},onGameSettings:()=>{}});
+const menuContent = createGameMenuContent({selection:{size:6,difficulty:'easy'},getAvailability:()=>({status:'ready'}),getSurpriseAvailability:()=>({status:'ready'}),onSurprise:()=>{},onStart:()=>{},onHowToPlay:()=>{},onGameSettings:()=>{}});
 menuContent.reset({size:15,difficulty:'hard'});
 menuContent.refresh();
 void compactHeader;

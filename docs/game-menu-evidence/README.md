@@ -1,6 +1,6 @@
-# Game Menu selector review
+# Feature Expansion Game Menu review
 
-Library issue #66. Baseline: merged main `45639c4` (identical source tree to `66f74db`, the previously built approved Storybook). The after images use this branch's production Storybook build.
+Owner revision 2026-11-13, library #66 / PR #71. Before images are the first PR revision `8d7538f` (optional selections); after images implement required selections and a separate Surprise Me action. Existing V4 reference stories remain unchanged; this round is grouped under **Projects / Grim & Glimmer / Feature Expansion / GameMenu**.
 
 | Before: 390px light             | After: 390px light            |
 | ------------------------------- | ----------------------------- |
@@ -10,19 +10,16 @@ Library issue #66. Baseline: merged main `45639c4` (identical source tree to `66
 | ------------------------------ | ---------------------------- |
 | ![Before](before-dark-360.png) | ![After](after-dark-360.png) |
 
-New Game now lives inside the same floating editorial overlay. Five optional grid sizes and three optional difficulties toggle independently; no selection means random. Only Start New Game submits. Closing discards drafts. How to Play and Game Settings follow the selector; duplicated global preferences and the separate difficulty sheet are removed.
+The body paragraph above Grid size is removed. Required native radio groups retain selected size/difficulty. New Game occupies 80% of the action tracks and the Phosphor magic-wand Surprise Me button occupies 20% (after the gap). Its independent random request never replaces committed preferences. The button and rotating edge glow use the current mode's accent. Reduced motion and Animations OFF retain a static accent treatment.
 
-All story puzzle requests are explicit fixtures, not a production puzzle adapter. Application integration, real eligible selection, saved progress and navigation remain gothic-cozy-puzzles#38 after library review/merge. The API handoff is documented in [game-menu-new-game.md](../game-menu-new-game.md).
+[Glow recording (dark mode)](surprise-glow.webm). The animation rotates only the decorative edge, not the wand.
 
-Validation performed before opening the PR:
+The shared menu retains loading/unavailable states, pending-versus-committed rollback, focus return, Back, How to Play and Game Settings. Global preferences stay in main Settings. App integration and real selection remain gothic-cozy-puzzles#38; see the [API handoff](../game-menu-new-game.md).
 
-- `NPM_CONFIG_CACHE=/workspace/.npm-cache npm run check` passed: lint, formatting, typecheck, 650 tests across 54 files, library build, publint, packed-consumer NodeNext/Bundler checks, both theme consumer builds, and static Storybook (363 entries).
-- Chromium/Playwright tested 320×568, 360×640 and 390×844 in light/dark with reduced motion and normal motion: 12 combinations. Verified optional/deselected states, Start-only submission, close/reopen rollback, accepted-selection retention, native keyboard activation, focus trap/return, no horizontal overflow, bounded scroll panel, and every menu button at least 44×44px.
-- Verified selected foreground/background against theme accent tokens, including hovered selected controls after their transitions finish.
-- Axe WCAG 2 A/AA and 2.1 AA checks reported no violations in the tested menu panel for those combinations. This is scoped automated evidence, not a complete accessibility certification.
-- Loading, unavailable, tall content, initially open, 360/390 story layouts and the OpenCloseReopen play story were checked; the migrated Difficulty SelectAndStart play story submits `{size: 8, difficulty: 'hard'}` without another dialog.
-- `browser-results.json` records viewport/target geometry and accessibility results. State screenshots show the same scrollable panel when lower content is in view.
+Browser verification: Chromium/Playwright tested 320×568, 360×640 and 390×844, light/dark, reduced/normal motion (12 combinations). It checked required selection, native arrow keys and Tab order, independent Surprise Me, retained committed preferences, exact 4:1 action tracks, theme accent, changing glow transforms, reduced-motion suppression, 44×44px targets, panel bounds and no horizontal overflow. Axe WCAG 2 A/AA and 2.1 AA checks found no violations in the tested panel. This is scoped automated evidence, not a complete accessibility certification.
 
-To review manually, build/serve Storybook, open V4 / Sheets / GameMenu, choose and deselect size/difficulty, close with Escape/trigger/scrim/Back, and reopen. Verify the committed baseline is restored, then Start and reopen to inspect the accepted fixture selection. Check Loading/Unavailable and scroll/focus to Game Settings on short screens. No live puzzle should be launched by this library preview.
+Seven additional stories were exercised: loading, unavailable, selected-pool unavailable with random still available, tall content, explicit reduced motion, open/close/reopen, and Start/Surprise interaction. `browser-results.json` contains the measured geometry and accessibility results.
 
-Physical Android/WebView review and comparison with an app consuming this new API remain pending. No APK, application state, game logic, artwork or shared theme tokens were changed.
+Run `NPM_CONFIG_CACHE=/workspace/.npm-cache npm run check` for lint, formatting, types, all unit/integration tests, library build, publint, packed-consumer NodeNext/Bundler and theme checks, and production Storybook. Validation counts and final results are recorded in the PR description.
+
+Physical Android/WebView and an app consuming this revised API remain unverified. No app code, saves, game logic or artwork assets changed.

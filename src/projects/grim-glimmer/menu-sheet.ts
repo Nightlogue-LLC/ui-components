@@ -143,7 +143,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       }
       document.addEventListener('keydown', keydown);
       window.addEventListener('popstate', popstate);
-      (panel.querySelector<HTMLElement>(FOCUSABLE) ?? panel).focus({ preventScroll: true });
+      (focusables()[0] ?? panel).focus({ preventScroll: true });
     } else {
       content.dispatchEvent(new Event('game-menu-close'));
       restoreInert?.();
@@ -186,6 +186,25 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
     else done();
     options.onOpenChange?.(next);
   };
+  function focusables(): HTMLElement[] {
+    const items = [...panel.querySelectorAll<HTMLElement>(FOCUSABLE)];
+    // Radio groups contribute their checked member to Tab order, not every choice.
+    return items.filter(
+      (item) =>
+        !(
+          item instanceof HTMLInputElement &&
+          item.type === 'radio' &&
+          !item.checked &&
+          items.some(
+            (other) =>
+              other instanceof HTMLInputElement &&
+              other.type === 'radio' &&
+              other.name === item.name &&
+              other.checked,
+          )
+        ),
+    );
+  }
   function popstate(): void {
     historyEntry = false;
     setOpen(false, true);
@@ -197,7 +216,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
       setOpen(false);
     }
     if (event.key !== 'Tab') return;
-    const items = [...panel.querySelectorAll<HTMLElement>(FOCUSABLE), trigger];
+    const items = [...focusables(), trigger];
     const index = items.indexOf(document.activeElement as HTMLElement);
     const next = event.shiftKey
       ? index <= 0
