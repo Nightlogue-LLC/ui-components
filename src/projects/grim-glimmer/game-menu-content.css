@@ -124,3 +124,10 @@
     animation: none;
   }
 }
+
+.nl-grim-glimmer-menu-content__settings-help {
+  margin: 0 16px 8px;
+  color: var(--nl-color-text);
+  font: 400 0.75rem/1.5 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}

@@ -19,6 +19,7 @@ export interface FlowOptions extends OverlayOptions {
   availability?: GameMenuAvailability['status'];
   surpriseAvailability?: GameMenuAvailability['status'];
   initiallyOpen?: boolean;
+  gameSettingsUnavailable?: boolean;
   onSurprise?: () => void;
   initialLesson?: number;
   longContent?: boolean;
@@ -121,12 +122,17 @@ export function createOverlayPreview(
       });
     },
     onHowToPlay: () => navigate(() => tutorial()),
-    onGameSettings: () =>
-      navigate(() => {
-        status.textContent =
-          'Game Settings requested · app supplies supported puzzle-specific settings';
-        options.onNavigate?.('game-settings');
-      }),
+    onGameSettings: options.gameSettingsUnavailable
+      ? undefined
+      : () =>
+          navigate(() => {
+            status.textContent =
+              'Game Settings requested · app supplies supported puzzle-specific settings';
+            options.onNavigate?.('game-settings');
+          }),
+    gameSettingsUnavailableMessage: options.gameSettingsUnavailable
+      ? 'Not available yet'
+      : undefined,
   });
   if (options.longContent) {
     for (let i = 0; i < 8; i++)

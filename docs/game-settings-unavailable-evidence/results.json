@@ -1,0 +1,98 @@
+[
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "light",
+    "motion": "reduce",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "light",
+    "motion": "no-preference",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "dark",
+    "motion": "reduce",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "dark",
+    "motion": "no-preference",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "light",
+    "motion": "reduce",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "light",
+    "motion": "no-preference",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "dark",
+    "motion": "reduce",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "dark",
+    "motion": "no-preference",
+    "disabled": true,
+    "description": "Not available yet",
+    "skipsInTabOrder": true,
+    "axe": [],
+    "overflow": false,
+    "errors": []
+  }
+]
