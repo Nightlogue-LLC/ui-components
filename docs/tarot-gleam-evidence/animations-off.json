@@ -1,0 +1,7 @@
+{
+  "publicConsumer": true,
+  "modes": ["light", "dark"],
+  "wrap": [2, 3, 1],
+  "animationCalls": 0,
+  "errors": []
+}
