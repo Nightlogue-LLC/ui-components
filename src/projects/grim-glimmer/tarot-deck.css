@@ -43,6 +43,8 @@
   background: var(--gg-v4-card-paper);
   transition: transform 160ms ease-out;
   border-radius: var(--gg-v4-deck-radius);
+  /* Clip the translating sheen to the card silhouette; the shell still paints its own shadow. */
+  overflow: hidden;
   box-shadow:
     0 16px 26px -12px rgb(26 10 16 / 0.5),
     0 2px 4px rgb(26 10 16 / 0.22);
