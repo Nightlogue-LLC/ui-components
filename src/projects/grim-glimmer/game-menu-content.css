@@ -1,0 +1,126 @@
+.nl-grim-glimmer-menu-content h2 {
+  margin: 0 0 16px;
+  font: 500 1.5rem/1.2 var(--nl-font-family-heading, var(--nl-font-family));
+}
+.nl-grim-glimmer-menu-content__status {
+  margin: 8px 0 12px;
+  color: var(--nl-color-text);
+  font: 400 0.75rem/1.5 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}
+.nl-grim-glimmer-menu-content fieldset {
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+.nl-grim-glimmer-menu-content legend {
+  margin-bottom: 8px;
+  font: 600 0.875rem/1.4 var(--nl-font-family);
+}
+.nl-grim-glimmer-menu-content .nl-grim-glimmer-menu-content__choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.nl-grim-glimmer-menu-content .nl-grim-glimmer-menu-content__choices .nl-segmented-control__option {
+  margin: 0;
+}
+.nl-grim-glimmer-menu-content .nl-grim-glimmer-menu-content__choices .nl-segmented-control__label {
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 4px;
+  border-radius: var(--nl-radius-md);
+  font-size: 0.875rem;
+}
+.nl-grim-glimmer-menu-content__button-row {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(48px, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+.nl-grim-glimmer-menu-content .nl-grim-glimmer-menu-content__button-row .nl-button {
+  min-width: 0;
+  min-height: 48px;
+  margin: 0;
+  padding-inline: 8px;
+  text-align: center;
+}
+.nl-grim-glimmer-menu-content__surprise-shell {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: block;
+  padding: 2px;
+  border-radius: var(--nl-radius-md);
+  overflow: hidden;
+  background: var(--nl-button-primary-background, var(--nl-color-accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--nl-color-text) 18%, transparent);
+}
+.nl-grim-glimmer-menu-content__surprise-shell::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -100%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 190deg,
+    var(--nl-color-text) 240deg,
+    var(--nl-color-surface) 285deg,
+    var(--nl-color-text) 330deg,
+    transparent 360deg
+  );
+  animation: nl-game-menu-surprise-glow 3s linear infinite;
+  pointer-events: none;
+}
+.nl-grim-glimmer-menu-content .nl-icon-button.nl-grim-glimmer-menu-content__surprise {
+  width: 100%;
+  height: 100%;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: calc(var(--nl-radius-md) - 1px);
+  background: var(--nl-button-primary-background, var(--nl-color-accent));
+  color: var(--nl-color-on-accent);
+}
+.nl-grim-glimmer-menu-content__surprise .nl-icon-button__icon {
+  width: 24px;
+  height: 24px;
+}
+.nl-grim-glimmer-menu-content__surprise-shell:focus-within {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+.nl-grim-glimmer-menu-content__surprise-shell[data-disabled='true'] {
+  box-shadow: none;
+  opacity: 0.55;
+}
+.nl-grim-glimmer-menu-content[data-animations='off']
+  .nl-grim-glimmer-menu-content__surprise-shell::before,
+.nl-grim-glimmer-menu-content__surprise-shell[data-disabled='true']::before {
+  animation: none;
+}
+.nl-grim-glimmer-menu-content__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.nl-grim-glimmer-menu-content__actions {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--nl-color-border);
+}
+@keyframes nl-game-menu-surprise-glow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-grim-glimmer-menu-content__surprise-shell::before {
+    animation: none;
+  }
+}

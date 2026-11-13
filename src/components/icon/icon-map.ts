@@ -1,3 +1,5 @@
+import wandLight from '@phosphor-icons/core/assets/light/magic-wand-light.svg?raw';
+import wandFill from '@phosphor-icons/core/assets/fill/magic-wand-fill.svg?raw';
 import i0light from '@phosphor-icons/core/assets/light/arrow-left-light.svg?raw';
 import i0fill from '@phosphor-icons/core/assets/fill/arrow-left-fill.svg?raw';
 import i1light from '@phosphor-icons/core/assets/light/dots-three-vertical-light.svg?raw';
@@ -43,6 +45,7 @@ import i20fill from '@phosphor-icons/core/assets/fill/question-fill.svg?raw';
 
 /** The only Phosphor imports in the library. Explicit assets keep the catalog out of bundles. */
 export const ICON_MAP = {
+  'magic-wand': { name: 'magic-wand', light: wandLight, fill: wandFill },
   back: { name: 'arrow-left', light: i0light, fill: i0fill },
   more: { name: 'dots-three-vertical', light: i1light, fill: i1fill },
   close: { name: 'x', light: i2light, fill: i2fill },

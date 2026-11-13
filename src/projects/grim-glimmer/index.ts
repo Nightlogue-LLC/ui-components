@@ -111,3 +111,15 @@ export type { RitualDrawOptions, DailyDrawIdentity, DrawState } from './ritual-d
 
 export { createGameplayMenuHeader } from './gameplay-menu-header.js';
 export type { GameplayMenuHeaderOptions } from './gameplay-menu-header.js';
+
+export {
+  createGameMenuContent,
+  GAME_MENU_SIZES,
+  GAME_MENU_DIFFICULTIES,
+} from './game-menu-content.js';
+export type {
+  GameMenuContent,
+  GameMenuContentOptions,
+  GameMenuSelection,
+  GameMenuAvailability,
+} from './game-menu-content.js';
