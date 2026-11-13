@@ -16,7 +16,7 @@ The button row uses 4:1 tracks (80/20 of the space after the gap), with a 48px m
 
 ## Controlled lifecycle and availability
 
-Required callbacks are `onStart`, `onSurprise`, `onHowToPlay`, `onGameSettings`, `getAvailability(selection)` and `getSurpriseAvailability()`. Optional `onSelectionChange` reports only draft edits. Neither selection nor random preview automatically persists data or replaces a board.
+Required callbacks are `onStart`, `onSurprise`, `onHowToPlay`, `getAvailability(selection)` and `getSurpriseAvailability()`. `onGameSettings` is optional: omit it until real puzzle-specific settings exist. Optional `onSelectionChange` reports only draft edits. Neither selection nor random preview automatically persists data or replaces a board.
 
 The returned controller provides:
 
@@ -38,3 +38,9 @@ The explanatory paragraph above Grid size is removed. A compact selection/status
 The menu keeps the approved floating overlay, Moonlit Oxblood tokens, editorial typography, Back/focus behavior, and How to Play / Game Settings actions. Global Sound/Music/Haptic preferences stay in main Settings.
 
 Stories cover selected, loading, unavailable, mobile, tall-content and reduced-motion states. Component tests cover mandatory selections, independent random requests, lifecycle rollback and catalog availability. The app's saved-progress selection and random-selection implementation belong to #38; no app code or Android build changes in this library PR.
+
+## Unavailable Game Settings
+
+Omitting `onGameSettings` leaves the Game Settings action visible but natively disabled, with visible **Not available yet** help linked through `aria-describedby`. Alternatively, `gameSettingsUnavailableMessage` supplies a plain-text explanation and disables the action even if a callback exists. No global Settings fallback or decorative working action is invented. Existing consumers providing a callback without an unavailable reason keep their current enabled behavior.
+
+This supports the owner's approved app #38 rollout while puzzle-specific settings remain app #86. Main global Settings remains available from Home. The unavailable story lives in the same Feature Expansion project group and covers the disabled accessible description.

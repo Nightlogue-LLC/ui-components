@@ -109,6 +109,8 @@ const compactHeader = createGameplayMenuHeader({title:'Trees & Tents',onBack:()=
 const menuContent = createGameMenuContent({selection:{size:6,difficulty:'easy'},getAvailability:()=>({status:'ready'}),getSurpriseAvailability:()=>({status:'ready'}),onSurprise:()=>{},onStart:()=>{},onHowToPlay:()=>{},onGameSettings:()=>{}});
 menuContent.reset({size:15,difficulty:'hard'});
 menuContent.refresh();
+const unavailableMenu = createGameMenuContent({selection:{size:6,difficulty:'easy'},getAvailability:()=>({status:'ready'}),getSurpriseAvailability:()=>({status:'ready'}),onStart:()=>{},onSurprise:()=>{},onHowToPlay:()=>{},gameSettingsUnavailableMessage:'Not available yet'});
+void unavailableMenu;
 void compactHeader;
 const dailyPuzzle = createRitualDraw({enabled:true,puzzle:{title:'6 × 6 Trees & Tents',action:'Resume'},state:'in-progress',onOpenPuzzle:()=>{}});
 void dailyPuzzle;

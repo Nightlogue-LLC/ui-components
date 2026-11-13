@@ -29,7 +29,10 @@ export interface GameMenuContentOptions {
   onSelectionChange?: (selection: GameMenuSelection) => void;
   onStart: (selection: GameMenuSelection) => void;
   onHowToPlay: () => void;
-  onGameSettings: () => void;
+  /** Omit until puzzle-specific settings are available; global Settings stays separate. */
+  onGameSettings?: () => void;
+  /** Supplying a reason disables the action even if a callback exists. Plain text only. */
+  gameSettingsUnavailableMessage?: string;
 }
 export interface GameMenuContent {
   element: HTMLElement;
@@ -130,10 +133,27 @@ export function createGameMenuContent(options: GameMenuContentOptions): GameMenu
   );
   const actions = document.createElement('div');
   actions.className = 'nl-grim-glimmer-menu-content__actions';
+  const settingsUnavailable =
+    options.onGameSettings === undefined || options.gameSettingsUnavailableMessage !== undefined;
+  const settingsAction = createButton({
+    label: 'Game Settings',
+    variant: 'ghost',
+    disabled: settingsUnavailable,
+    onClick: options.onGameSettings,
+  });
   actions.append(
     createButton({ label: 'How to Play', variant: 'ghost', onClick: options.onHowToPlay }),
-    createButton({ label: 'Game Settings', variant: 'ghost', onClick: options.onGameSettings }),
+    settingsAction,
   );
+  if (settingsUnavailable) {
+    const help = document.createElement('p');
+    help.id = uniqueId('nl-game-settings-unavailable');
+    help.className = 'nl-grim-glimmer-menu-content__settings-help';
+    const message = (options.gameSettingsUnavailableMessage ?? '').trim();
+    help.textContent = message.length > 0 ? message : 'Not available yet';
+    settingsAction.setAttribute('aria-describedby', help.id);
+    actions.append(help);
+  }
   root.append(section, actions);
   function refresh() {
     for (const group of groups)

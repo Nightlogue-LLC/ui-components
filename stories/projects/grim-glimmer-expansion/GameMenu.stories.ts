@@ -106,3 +106,13 @@ export const SelectedPoolUnavailable: Story = {
     difficulty: 'hard',
   },
 };
+
+export const GameSettingsUnavailable: Story = {
+  args: { initiallyOpen: true, gameSettingsUnavailable: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const action = canvas.getByRole('button', { name: 'Game Settings' });
+    await expect(action).toBeDisabled();
+    await expect(action).toHaveAccessibleDescription('Not available yet');
+  },
+};

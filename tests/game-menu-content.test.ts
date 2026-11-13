@@ -195,3 +195,30 @@ describe('required Game Menu selections and independent Surprise Me', () => {
     expect(s.onStart).not.toHaveBeenCalled();
   });
 });
+
+describe('unavailable Game Settings action', () => {
+  it.each([false, true])(
+    'shows an accessible disabled reason (callback supplied: %s)',
+    (withCallback) => {
+      const onGameSettings = vi.fn();
+      const content = createGameMenuContent({
+        selection: { size: 6, difficulty: 'easy' },
+        getAvailability: () => ({ status: 'ready' }),
+        getSurpriseAvailability: () => ({ status: 'ready' }),
+        onStart: vi.fn(),
+        onSurprise: vi.fn(),
+        onHowToPlay: vi.fn(),
+        onGameSettings: withCallback ? onGameSettings : undefined,
+        gameSettingsUnavailableMessage: withCallback ? 'Not available yet' : undefined,
+      });
+      document.body.append(content.element);
+      const settings = button(content.element, 'Game Settings');
+      expect(settings.disabled).toBe(true);
+      settings.click();
+      expect(onGameSettings).not.toHaveBeenCalled();
+      const help = document.getElementById(settings.getAttribute('aria-describedby')!);
+      expect(help?.textContent).toBe('Not available yet');
+      expect(content.element.querySelectorAll('button:disabled')).toHaveLength(1);
+    },
+  );
+});
