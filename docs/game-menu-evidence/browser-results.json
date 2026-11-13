@@ -1,0 +1,902 @@
+[
+  {
+    "width": 320,
+    "height": 568,
+    "mode": "light",
+    "motion": "reduce",
+    "metrics": {
+      "x": 32,
+      "right": 312,
+      "top": 72,
+      "bottom": 540,
+      "viewportWidth": 320,
+      "viewportHeight": 568,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": true
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "mode": "light",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 32,
+      "right": 312,
+      "top": -27,
+      "bottom": 441,
+      "viewportWidth": 320,
+      "viewportHeight": 568,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": true
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "mode": "dark",
+    "motion": "reduce",
+    "metrics": {
+      "x": 32,
+      "right": 312,
+      "top": 72,
+      "bottom": 540,
+      "viewportWidth": 320,
+      "viewportHeight": 568,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": true
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "mode": "dark",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 32,
+      "right": 312,
+      "top": -27,
+      "bottom": 441,
+      "viewportWidth": 320,
+      "viewportHeight": 568,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": true
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "light",
+    "motion": "reduce",
+    "metrics": {
+      "x": 72,
+      "right": 352,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 360,
+      "viewportHeight": 640,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "light",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 72,
+      "right": 352,
+      "top": 61,
+      "bottom": 591.984375,
+      "viewportWidth": 360,
+      "viewportHeight": 640,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "dark",
+    "motion": "reduce",
+    "metrics": {
+      "x": 72,
+      "right": 352,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 360,
+      "viewportHeight": 640,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "mode": "dark",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 72,
+      "right": 352,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 360,
+      "viewportHeight": 640,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "light",
+    "motion": "reduce",
+    "metrics": {
+      "x": 102,
+      "right": 382,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "light",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 102,
+      "right": 382,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "dark",
+    "motion": "reduce",
+    "metrics": {
+      "x": 102,
+      "right": 382,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "dark",
+    "motion": "no-preference",
+    "metrics": {
+      "x": 102,
+      "right": 382,
+      "top": 72,
+      "bottom": 602.984375,
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "overflow": false,
+      "targets": [
+        {
+          "label": "6×6",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "8×8",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "10×10",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "12×12",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "15×15",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Easy",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Medium",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Hard",
+          "w": 78,
+          "h": 44
+        },
+        {
+          "label": "Start New Game",
+          "w": 246,
+          "h": 44
+        },
+        {
+          "label": "How to Play",
+          "w": 246,
+          "h": 48
+        },
+        {
+          "label": "Game Settings",
+          "w": 246,
+          "h": 48
+        }
+      ],
+      "scrollable": false
+    },
+    "axe": [],
+    "errors": []
+  }
+]

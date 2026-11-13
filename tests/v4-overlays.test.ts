@@ -46,15 +46,13 @@ function pointer(handle: HTMLElement, type: string, y: number, time: number) {
   Object.defineProperties(event, { pointerId: { value: 1 }, timeStamp: { value: time } });
   handle.dispatchEvent(event);
 }
-describe('V4 menu and difficulty flows', () => {
-  it('keeps one stable trigger and icon holder; restores focus and board interactivity on toggle/Escape/Back', () => {
-    const push = vi.spyOn(window.history, 'pushState');
+describe('V4 menu and New Game flows', () => {
+  it('keeps the stable trigger and restores board/focus on toggle, Escape and Back', () => {
     const root = preview();
     const trigger = root.querySelector<HTMLButtonElement>('[aria-label="Game menu"]')!;
     const icon = trigger.querySelector('.nl-icon-button__icon');
     for (const route of ['toggle', 'escape', 'back']) {
       trigger.click();
-      expect(trigger.getAttribute('aria-expanded')).toBe('true');
       expect(root.querySelector<HTMLElement>('[data-slot="board"]')!.inert).toBe(true);
       if (route === 'toggle') trigger.click();
       else if (route === 'escape')
@@ -65,68 +63,64 @@ describe('V4 menu and difficulty flows', () => {
       expect(root.querySelector<HTMLElement>('[data-slot="board"]')!.inert).not.toBe(true);
       expect(trigger.querySelector('.nl-icon-button__icon')).toBe(icon);
     }
-    expect(push).not.toHaveBeenCalled();
   });
-  it('traps Tab between menu content and trigger', () => {
+  it('traps Tab between menu content and the stable trigger', () => {
     const root = preview();
     const trigger = root.querySelector<HTMLButtonElement>('[aria-label="Game menu"]')!;
     trigger.click();
-    button(root, 'Settings').focus();
-    document.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }),
-    );
+    button(root, 'Game Settings').focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
     expect(document.activeElement).toBe(trigger);
     document.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }),
+      new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, cancelable: true }),
     );
-    expect(document.activeElement).toBe(button(root, 'Settings'));
+    expect(document.activeElement).toBe(button(root, 'Game Settings'));
   });
-  it('emits mock preferences and gates haptics, without storage writes', () => {
-    const tick = vi.fn(),
-      onChange = vi.fn(),
+  it('removes duplicated global preferences and makes only Start commit a draft', () => {
+    const onNewGame = vi.fn(),
       storage = vi.spyOn(Storage.prototype, 'setItem');
-    const root = preview('menu', { tick, onChange });
+    const root = preview('menu', { onNewGame });
     button(root, 'Open game menu').click();
-    const switches = root.querySelectorAll<HTMLInputElement>('[role="switch"]');
-    switches[2]!.click();
-    switches[0]!.click();
-    expect(tick).not.toHaveBeenCalled();
-    expect(onChange.mock.calls.at(-1)?.[0]).toMatchObject({ haptics: false, sound: false });
+    expect(root.querySelector('[role="switch"]')).toBeNull();
+    button(root, '8×8').click();
+    button(root, 'Hard').click();
+    expect(onNewGame).not.toHaveBeenCalled();
+    button(root, 'Start New Game').click();
+    expect(onNewGame).toHaveBeenCalledExactlyOnceWith({ size: 8, difficulty: 'hard' });
+    expect(root.querySelector('dialog')).toBeNull();
     expect(storage).not.toHaveBeenCalled();
   });
-  it('routes Settings once after closing the popover', () => {
+  it('routes Game Settings once after the floating menu closes', () => {
     const onNavigate = vi.fn();
     const root = preview('menu', { onNavigate });
     button(root, 'Open game menu').click();
-    button(root, 'Settings').click();
+    button(root, 'Game Settings').click();
     expect(root.querySelector('.gg-v4-popover')?.hasAttribute('hidden')).toBe(true);
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('settings');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('game-settings');
   });
-  it('retains selected Hard after visiting and dismissing help; starts only the requested mock puzzle', async () => {
+  it('discards a draft when visiting Help and restores the last committed selection on reopen', async () => {
     const onNewGame = vi.fn();
-    const root = preview('difficulty', { onNewGame });
-    button(root, 'Open difficulty sheet').click();
-    root.querySelector<HTMLInputElement>('input[value="hard"]')!.click();
+    const root = preview('menu', { onNewGame, difficulty: 'easy' });
+    button(root, 'Open game menu').click();
+    button(root, 'Hard').click();
     button(root, 'How to Play').click();
     await flush();
     expect(root.querySelector('.gg-v4-howto[open]')).not.toBeNull();
     button(root, 'Skip').click();
     await flush();
-    expect(root.querySelector<HTMLInputElement>('input[value="hard"]')!.checked).toBe(true);
-    button(root.querySelector('dialog')!, 'New Game').click();
-    await flush();
-    expect(onNewGame).toHaveBeenCalledExactlyOnceWith('hard');
-    expect(root.querySelector('dialog')).toBeNull();
-    expect(document.activeElement).toBe(button(root, 'Open difficulty sheet'));
+    button(root, 'Open game menu').click();
+    expect(button(root, 'Easy').getAttribute('aria-pressed')).toBe('true');
+    expect(button(root, 'Hard').getAttribute('aria-pressed')).toBe('false');
+    expect(onNewGame).not.toHaveBeenCalled();
   });
-  it('destroys an open modal and its pending outcome when the story unmounts', async () => {
-    const onNewGame = vi.fn();
-    const root = preview('difficulty', { onNewGame });
-    button(root, 'Open difficulty sheet').click();
+  it('destroys an open tutorial and suppresses pending outcomes when the story unmounts', async () => {
+    const onTutorial = vi.fn();
+    const root = preview('howto', { onTutorial });
+    button(root, 'Open guided tutorial').click();
     root.remove();
     await flush();
     expect(root.querySelector('dialog')).toBeNull();
-    expect(onNewGame).not.toHaveBeenCalled();
+    expect(onTutorial).not.toHaveBeenCalled();
   });
 });
 describe('V4 proposal sheet gesture contract', () => {
@@ -252,7 +246,7 @@ describe('V4 overlay lifecycle and motion', () => {
     };
     const trigger = root.querySelector<HTMLButtonElement>('[aria-label="Game menu"]')!;
     trigger.click();
-    button(root, 'Settings').click();
+    button(root, 'Game Settings').click();
     expect(onNavigate).not.toHaveBeenCalled();
     trigger.click();
     motions.forEach((m) => m.finish());
@@ -263,10 +257,10 @@ describe('V4 overlay lifecycle and motion', () => {
     await flush();
     expect(onNavigate).not.toHaveBeenCalled();
     trigger.click();
-    button(root, 'Settings').click();
+    button(root, 'Game Settings').click();
     motions.at(-1)!.finish();
     await flush();
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('settings');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('game-settings');
     for (const motion of motions) {
       expect(motion.options.duration).toBe(160);
       for (const frame of motion.frames)
@@ -302,19 +296,18 @@ describe('V4 overlay lifecycle and motion', () => {
     part.destroy();
   });
   it.each(['back', 'escape', 'backdrop'])(
-    'dismisses the difficulty sheet through %s and restores focus',
+    'dismisses the New Game menu through %s and restores trigger focus',
     (route) => {
       const root = preview('difficulty');
-      button(root, 'Open difficulty sheet').click();
-      const dialog = root.querySelector('dialog')!;
+      button(root, 'Open New Game menu').click();
+      const menu = root.querySelector<HTMLElement>('.nl-grim-glimmer-menu-sheet')!;
       if (route === 'back') button(root, 'Simulate Back').click();
-      else if (route === 'escape') dialog.dispatchEvent(new Event('cancel', { cancelable: true }));
-      else {
-        dialog.dispatchEvent(new Event('pointerdown', { bubbles: true }));
-        dialog.click();
-      }
+      else if (route === 'escape')
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      else menu.querySelector<HTMLElement>('.nl-grim-glimmer-menu-sheet__scrim')!.click();
+      expect(menu.hidden).toBe(true);
       expect(root.querySelector('dialog')).toBeNull();
-      expect(document.activeElement).toBe(button(root, 'Open difficulty sheet'));
+      expect(document.activeElement).toBe(root.querySelector('[aria-label="Game menu"]'));
     },
   );
 });

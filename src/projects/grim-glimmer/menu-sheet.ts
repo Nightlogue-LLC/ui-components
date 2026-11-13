@@ -6,6 +6,7 @@ export interface GameMenuSheetOptions {
   /** Default sheet keeps its current placement; opt in to the accepted top-right popover. */
   presentation?: 'popover';
   trigger: HTMLButtonElement;
+  /** Receives game-menu-open before focus, and game-menu-close on dismissal/active teardown. */
   content: HTMLElement;
   label?: string;
   animations?: () => boolean;
@@ -117,6 +118,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
     motionDone = false;
     if (next) {
       content.hidden = false;
+      content.dispatchEvent(new Event('game-menu-open'));
       observer.observe(document.documentElement, { childList: true, subtree: true });
       const inertNodes = [
         ...(root.parentElement?.querySelectorAll<HTMLElement>(
@@ -283,6 +285,7 @@ export function createGameMenuSheet(options: GameMenuSheetOptions): GameMenuShee
     trigger.removeEventListener('click', toggle);
     trigger.setAttribute('aria-expanded', 'false');
     const wasOpen = active;
+    if (wasOpen) content.dispatchEvent(new Event('game-menu-close'));
     active = false;
     closing = false;
     root.remove();

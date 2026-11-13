@@ -1,0 +1,53 @@
+.nl-grim-glimmer-menu-content h2 {
+  margin: 0 0 8px;
+  font: 500 1.5rem/1.2 var(--nl-font-family-heading, var(--nl-font-family));
+}
+.nl-grim-glimmer-menu-content__help,
+.nl-grim-glimmer-menu-content__status {
+  margin: 8px 0 12px;
+  color: var(--nl-color-text);
+  font: 400 0.75rem/1.5 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}
+.nl-grim-glimmer-menu-content fieldset {
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+.nl-grim-glimmer-menu-content legend {
+  margin-bottom: 8px;
+  font: 600 0.875rem/1.4 var(--nl-font-family);
+}
+.nl-grim-glimmer-menu-content__choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.nl-grim-glimmer-menu-content .nl-grim-glimmer-menu-content__choices .nl-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 0.875rem;
+}
+.nl-grim-glimmer-menu-content
+  .nl-grim-glimmer-menu-content__choices
+  .nl-button[aria-pressed='true'] {
+  border-color: var(--nl-color-accent);
+  background: var(--nl-color-accent);
+  color: var(--nl-color-on-accent);
+}
+.nl-grim-glimmer-menu-content .nl-button.nl-grim-glimmer-menu-content__start {
+  min-height: 44px;
+  text-align: center;
+}
+.nl-grim-glimmer-menu-content__actions {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--nl-color-border);
+}
