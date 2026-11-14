@@ -1,0 +1,59 @@
+name: Open agent PR after CI
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  open:
+    # The trusted default-branch workflow never checks out agent code.
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_repository.full_name == github.repository &&
+          (startsWith(github.event.workflow_run.head_branch, 'agent/') ||
+           startsWith(github.event.workflow_run.head_branch, 'claude/')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Mint restricted App token to read the protected PR generator
+        id: app
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.NIGHTLOGUE_APP_ID }}
+          private-key: ${{ secrets.NIGHTLOGUE_APP_PRIVATE_KEY }}
+          owner: Nightlogue-LLC
+          repositories: |
+            nightlogue-agent-relay
+            ui-components
+          permission-contents: read
+          permission-pull-requests: write
+
+      - name: Load PR creator from protected relay main
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/nightlogue-pr"
+          gh api 'repos/Nightlogue-LLC/nightlogue-agent-relay/contents/scripts/open-app-pr.mjs?ref=main' --jq .content | base64 -d > "$RUNNER_TEMP/nightlogue-pr/open-app-pr.mjs"
+          gh api 'repos/Nightlogue-LLC/nightlogue-agent-relay/contents/scripts/pr-description.mjs?ref=main' --jq .content | base64 -d > "$RUNNER_TEMP/nightlogue-pr/pr-description.mjs"
+          # Restrict trusted relay source to this repository's controller identity.
+          grep -Fq "const relayRepo = 'nightlogue-agent-relay';" "$RUNNER_TEMP/nightlogue-pr/open-app-pr.mjs"
+          sed -i "s/const relayRepo = 'nightlogue-agent-relay';/const relayRepo = 'ui-components';/" "$RUNNER_TEMP/nightlogue-pr/open-app-pr.mjs"
+          grep -Fq "const relayRepo = 'ui-components';" "$RUNNER_TEMP/nightlogue-pr/open-app-pr.mjs"
+
+      - name: Open or refresh bot-owned draft PR
+        shell: bash
+        run: node "$RUNNER_TEMP/nightlogue-pr/open-app-pr.mjs"
+        env:
+          PR_TARGET_REPO: ui-components
+          PR_HEAD: ${{ github.event.workflow_run.head_branch }}
+          PR_EXPECTED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PR_TITLE: 'Agent change - ${{ github.event.workflow_run.head_branch }}'
+          NIGHTLOGUE_APP_ID: ${{ secrets.NIGHTLOGUE_APP_ID }}
+          NIGHTLOGUE_APP_PRIVATE_KEY: ${{ secrets.NIGHTLOGUE_APP_PRIVATE_KEY }}
