@@ -54,6 +54,6 @@ jobs:
           PR_TARGET_REPO: ui-components
           PR_HEAD: ${{ github.event.workflow_run.head_branch }}
           PR_EXPECTED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          PR_TITLE: "Agent change - ${{ github.event.workflow_run.head_branch }}"
+          PR_TITLE: 'Agent change - ${{ github.event.workflow_run.head_branch }}'
           NIGHTLOGUE_APP_ID: ${{ secrets.NIGHTLOGUE_APP_ID }}
           NIGHTLOGUE_APP_PRIVATE_KEY: ${{ secrets.NIGHTLOGUE_APP_PRIVATE_KEY }}
