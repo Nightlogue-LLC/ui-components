@@ -1,11 +1,11 @@
 {
   "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-9/configure-agent-pr-handoff-and-codex-review-guidance",
-  "problem": "Implementation branches in the UI Components repository lack branch-push CI and automatic Nightlogue Conductor PR creation, leaving the first library pilot dependent on manual workflow launches.",
-  "solution": "Extend CI to agent and Claude branches, add a trusted default-branch workflow that obtains restricted Nightlogue App access and runs the protected relay PR creator, and add AGENTS.md with library-specific implementation and independent Codex review rules.",
+  "problem": "Verify the new UI Components automatic PR handoff actually works without a manual GitHub Actions dispatch.",
+  "solution": "Create a temporary documentation-only agent branch and verify that successful branch CI opens a Nightlogue Conductor-authored draft PR. Close the test PR without merging.",
   "tests": [
-    "GitHub Actions lint, Prettier, type checks, Vitest, package verification and Storybook passed for the implementation before metadata was added",
-    "Final branch CI must pass again with this PR description included"
+    "GitHub Actions full CI on agent/auto-pr-smoke-check; check actual run before closing",
+    "Verify draft PR author, issue description, and tested head commit"
   ],
-  "risks": "The new privileged workflow only runs after merging onto main. Its GitHub App token requires the existing App installation on both repositories. Codex cloud automatic reviews remain a separate setting; the workflow does not merge PRs.",
-  "review": "Verify the privileged workflow uses only protected source, checks the CI-tested head SHA, never checks out agent code, scopes App permissions, and preserves existing CI requirements for other PRs."
+  "risks": "This is a temporary test branch and must never be merged. No component or application behavior changes.",
+  "review": "Check that the workflow uses the trusted relay script, opens a bot-owned draft without automatic merge, and does not expose secrets or execute unreviewed branch code."
 }
