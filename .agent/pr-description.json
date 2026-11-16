@@ -1,12 +1,11 @@
 {
-  "issue": "https://github.com/Nightlogue-LLC/ui-components/issues/81",
-  "problem": "Test whether the configured owner-authorized GitHub credential successfully initiates Codex review of a bot-created draft PR after successful CI.",
-  "solution": "Create a temporary documentation-only change on a branch based on current main, then inspect Conductor's PR handoff, request identity, safe API-stage diagnostics, and actual Codex review response.",
+  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-1/pilot-a-add-optional-dom-id-to-badge",
+  "problem": "UICOMP-1: Badge had no way to set a DOM id, so consumers could not reference a badge (for example from aria-describedby) without reaching into the element by hand.",
+  "solution": "Add optional `id?: string` to `BadgeProps` in src/components/badge/badge.ts. `updateBadge` (also used by `createBadge`) sets the id when a non-empty value is supplied and removes the attribute when it is omitted or empty, so full-props replacement leaves no stale id. Label and tone behavior and default markup are unchanged. No CSS, tokens, Storybook, or other components touched.",
   "tests": [
-    "Run full push CI against the exact branch commit",
-    "Verify Conductor opens a bot-authored draft with complete description, and confirm the owner token posts a review request",
-    "Verify Codex accepts and completes a review before closing the temporary PR without merging"
+    "npm run check (lint, format:check, typecheck, vitest 54 files / 656 tests, build, publint + consumer smoke, build-storybook) - all passed locally",
+    "New badge unit tests: no id by default; supplied id set on create without affecting label/tone; update changes id; update omitting id removes a previous id; update with empty string removes id"
   ],
-  "risks": "Integration test only; do not merge this temporary PR. The token might still lack a required GitHub authorization. Claude execution and automatic merging remain off.",
-  "review": "Confirm that the author is Nightlogue Conductor, that the request originates from the verified owner identity, and that Codex produces an actual review response."
+  "risks": "Low. Additive optional prop, source compatible for existing callers. Design choice to flag: an empty-string id is treated as absent and removes the attribute (id=\"\" is not a valid HTML id); reviewers may prefer otherwise.",
+  "review": "Verify the removal path in updateBadge (removeAttribute('id') when id is omitted) and the test 'removes a previously set id when update omits it'. Confirm BadgeProps remains backward compatible and no files outside src/components/badge/ and .agent/ changed."
 }
