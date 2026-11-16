@@ -30,6 +30,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Capture Prettier output for correction (temporary)
+        run: |
+          echo PRETTIER_SCRIPT_START
+          npx prettier scripts/request-codex-review.mjs | base64 -w0
+          echo
+          echo PRETTIER_SCRIPT_END
+          echo PRETTIER_TEST_START
+          npx prettier scripts/request-codex-review.test.mjs | base64 -w0
+          echo
+          echo PRETTIER_TEST_END
+
       - name: Formatting
         run: npm run format:check
 
