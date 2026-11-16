@@ -21,7 +21,7 @@ const env = {
   NIGHTLOGUE_APP_TOKEN: 'test-installation-token-redacted',
 };
 
-function mockApi({ pullRequests = [pr], comments = [], postStatus = 201 } = {}) {
+function mockApi({ pullRequests = [pr], currentPr = pr, comments = [], postStatus = 201 } = {}) {
   const calls = [];
   const fetchImpl = async (url, options) => {
     const method = options.method || 'GET';
@@ -31,7 +31,9 @@ function mockApi({ pullRequests = [pr], comments = [], postStatus = 201 } = {}) 
       ? pullRequests
       : url.includes('/comments?')
         ? comments
-        : { id: 123 };
+        : url.includes('/pulls/89')
+          ? currentPr
+          : { id: 123 };
     return {
       ok: status >= 200 && status < 300,
       status,
@@ -120,4 +122,25 @@ test('invalid workflow scope fails before external requests', async () => {
     /codex_request_invalid_trusted_context/,
   );
   assert.equal(api.calls.length, 0);
+});
+
+test('does not post when a new commit arrives after comment pagination', async () => {
+  const api = mockApi({ currentPr: { ...pr, head: { ...pr.head, sha: 'b'.repeat(40) } } });
+  const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+  assert.deepEqual(result, { status: 'skipped_pr_changed' });
+  assert.equal(api.calls.filter((x) => x.method === 'POST').length, 0);
+});
+
+test('does not post when a review hold appears after comment pagination', async () => {
+  const api = mockApi({ currentPr: { ...pr, body: pr.body + '\n**REVIEW HOLD:** missing' } });
+  const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+  assert.deepEqual(result, { status: 'skipped_pr_changed' });
+  assert.equal(api.calls.filter((x) => x.method === 'POST').length, 0);
+});
+
+test('does not post when the PR closes before the final recheck', async () => {
+  const api = mockApi({ currentPr: { ...pr, state: 'closed' } });
+  const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+  assert.deepEqual(result, { status: 'skipped_pr_changed' });
+  assert.equal(api.calls.filter((x) => x.method === 'POST').length, 0);
 });
