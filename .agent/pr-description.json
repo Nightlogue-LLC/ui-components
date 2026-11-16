@@ -1,12 +1,12 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-12/use-owner-authorized-codex-review-requests-for-bot-created-prs",
-  "problem": "Nightlogue Conductor posts bot-authored Codex review requests, but Codex does not acknowledge them. Owner-authored requests have completed successfully.",
-  "solution": "Separate PR creation through the GitHub App from Codex review requests using an owner-authorized fine-grained token. Validate the requester identity, skip when absent or incorrect, preserve exact CI SHA verification, and deduplicate owner-authored comments.",
+  "issue": "https://github.com/Nightlogue-LLC/ui-components/issues/81",
+  "problem": "The owner-authorized Codex review request returns GitHub HTTP 403, but the script omits the failing API stage, making permission debugging inconclusive.",
+  "solution": "Emit only a fixed API stage identifier alongside HTTP status on failures, without exposing tokens, endpoints containing private data, or response bodies. Add regression tests for failed identity and comment-post requests.",
   "tests": [
-    "CI unit tests for valid owner, wrong bot identity, missing token, duplicate commit, and changed PR head",
-    "Full CI checks for lint, formatting, types, tests, package and Storybook",
-    "Owner-token live review still needs a secure GitHub Actions secret and follow-up smoke test"
+    "Full CI lint, Prettier, TypeScript, tests, package verification and Storybook build pass on the diagnostic branch",
+    "Review-request unit tests confirm identity and comment-post 403 stage labels",
+    "After owner-approved merge, retry the owner-token smoke test and read the exact failed stage"
   ],
-  "risks": "The owner must configure a fine-grained GitHub credential with issue comment permission. GitHub may require organization approval. This PR does not activate live Codex review without that token.",
-  "review": "Verify the reviewer token is distinct from the GitHub App key, only the approved GitHub identity can send review requests, missing token does not fail CI, and no automatic merge occurs."
+  "risks": "Diagnostic output contains only a fixed stage and HTTP status. No changes to token scope, review eligibility, bot ownership, or auto-merge; keep Claude execution disabled.",
+  "review": "Verify stage labels on every GitHub call, no credential or response-body logging, corresponding 403 tests, successful CI, and that final approval and merge remain with owner."
 }

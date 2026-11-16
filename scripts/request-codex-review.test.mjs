@@ -118,7 +118,7 @@ test('API failures stop without an apparent successful request', async () => {
   const api = mockApi({ postStatus: 403 });
   await assert.rejects(
     requestCodexReview({ env, fetchImpl: api.fetchImpl }),
-    /github_request_failed_403/,
+    /github_request_failed_comment_post_403/,
   );
 });
 
@@ -172,4 +172,12 @@ test('App identity or another GitHub account cannot request the Codex review', a
     assert.deepEqual(result, { status: 'skipped_wrong_requester' });
     assert.equal(api.calls.filter((call) => call.method === 'POST').length, 0);
   }
+});
+
+test('identity API failures report safe stage without exposing credentials', async () => {
+  const fetchImpl = async () => ({ ok: false, status: 403 });
+  await assert.rejects(
+    requestCodexReview({ env, fetchImpl }),
+    /github_request_failed_identity_403/,
+  );
 });
