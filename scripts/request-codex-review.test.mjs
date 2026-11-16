@@ -22,21 +22,28 @@ const env = {
   CODEX_REVIEW_REQUEST_TOKEN: 'test-owner-token-redacted',
 };
 
-function mockApi({ pullRequests = [pr], currentPr = pr, comments = [], postStatus = 201, login = requester } = {}) {
+function mockApi({
+  pullRequests = [pr],
+  currentPr = pr,
+  comments = [],
+  postStatus = 201,
+  login = requester,
+} = {}) {
   const calls = [];
   const fetchImpl = async (url, options) => {
     const method = options.method || 'GET';
     calls.push({ url, method, body: options.body });
     const status = method === 'POST' ? postStatus : 200;
-    const body = url === 'https://api.github.com/user'
-      ? { login }
-      : url.includes('/pulls?')
-      ? pullRequests
-      : url.includes('/comments?')
-        ? comments
-        : url.includes('/pulls/89')
-          ? currentPr
-          : { id: 123 };
+    const body =
+      url === 'https://api.github.com/user'
+        ? { login }
+        : url.includes('/pulls?')
+          ? pullRequests
+          : url.includes('/comments?')
+            ? comments
+            : url.includes('/pulls/89')
+              ? currentPr
+              : { id: 123 };
     return {
       ok: status >= 200 && status < 300,
       status,
