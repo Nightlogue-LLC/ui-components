@@ -56,7 +56,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     throw Error('codex_request_invalid_trusted_context');
   }
 
-  const api = async (url, options = {}) => {
+  const api = async (url, options = {}, stage = 'unknown') => {
     const response = await fetchImpl(url, {
       ...options,
       headers: {
@@ -68,11 +68,12 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
       },
       signal: AbortSignal.timeout(12000),
     });
-    if (!response.ok) throw Error(`github_request_failed_${response.status}`);
+    // Log only a fixed stage label and HTTP status, never response bodies or credentials.
+    if (!response.ok) throw Error(`github_request_failed_${stage}_${response.status}`);
     return response.json();
   };
 
-  const requester = await api('https://api.github.com/user');
+  const requester = await api('https://api.github.com/user', {}, 'identity');
   if (requester?.login !== REQUESTER) {
     return { status: 'skipped_wrong_requester' };
   }
@@ -83,7 +84,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     base: 'main',
     per_page: '100',
   });
-  const prs = await api(`${ROOT}/pulls?${search}`);
+  const prs = await api(`${ROOT}/pulls?${search}`, {}, 'pr_lookup');
   if (!Array.isArray(prs) || prs.length !== 1 || !isEligiblePr(prs[0], sha, head)) {
     return { status: 'skipped_ineligible_pr' };
   }
@@ -96,7 +97,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   const comments = [];
   let lastPageFull = false;
   for (let page = 1; page <= 5; page++) {
-    const results = await api(`${ROOT}/issues/${number}/comments?per_page=100&page=${page}`);
+    const results = await api(`${ROOT}/issues/${number}/comments?per_page=100&page=${page}`, {}, 'comment_list');
     if (!Array.isArray(results)) throw Error('invalid_comments_response');
     comments.push(...results);
     if (hasRequestForCommit(comments, sha)) {
@@ -109,7 +110,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
 
   // PRs can receive new commits, close, or gain a review hold during comment
   // pagination. Check the live PR again before posting any request.
-  const current = await api(`${ROOT}/pulls/${number}`);
+  const current = await api(`${ROOT}/pulls/${number}`, {}, 'pr_recheck');
   if (!isEligiblePr(current, sha, head)) {
     return { status: 'skipped_pr_changed' };
   }
@@ -119,7 +120,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   await api(`${ROOT}/issues/${number}/comments`, {
     method: 'POST',
     body: JSON.stringify({ body }),
-  });
+  }, 'comment_post');
   return { status: 'requested' };
 }
 
