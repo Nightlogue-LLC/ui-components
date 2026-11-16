@@ -1,12 +1,12 @@
 {
   "issue": "https://github.com/Nightlogue-LLC/ui-components/issues/81",
-  "problem": "The owner-authorized Codex review request returns GitHub HTTP 403, but the script omits the failing API stage, making permission debugging inconclusive.",
-  "solution": "Emit only a fixed API stage identifier alongside HTTP status on failures, without exposing tokens, endpoints containing private data, or response bodies. Add regression tests for failed identity and comment-post requests.",
+  "problem": "Test whether the configured owner-authorized GitHub credential successfully initiates Codex review of a bot-created draft PR after successful CI.",
+  "solution": "Create a temporary documentation-only change on a branch based on current main, then inspect Conductor's PR handoff, request identity, safe API-stage diagnostics, and actual Codex review response.",
   "tests": [
-    "Full CI lint, Prettier, TypeScript, tests, package verification and Storybook build pass on the diagnostic branch",
-    "Review-request unit tests confirm identity and comment-post 403 stage labels",
-    "After owner-approved merge, retry the owner-token smoke test and read the exact failed stage"
+    "Run full push CI against the exact branch commit",
+    "Verify Conductor opens a bot-authored draft with complete description, and confirm the owner token posts a review request",
+    "Verify Codex accepts and completes a review before closing the temporary PR without merging"
   ],
-  "risks": "Diagnostic output contains only a fixed stage and HTTP status. No changes to token scope, review eligibility, bot ownership, or auto-merge; keep Claude execution disabled.",
-  "review": "Verify stage labels on every GitHub call, no credential or response-body logging, corresponding 403 tests, successful CI, and that final approval and merge remain with owner."
+  "risks": "Integration test only; do not merge this temporary PR. The token might still lack a required GitHub authorization. Claude execution and automatic merging remain off.",
+  "review": "Confirm that the author is Nightlogue Conductor, that the request originates from the verified owner identity, and that Codex produces an actual review response."
 }
