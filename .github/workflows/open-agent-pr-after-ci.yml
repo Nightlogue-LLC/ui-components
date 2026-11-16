@@ -17,6 +17,11 @@ jobs:
           github.event.workflow_run.head_repository.full_name == github.repository &&
           (startsWith(github.event.workflow_run.head_branch, 'agent/') ||
            startsWith(github.event.workflow_run.head_branch, 'claude/')) }}
+    # Only eligible push-CI handoffs enter this group. PR-CI workflow_run
+    # completions skip the job and cannot evict a pending push handoff.
+    concurrency:
+      group: agent-pr-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -57,3 +62,20 @@ jobs:
           PR_TITLE: 'Agent change - ${{ github.event.workflow_run.head_branch }}'
           NIGHTLOGUE_APP_ID: ${{ secrets.NIGHTLOGUE_APP_ID }}
           NIGHTLOGUE_APP_PRIVATE_KEY: ${{ secrets.NIGHTLOGUE_APP_PRIVATE_KEY }}
+
+      - name: Check out trusted main-branch Codex request script
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/request-codex-review.mjs
+
+      - name: Request Codex review of CI-tested agent PR
+        run: node scripts/request-codex-review.mjs
+        env:
+          GITHUB_REF: refs/heads/main
+          GITHUB_REPOSITORY: Nightlogue-LLC/ui-components
+          PR_HEAD: ${{ github.event.workflow_run.head_branch }}
+          PR_EXPECTED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          NIGHTLOGUE_APP_TOKEN: ${{ steps.app.outputs.token }}

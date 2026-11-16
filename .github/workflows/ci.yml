@@ -39,6 +39,9 @@ jobs:
       - name: Tests
         run: npm test
 
+      - name: Review automation unit tests
+        run: node --test scripts/request-codex-review.test.mjs
+
       - name: Build library
         run: npm run build
 
