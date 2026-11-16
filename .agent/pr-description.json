@@ -1,5 +1,5 @@
 {
-  "issue": "https://github.com/Nightlogue-LLC/ui-components/pull/79",
+  "issue": "https://github.com/Nightlogue-LLC/ui-components/issues/81",
   "problem": "Confirm the newly configured owner-authorized credential triggers an independent Codex review for a CI-verified, bot-created draft PR without any manual review comment.",
   "solution": "Run a documentation-only smoke test of the owner-authorized review request. Verify the request is posted by shavonne-senpai, Codex responds with an actual review, and the test PR stays unmerged.",
   "tests": [
