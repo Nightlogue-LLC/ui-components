@@ -1,11 +1,12 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-9/configure-agent-pr-handoff-and-codex-review-guidance",
-  "problem": "Implementation branches in the UI Components repository lack branch-push CI and automatic Nightlogue Conductor PR creation, leaving the first library pilot dependent on manual workflow launches.",
-  "solution": "Extend CI to agent and Claude branches, add a trusted default-branch workflow that obtains restricted Nightlogue App access and runs the protected relay PR creator, and add AGENTS.md with library-specific implementation and independent Codex review rules.",
+  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-10/automatically-request-codex-review-after-verified-agent-pr-ci",
+  "problem": "Bot-authored Nightlogue PRs do not receive reliable independent Codex reviews because the Codex All PRs setting is unavailable, leaving GitHub reviews dependent on manual requests.",
+  "solution": "After successful agent branch CI and the trusted Conductor PR handoff, use the existing restricted GitHub App token to request @codex review on the exact tested PR commit. Reject incomplete PR descriptions and stale heads, and deduplicate review requests by commit SHA.",
   "tests": [
-    "GitHub Actions lint, Prettier, type checks, Vitest, package verification and Storybook passed for the implementation before metadata was added",
-    "Final branch CI must pass again with this PR description included"
+    "Node test suite for PR identity, full-description eligibility, duplicate SHA requests, API rejection and trusted workflow scope",
+    "GitHub CI lint, Prettier, TypeScript, Vitest, package checks and Storybook must pass on the final commit",
+    "Manual @codex review on bot-authored draft PR #76 completed successfully; bot-authored comment still requires a real integration test"
   ],
-  "risks": "The new privileged workflow only runs after merging onto main. Its GitHub App token requires the existing App installation on both repositories. Codex cloud automatic reviews remain a separate setting; the workflow does not merge PRs.",
-  "review": "Verify the privileged workflow uses only protected source, checks the CI-tested head SHA, never checks out agent code, scopes App permissions, and preserves existing CI requirements for other PRs."
+  "risks": "GitHub App-authored @codex review support is not yet proven. The App token has pull-request write permissions but the issue-comment endpoint must be verified. No automatic merge or production Claude dispatch is activated.",
+  "review": "Verify trusted main-only script execution, no checkout of agent-branch code with the token, exact CI SHA matching, no duplicate requests, and a clear review hold for incomplete metadata."
 }
