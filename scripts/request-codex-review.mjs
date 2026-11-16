@@ -4,6 +4,7 @@ const OWNER = 'Nightlogue-LLC';
 const REPO = 'ui-components';
 const ROOT = `https://api.github.com/repos/${OWNER}/${REPO}`;
 const BOT = 'nightlogue-conductor[bot]';
+const REQUESTER = 'shavonne-senpai';
 const MARKER_PREFIX = '<!-- nightlogue-codex-request:';
 const SHA_PATTERN = /^[a-f0-9]{40}$/;
 
@@ -30,7 +31,7 @@ export function hasRequestForCommit(comments, sha) {
     Array.isArray(comments) &&
     comments.some(
       (comment) =>
-        comment?.user?.login === BOT &&
+        comment?.user?.login === REQUESTER &&
         typeof comment.body === 'string' &&
         comment.body.includes(marker),
     )
@@ -40,7 +41,10 @@ export function hasRequestForCommit(comments, sha) {
 export async function requestCodexReview({ env = process.env, fetchImpl = fetch } = {}) {
   const sha = env.PR_EXPECTED_HEAD_SHA;
   const head = env.PR_HEAD;
-  const token = env.NIGHTLOGUE_APP_TOKEN;
+  const token = env.CODEX_REVIEW_REQUEST_TOKEN;
+  // An absent owner-authorized credential is an expected setup state, not
+  // a failed workflow or a claim that Codex has been requested.
+  if (!token) return { status: 'skipped_requester_not_configured' };
   if (
     env.GITHUB_REF !== 'refs/heads/main' ||
     env.GITHUB_REPOSITORY !== `${OWNER}/${REPO}` ||
@@ -67,6 +71,11 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     if (!response.ok) throw Error(`github_request_failed_${response.status}`);
     return response.json();
   };
+
+  const requester = await api('https://api.github.com/user');
+  if (requester?.login !== REQUESTER) {
+    return { status: 'skipped_wrong_requester' };
+  }
 
   const search = new URLSearchParams({
     state: 'open',
@@ -106,7 +115,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   }
 
   const marker = `${MARKER_PREFIX}${sha} -->`;
-  const body = `@codex review\n\n${marker}\nIndependent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
+  const body = `@codex review\n\n${marker}\nOwner-authorized independent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
   await api(`${ROOT}/issues/${number}/comments`, {
     method: 'POST',
     body: JSON.stringify({ body }),

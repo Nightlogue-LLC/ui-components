@@ -78,4 +78,6 @@ jobs:
           GITHUB_REPOSITORY: Nightlogue-LLC/ui-components
           PR_HEAD: ${{ github.event.workflow_run.head_branch }}
           PR_EXPECTED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          NIGHTLOGUE_APP_TOKEN: ${{ steps.app.outputs.token }}
+          # Owner-authorized token posts review request. App-authored comments
+          # do not initiate Codex in the verified smoke test.
+          CODEX_REVIEW_REQUEST_TOKEN: ${{ secrets.CODEX_REVIEW_REQUEST_TOKEN }}
