@@ -5,10 +5,6 @@ on:
     workflows: [CI]
     types: [completed]
 
-concurrency:
-  group: agent-pr-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
@@ -21,6 +17,11 @@ jobs:
           github.event.workflow_run.head_repository.full_name == github.repository &&
           (startsWith(github.event.workflow_run.head_branch, 'agent/') ||
            startsWith(github.event.workflow_run.head_branch, 'claude/')) }}
+    # Only eligible push-CI handoffs enter this group. PR-CI workflow_run
+    # completions skip the job and cannot evict a pending push handoff.
+    concurrency:
+      group: agent-pr-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
