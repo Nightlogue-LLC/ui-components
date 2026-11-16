@@ -98,6 +98,13 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   }
   if (lastPageFull) return { status: 'skipped_comment_limit' };
 
+  // PRs can receive new commits, close, or gain a review hold during comment
+  // pagination. Check the live PR again before posting any request.
+  const current = await api(`${ROOT}/pulls/${number}`);
+  if (!isEligiblePr(current, sha, head)) {
+    return { status: 'skipped_pr_changed' };
+  }
+
   const marker = `${MARKER_PREFIX}${sha} -->`;
   const body = `@codex review\n\n${marker}\nIndependent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
   await api(`${ROOT}/issues/${number}/comments`, {
