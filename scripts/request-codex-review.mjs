@@ -69,7 +69,9 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
       signal: AbortSignal.timeout(12000),
     });
     // Log only a fixed stage label and HTTP status, never response bodies or credentials.
-    if (!response.ok) throw Error(`github_request_failed_${stage}_${response.status}`);
+    if (!response.ok) {
+      throw Error(`github_request_failed_${stage}_${response.status}`);
+    }
     return response.json();
   };
 
@@ -97,7 +99,11 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   const comments = [];
   let lastPageFull = false;
   for (let page = 1; page <= 5; page++) {
-    const results = await api(`${ROOT}/issues/${number}/comments?per_page=100&page=${page}`, {}, 'comment_list');
+    const results = await api(
+      `${ROOT}/issues/${number}/comments?per_page=100&page=${page}`,
+      {},
+      'comment_list',
+    );
     if (!Array.isArray(results)) throw Error('invalid_comments_response');
     comments.push(...results);
     if (hasRequestForCommit(comments, sha)) {
@@ -117,10 +123,14 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
 
   const marker = `${MARKER_PREFIX}${sha} -->`;
   const body = `@codex review\n\n${marker}\nOwner-authorized independent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
-  await api(`${ROOT}/issues/${number}/comments`, {
-    method: 'POST',
-    body: JSON.stringify({ body }),
-  }, 'comment_post');
+  await api(
+    `${ROOT}/issues/${number}/comments`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ body }),
+    },
+    'comment_post',
+  );
   return { status: 'requested' };
 }
 
