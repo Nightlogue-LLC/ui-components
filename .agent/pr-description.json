@@ -1,12 +1,12 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-10/automatically-request-codex-review-after-verified-agent-pr-ci",
-  "problem": "Bot-authored Nightlogue PRs do not receive reliable independent Codex reviews because the Codex All PRs setting is unavailable, leaving GitHub reviews dependent on manual requests.",
-  "solution": "After successful agent branch CI and the trusted Conductor PR handoff, use the existing restricted GitHub App token to request @codex review on the exact tested PR commit. Reject incomplete PR descriptions and stale heads, and deduplicate review requests by commit SHA.",
+  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-11/smoke-test-nightlogue-conductors-automatic-codex-review-request",
+  "problem": "Verify Nightlogue Conductor automatically requests a Codex review on a bot-created draft PR after successful agent branch CI, without needing a human comment.",
+  "solution": "Add a temporary documentation-only smoke check branch. Inspect the trusted handoff's PR, bot-authored comment, Codex response and review completion. Close the PR without merging.",
   "tests": [
-    "Node test suite for PR identity, full-description eligibility, duplicate SHA requests, API rejection and trusted workflow scope",
-    "GitHub CI lint, Prettier, TypeScript, Vitest, package checks and Storybook must pass on the final commit",
-    "Manual @codex review on bot-authored draft PR #76 completed successfully; bot-authored comment still requires a real integration test"
+    "GitHub Actions full branch CI must complete successfully",
+    "Inspect automatically created GitHub App draft PR and match its exact CI commit",
+    "Verify the @codex review comment is authored by nightlogue-conductor[bot] and Codex responds"
   ],
-  "risks": "GitHub App-authored @codex review support is not yet proven. The App token has pull-request write permissions but the issue-comment endpoint must be verified. No automatic merge or production Claude dispatch is activated.",
-  "review": "Verify trusted main-only script execution, no checkout of agent-branch code with the token, exact CI SHA matching, no duplicate requests, and a clear review hold for incomplete metadata."
+  "risks": "Do not merge this documentation-only test. Codex may ignore requests authored by GitHub Apps; if so leave auto-review unverified and disable the faulty trigger rather than retrying repeatedly.",
+  "review": "Confirm the PR has the UICOMP-11 problem statement, one GitHub App-authored review request for the tested SHA, a Codex acknowledgment or receipt, and no automatic merge."
 }
