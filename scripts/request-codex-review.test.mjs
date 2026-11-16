@@ -174,7 +174,6 @@ test('App identity or another GitHub account cannot request the Codex review', a
   }
 });
 
-
 test('identity API failures report safe stage without exposing credentials', async () => {
   const fetchImpl = async () => ({ ok: false, status: 403 });
   await assert.rejects(
