@@ -1,12 +1,12 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-12/use-owner-authorized-codex-review-requests-for-bot-created-prs",
-  "problem": "Nightlogue Conductor posts bot-authored Codex review requests, but Codex does not acknowledge them. Owner-authored requests have completed successfully.",
-  "solution": "Separate PR creation through the GitHub App from Codex review requests using an owner-authorized fine-grained token. Validate the requester identity, skip when absent or incorrect, preserve exact CI SHA verification, and deduplicate owner-authored comments.",
+  "issue": "https://github.com/Nightlogue-LLC/ui-components/pull/79",
+  "problem": "Confirm the newly configured owner-authorized credential triggers an independent Codex review for a CI-verified, bot-created draft PR without any manual review comment.",
+  "solution": "Run a documentation-only smoke test of the owner-authorized review request. Verify the request is posted by shavonne-senpai, Codex responds with an actual review, and the test PR stays unmerged.",
   "tests": [
-    "CI unit tests for valid owner, wrong bot identity, missing token, duplicate commit, and changed PR head",
-    "Full CI checks for lint, formatting, types, tests, package and Storybook",
-    "Owner-token live review still needs a secure GitHub Actions secret and follow-up smoke test"
+    "Full branch CI must pass for the exact test commit",
+    "Confirm Nightlogue Conductor creates a draft PR and shavonne-senpai posts @codex review through the protected workflow",
+    "Check actual Codex review receipt, and close the temporary PR without merging"
   ],
-  "risks": "The owner must configure a fine-grained GitHub credential with issue comment permission. GitHub may require organization approval. This PR does not activate live Codex review without that token.",
-  "review": "Verify the reviewer token is distinct from the GitHub App key, only the approved GitHub identity can send review requests, missing token does not fail CI, and no automatic merge occurs."
+  "risks": "Temporary test branch only. Do not merge the resulting PR. A posted request does not establish review completion. Keep Claude execution disabled.",
+  "review": "Verify credential ownership, bot-created PR identity, request SHA marker, actual Codex review result, CI success, and no automatic merge."
 }
