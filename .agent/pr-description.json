@@ -1,12 +1,12 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-15/retry-codex-cleared-draft-pr-promotion-when-ci-finishes",
-  "problem": "PR #89 stayed draft after Codex cleared its exact commit. The readiness workflow ran before pull-request CI completed, logged ci_not_clear and had no immediate CI-completion retry; it relied on an hourly fallback.",
-  "solution": "Trigger the existing protected-main readiness workflow on successful completion of the same-repository CI workflow. Keep strict current SHA, two CI checks, Codex summary and receipt, Conductor authorship, and final PR recheck. The trusted workflow scans eligible Conductor drafts on CI completion and never executes branch code or merges.",
+  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-16/cap-automated-codex-review-cycles-by-severity-and-enforce-review-holds",
+  "problem": "The existing CI-triggered Codex request controller prevents repeated requests for one commit but has no cap across PR commits. Repeated implementation/review exchanges could continue indefinitely or keep chasing low-severity findings.",
+  "solution": "Add a deterministic per-PR review budget derived from owner-authored SHA-tagged request comments, bot-authored Codex review statuses and inline findings. Round zero is the initial review; allow five total repair reviews, P1 five, P2 three, P3 one, with two unchanged substantive repair outcomes triggering a review hold. Do not request Codex when prior receipt is pending. On terminal stop PATCH the PR body with **REVIEW HOLD:**; the existing readiness gate rejects held PRs. Extend agent policy and CI tests. No auto-merges.",
   "tests": [
-    "GitHub Actions CI on branch commit: lint, format, types, unit tests, build, package, Storybook",
-    "node --test scripts/review-gate-trigger.test.mjs verifies workflow_run CI completed, same-repository successful conclusion, protected main checkout, existing Codex comments and hourly fallback",
-    "Existing scripts/promote-reviewed-pr.test.mjs remains in CI for exact SHA, review and CI gates"
+    "Node review budget unit tests for initial round, P1/P2/P3 limits, no-progress, missing evidence, duplicate SHA and untrusted input",
+    "Codex request controller integration tests for P3 hold and no requests while prior review is pending",
+    "Full repository CI: lint, format, typecheck, unit tests, build, package check, Storybook"
   ],
-  "risks": "A CI completion event may invoke the gate even before Codex is done; this safely skips until the later Codex comment. Review status still must match current SHA; no automatic merge or approval. workflow_run retains restricted Conductor credentials and loads code only from protected main.",
-  "review": "Verify workflow_run only for CI success on same repository, no unreviewed checkout, existing CodeX and CI checks remain mandatory, recheck for current commit, and safe hourly fallback. Check PR #89 timeline where Codex passed before PR CI and inspect gate ci_not_clear logs."
+  "risks": "Codex inline severity is inferred only from its bot-authored [P1]/[P2]/[P3] annotations; missing/ambiguous priority gets P1-level budget. Identification of repeated findings uses a normalized file path and first-line title, so owner may review a false-positive repeat. Receipt and pagination failures deny retries; holds require owner intervention. Existing old request markers are counted, so budgets survive deployment.",
+  "review": "Check exact SHA matching, prior review completion/receipt checks, bot-only severity evidence, commit-independent counting, P1 five / P2 three / P3 one and global five repair ceilings, two unsuccessful repair-round cutoff, PR body review hold, no auto merge, and tests for unauthorized comments and incomplete reviews."
 }
