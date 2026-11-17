@@ -35,10 +35,7 @@ const summary = {
 };
 const receipt = {
   user: { login: 'chatgpt-codex-connector[bot]' },
-  body:
-    '<!-- codex-review-receipt:v1 -->\n' +
-    'Reviewed commit: ' +
-    sha.slice(0, 10),
+  body: '<!-- codex-review-receipt:v1 -->\n' + 'Reviewed commit: ' + sha.slice(0, 10),
 };
 const runs = ['push', 'pull_request'].map((event) => ({
   name: 'CI',
@@ -61,15 +58,38 @@ test('requires clean Codex summary and receipt for exact SHA', () => {
   assert.equal(cleanCodexReview([summary], sha), false);
   assert.equal(cleanCodexReview([summary, receipt], 'b'.repeat(40)), false);
   assert.equal(
-    cleanCodexReview([{ ...summary, body: summary.body.replace('"completed"', '"running"') }, receipt], sha),
+    cleanCodexReview(
+      [{ ...summary, body: summary.body.replace('"completed"', '"running"') }, receipt],
+      sha,
+    ),
     false,
   );
   assert.equal(
-    cleanCodexReview([{ ...summary, body: summary.body.replace('"has_any_findings":false', '"has_any_findings":true') }, receipt], sha),
+    cleanCodexReview(
+      [
+        {
+          ...summary,
+          body: summary.body.replace('"has_any_findings":false', '"has_any_findings":true'),
+        },
+        receipt,
+      ],
+      sha,
+    ),
     false,
   );
   assert.equal(
-    cleanCodexReview([summary, receipt, { ...summary, updated_at: '2026-11-16T23:59:00Z', body: summary.body.replace('"completed"', '"running"') }], sha),
+    cleanCodexReview(
+      [
+        summary,
+        receipt,
+        {
+          ...summary,
+          updated_at: '2026-11-16T23:59:00Z',
+          body: summary.body.replace('"completed"', '"running"'),
+        },
+      ],
+      sha,
+    ),
     false,
   );
 });
@@ -77,7 +97,13 @@ test('requires clean Codex summary and receipt for exact SHA', () => {
 test('requires successful push AND pull-request CI for the exact head', () => {
   assert.equal(successfulCi(runs, sha), true);
   assert.equal(successfulCi(runs.slice(0, 1), sha), false);
-  assert.equal(successfulCi([...runs, { ...runs[0], conclusion: 'failure', created_at: '2026-11-16T23:56:00Z' }], sha), false);
+  assert.equal(
+    successfulCi(
+      [...runs, { ...runs[0], conclusion: 'failure', created_at: '2026-11-16T23:56:00Z' }],
+      sha,
+    ),
+    false,
+  );
   assert.equal(successfulCi(runs, 'b'.repeat(40)), false);
 });
 
@@ -85,16 +111,19 @@ function fixture({ currentPr = pr, comments = [summary, receipt], ci = runs } = 
   const calls = [];
   const fetchImpl = async (url, init) => {
     calls.push({ url, method: init.method ?? 'GET', body: init.body });
-    const response =
-      url.includes('/issues/85/comments')
-        ? comments
-        : url.includes('/actions/runs?')
-          ? { total_count: ci.length, workflow_runs: ci }
-          : url === 'https://api.github.com/graphql'
-            ? { data: { markPullRequestReadyForReview: { pullRequest: { isDraft: false, headRefOid: sha } } } }
-            : url.endsWith('/pulls/85')
-              ? currentPr
-              : null;
+    const response = url.includes('/issues/85/comments')
+      ? comments
+      : url.includes('/actions/runs?')
+        ? { total_count: ci.length, workflow_runs: ci }
+        : url === 'https://api.github.com/graphql'
+          ? {
+              data: {
+                markPullRequestReadyForReview: { pullRequest: { isDraft: false, headRefOid: sha } },
+              },
+            }
+          : url.endsWith('/pulls/85')
+            ? currentPr
+            : null;
     return { ok: true, json: async () => response };
   };
   return { fetchImpl, calls };
@@ -121,7 +150,10 @@ test('a stale or failing review cannot transition PR to ready', async () => {
     fetchImpl: f.fetchImpl,
   });
   assert.equal(result.reason, 'pr_changed');
-  assert.equal(f.calls.some((c) => c.url === 'https://api.github.com/graphql'), false);
+  assert.equal(
+    f.calls.some((c) => c.url === 'https://api.github.com/graphql'),
+    false,
+  );
 });
 
 test('missing Codex completion never invokes a write', async () => {
@@ -133,5 +165,8 @@ test('missing Codex completion never invokes a write', async () => {
     fetchImpl: f.fetchImpl,
   });
   assert.equal(result.reason, 'codex_not_clear');
-  assert.equal(f.calls.some((c) => c.url === 'https://api.github.com/graphql'), false);
+  assert.equal(
+    f.calls.some((c) => c.url === 'https://api.github.com/graphql'),
+    false,
+  );
 });
