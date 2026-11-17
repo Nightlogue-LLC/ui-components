@@ -1,12 +1,12 @@
 {
-  "issue": "https://github.com/Nightlogue-LLC/ui-components/issues/81",
-  "problem": "Test whether the configured owner-authorized GitHub credential successfully initiates Codex review of a bot-created draft PR after successful CI.",
-  "solution": "Create a temporary documentation-only change on a branch based on current main, then inspect Conductor's PR handoff, request identity, safe API-stage diagnostics, and actual Codex review response.",
+  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-13/automate-codex-cleared-pr-readiness-and-linear-review-lifecycle",
+  "problem": "Conductor creates draft PRs and posts Codex requests, but after Codex finishes the PR stays in draft. Linear issues remain in implementation status until manually updated.",
+  "solution": "Add default-branch-only readiness gate that requires bot-authored draft, exact SHA clean Codex status and final receipt, and passing push plus pull-request CI before marking Ready for review. Add separate GitHub-event lifecycle sync for bot PR creation and owner merge, using a dedicated optional Linear write token. No automated approval or merging.",
   "tests": [
-    "Run full push CI against the exact branch commit",
-    "Verify Conductor opens a bot-authored draft with complete description, and confirm the owner token posts a review request",
-    "Verify Codex accepts and completes a review before closing the temporary PR without merging"
+    "Node unit tests for Codex receipt, stale SHA, failure paths, CI prerequisites and PR identity",
+    "Node unit tests for authenticated Linear issue/PR matching, no accidental Done on closed unmerged PR, and state transitions",
+    "Run repository CI: lint, formatting, TypeScript, tests, package checks and Storybook"
   ],
-  "risks": "Integration test only; do not merge this temporary PR. The token might still lack a required GitHub authorization. Claude execution and automatic merging remain off.",
-  "review": "Confirm that the author is Nightlogue Conductor, that the request originates from the verified owner identity, and that Codex produces an actual review response."
+  "risks": "Linear lifecycle transitions require a separately provisioned LINEAR_LIFECYCLE_API_KEY secret; absent key safely skips. Codex readiness gate uses a restricted GitHub App token and main-branch script. GitHub readyForReview mutation cannot atomically specify an expected SHA, so branch protection and live recheck remain mandatory. No merges occur.",
+  "review": "Review all token scopes, exact reviewed SHA and CI success checks, Codex latest summary and receipt, no unreviewed PR execution, correct Linear team/issue linkage, and no merge permissions. Verify that ready and Done never occur on failed checks or unmerged PRs."
 }
