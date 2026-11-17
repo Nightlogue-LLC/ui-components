@@ -253,6 +253,17 @@ describe('Explain guidance', () => {
     expect(onOpen).toHaveBeenCalledOnce();
   });
 
+  it('moves focus to Done when an open guidance view loses its focused lesson link', () => {
+    const { panel, button } = setup();
+    const lesson = { onOpen: vi.fn(), label: 'Learn: Full rows' };
+    panel.update({ ...ready, guidance: { ...guidance, lesson } });
+    const link = button('Learn: Full rows');
+    link.focus();
+    panel.update({ ...ready, guidance });
+    expect(link.hidden).toBe(true);
+    expect(document.activeElement).toBe(button('Done'));
+  });
+
   it('Done reports to the app; clearing guidance restores focus to Explain', () => {
     const { panel, button, callbacks } = setup();
     panel.update({ ...ready, guidance });

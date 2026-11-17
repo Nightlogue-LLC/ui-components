@@ -272,6 +272,13 @@ export function createAssistancePanel(options: AssistancePanelOptions): Assistan
         variant: 'ghost',
       });
       if (!wasShowing) guidanceTitle.focus({ preventScroll: true });
+      // Hiding a focused lesson link would drop keyboard focus; hand it to Done.
+      else if (
+        lesson.hidden &&
+        (document.activeElement === lesson ||
+          (focusWasInside && document.activeElement === document.body))
+      )
+        done.focus({ preventScroll: true });
     } else {
       lessonOpen = undefined;
       if (wasShowing && (focusWasInside || document.activeElement === document.body)) {

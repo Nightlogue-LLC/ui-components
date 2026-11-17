@@ -74,7 +74,7 @@ still being recorded) and the count the ledger reports. Never decrement locally.
 Supplying `guidance: { title, text, lesson? }` swaps the tier list for the guidance region and
 moves focus to its heading. `lesson` is only passed when a real Logic Library destination exists;
 without it no link renders. **Done** calls `onGuidanceDone`; when the app clears `guidance`, focus
-returns to the Explain button. If Explain is disabled at that moment, focus goes to another enabled tier, or to the panel section itself (`tabindex=-1`). Updates while guidance stays open do not move focus.
+returns to the Explain button. If Explain is disabled at that moment, focus goes to another enabled tier, or to the panel section itself (`tabindex=-1`). Updates while guidance stays open do not move focus, except that removing a focused lesson link moves focus to Done.
 
 ## Nudge cue
 
