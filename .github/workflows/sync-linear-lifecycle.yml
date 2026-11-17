@@ -1,0 +1,30 @@
+name: Sync Conductor PR lifecycle to Linear
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  linear:
+    if: ${{ github.event.pull_request.user.login == 'nightlogue-conductor[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out trusted lifecycle script
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/sync-linear-lifecycle.mjs
+
+      - name: Synchronize approved issue only
+        env:
+          LINEAR_LIFECYCLE_API_KEY: ${{ secrets.LINEAR_LIFECYCLE_API_KEY }}
+          PR_EVENT: ${{ github.event.action }}
+          PR_SNAPSHOT: ${{ toJSON(github.event.pull_request) }}
+        run: node scripts/sync-linear-lifecycle.mjs
