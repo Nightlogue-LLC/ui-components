@@ -3,6 +3,9 @@ name: Promote Codex-cleared Conductor PRs
 on:
   issue_comment:
     types: [created, edited]
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -16,9 +19,12 @@ permissions:
 jobs:
   promote:
     if: >-
-      ${{ github.event_name != 'issue_comment' ||
-          (github.event.issue.pull_request != null &&
-           github.event.comment.user.login == 'chatgpt-codex-connector[bot]') }}
+      ${{ (github.event_name != 'issue_comment' ||
+           (github.event.issue.pull_request != null &&
+            github.event.comment.user.login == 'chatgpt-codex-connector[bot]')) &&
+          (github.event_name != 'workflow_run' ||
+           (github.event.workflow_run.conclusion == 'success' &&
+            github.event.workflow_run.head_repository.full_name == 'Nightlogue-LLC/ui-components')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     concurrency:
