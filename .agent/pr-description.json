@@ -1,12 +1,11 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-16/cap-automated-codex-review-cycles-by-severity-and-enforce-review-holds",
-  "problem": "The existing CI-triggered Codex request controller prevents repeated requests for one commit but has no cap across PR commits. Repeated implementation/review exchanges could continue indefinitely or keep chasing low-severity findings.",
-  "solution": "Add a deterministic per-PR review budget derived from owner-authored SHA-tagged request comments, bot-authored Codex review statuses and inline findings. Round zero is the initial review; allow five total repair reviews, P1 five, P2 three, P3 one, with two unchanged substantive repair outcomes triggering a review hold. Do not request Codex when prior receipt is pending. On terminal stop PATCH the PR body with **REVIEW HOLD:**; the existing readiness gate rejects held PRs. Extend agent policy and CI tests. No auto-merges.",
+  "issue": "https://linear.app/nightlogue-llc/issue/SHAE-8/standardize-repository-agentsmd-onboarding-and-conductor-handoff",
+  "problem": "Existing UI Components agent guidance did not explain bot-authored manual handoff, strict branch matching for UICOMP lifecycle, per-PR stop gates, and explicit no-onboarding-by-docs rules.",
+  "solution": "Update AGENTS.md with the Shae-approved common Nightlogue engineering agent workflow contract and verified UI Components configuration, preserving component-specific rules. Clarify current UICOMP branch naming and separate external Claude routine instructions from repo AGENTS.md.",
   "tests": [
-    "Node review budget unit tests for initial round, P1/P2/P3 limits, no-progress, missing evidence, duplicate SHA and untrusted input",
-    "Codex request controller integration tests for P3 hold and no requests while prior review is pending",
-    "Full repository CI: lint, format, typecheck, unit tests, build, package check, Storybook"
+    "Documentation source reviewed against main-branch UI Components CI, Conductor workflow, Linear lifecycle script and review budget",
+    "Full repository CI will run automatically after branch push; no local tests claimed"
   ],
-  "risks": "Codex inline severity is inferred only from its bot-authored [P1]/[P2]/[P3] annotations; missing/ambiguous priority gets P1-level budget. Identification of repeated findings uses a normalized file path and first-line title, so owner may review a false-positive repeat. Receipt and pagination failures deny retries; holds require owner intervention. Existing old request markers are counted, so budgets survive deployment.",
-  "review": "Check exact SHA matching, prior review completion/receipt checks, bot-only severity evidence, commit-independent counting, P1 five / P2 three / P3 one and global five repair ceilings, two unsuccessful repair-round cutoff, PR body review hold, no auto merge, and tests for unauthorized comments and incomplete reviews."
+  "risks": "Documentation-only; no CI/security/dispatch changes. SHAE ticket branch is intentionally not an UICOMP issue branch, so automated UICOMP lifecycle sync does not apply. Current Claude session loading of AGENTS.md is unverified.",
+  "review": "Verify root AGENTS.md preserves API, accessibility, theme and consumer rules; document correct app PR authorship and UICOMP-only branch sync; no secrets or enabled-repo claims invented."
 }
