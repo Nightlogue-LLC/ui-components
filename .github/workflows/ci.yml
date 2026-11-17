@@ -45,6 +45,9 @@ jobs:
       - name: Review readiness and Linear lifecycle unit tests
         run: node --test scripts/promote-reviewed-pr.test.mjs scripts/sync-linear-lifecycle.test.mjs
 
+      - name: Review gate trigger regression tests
+        run: node --test scripts/review-gate-trigger.test.mjs
+
       - name: Build library
         run: npm run build
 
