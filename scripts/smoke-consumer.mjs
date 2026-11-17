@@ -96,6 +96,7 @@ import {
   createCompletionSheet, createCompletionSequence, COMPLETION_TIMING,
   createTarotGameplayHeader, createCluedBoard, updateCluedBoard,
   createGameControlRow, updateGameControlRow, createGameToolToggle, updateGameToolToggle, createGameplayMenuHeader, createGameMenuContent,
+  createAssistancePanel, showAssistanceCue, createAssistanceAnnouncer, type RevealPresentation,
   createMainScreen,
   updateMainScreen,
   createBoard,
@@ -111,6 +112,11 @@ menuContent.reset({size:15,difficulty:'hard'});
 menuContent.refresh();
 const unavailableMenu = createGameMenuContent({selection:{size:6,difficulty:'easy'},getAvailability:()=>({status:'ready'}),getSurpriseAvailability:()=>({status:'ready'}),onStart:()=>{},onSurprise:()=>{},onHowToPlay:()=>{},gameSettingsUnavailableMessage:'Not available yet'});
 void unavailableMenu;
+const exhausted: RevealPresentation = {status:'exhausted',freeTotal:3};
+const assistance = createAssistancePanel({nudge:{status:'ready'},explain:{status:'ready'},reveal:{status:'ready',allowance:{kind:'free',remaining:3,total:3}},onNudge:()=>{},onExplain:()=>{},onReveal:()=>{},onGuidanceDone:()=>{}});
+assistance.update({nudge:{status:'ready'},explain:{status:'ready'},reveal:exhausted,guidance:{title:'Full row',text:'Reasoning.'}});
+const cueCell = document.createElement('span'); showAssistanceCue({cell:cueCell,reducedMotion:true}).dispose();
+const announcer = createAssistanceAnnouncer(); announcer.clear();
 void compactHeader;
 const dailyPuzzle = createRitualDraw({enabled:true,puzzle:{title:'6 × 6 Trees & Tents',action:'Resume'},state:'in-progress',onOpenPuzzle:()=>{}});
 void dailyPuzzle;

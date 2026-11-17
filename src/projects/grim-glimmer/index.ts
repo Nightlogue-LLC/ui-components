@@ -123,3 +123,23 @@ export type {
   GameMenuSelection,
   GameMenuAvailability,
 } from './game-menu-content.js';
+
+export {
+  createAssistancePanel,
+  showAssistanceCue,
+  createAssistanceAnnouncer,
+  ASSISTANCE_DEFAULT_DESCRIPTIONS,
+} from './assistance-panel.js';
+export type {
+  AssistanceTier,
+  AssistanceTierAvailability,
+  ExplainGuidance,
+  RevealAllowance,
+  RevealPresentation,
+  AssistancePanelState,
+  AssistancePanelOptions,
+  AssistancePanel,
+  AssistanceCueOptions,
+  AssistanceCue,
+  AssistanceAnnouncer,
+} from './assistance-panel.js';

@@ -1,0 +1,113 @@
+/* Shared Nudge / Explain / Reveal presentation. Theme contract tokens only. */
+.nl-grim-glimmer-assistance {
+  color: var(--nl-color-text);
+  font-family: var(--nl-font-family);
+}
+/* Component display rules (grid, inline-flex buttons) must not override the hidden attribute. */
+.nl-grim-glimmer-assistance [hidden] {
+  display: none;
+}
+.nl-grim-glimmer-assistance__title {
+  margin: 0 0 12px;
+  font: 500 1.5rem/1.2 var(--nl-font-family-heading, var(--nl-font-family));
+}
+.nl-grim-glimmer-assistance__tiers {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nl-grim-glimmer-assistance__tier {
+  display: grid;
+  grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px 0;
+  border-top: 1px solid var(--nl-color-border);
+}
+.nl-grim-glimmer-assistance__tier:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+/* Reveal is a separate, counted tier: a stronger divider marks it apart from the free tiers. */
+.nl-grim-glimmer-assistance__tier[data-tier='reveal'] {
+  margin-top: 4px;
+  border-top-width: 2px;
+}
+.nl-grim-glimmer-assistance .nl-button.nl-grim-glimmer-assistance__action {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  margin: 0;
+}
+.nl-grim-glimmer-assistance__copy {
+  min-width: 0;
+}
+.nl-grim-glimmer-assistance__copy p,
+.nl-grim-glimmer-assistance__status {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.nl-grim-glimmer-assistance__description {
+  font: 400 0.875rem/1.45 var(--nl-font-family);
+}
+.nl-grim-glimmer-assistance__copy .nl-grim-glimmer-assistance__meta {
+  margin-top: 4px;
+  font: 600 0.75rem/1.4 var(--nl-font-family);
+  letter-spacing: 0.02em;
+}
+.nl-grim-glimmer-assistance__copy .nl-grim-glimmer-assistance__note {
+  margin-top: 4px;
+  font: italic 400 0.75rem/1.45 var(--nl-font-family);
+}
+.nl-grim-glimmer-assistance__status {
+  min-height: 1.4em;
+  margin-top: 8px;
+  font: 400 0.8125rem/1.4 var(--nl-font-family);
+}
+.nl-grim-glimmer-assistance[data-reveal='failure'] .nl-grim-glimmer-assistance__status::before {
+  content: '! ';
+  font-weight: 700;
+}
+.nl-grim-glimmer-assistance__guidance-title {
+  margin: 0 0 8px;
+  font: 600 1.125rem/1.3 var(--nl-font-family-heading, var(--nl-font-family));
+}
+.nl-grim-glimmer-assistance:focus-visible,
+.nl-grim-glimmer-assistance__guidance-title:focus-visible {
+  outline: var(--nl-focus-ring-width) solid var(--nl-color-focus-ring);
+  outline-offset: var(--nl-focus-ring-offset);
+}
+.nl-grim-glimmer-assistance:focus:not(:focus-visible),
+.nl-grim-glimmer-assistance__guidance-title:focus:not(:focus-visible) {
+  outline: none;
+}
+.nl-grim-glimmer-assistance__guidance-text {
+  margin: 0 0 16px;
+  max-width: 60ch;
+  font: 400 1rem/1.55 var(--nl-font-family);
+  overflow-wrap: anywhere;
+}
+.nl-grim-glimmer-assistance__guidance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.nl-grim-glimmer-assistance__guidance-actions .nl-button {
+  min-height: 48px;
+  margin: 0;
+}
+@media (max-width: 22.5rem) {
+  .nl-grim-glimmer-assistance__tier {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* Nudge cue: the approved V4 hint-circle (.gg-v4-hint) at the approved preview's resting opacity. */
+.nl-grim-glimmer-v4 .gg-v4-assistance-cue {
+  z-index: 1;
+  opacity: 0.75;
+}

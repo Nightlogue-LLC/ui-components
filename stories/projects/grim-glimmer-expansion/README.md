@@ -7,3 +7,5 @@ GameMenu consumes the supported `createGameMenuContent`, existing floating overl
 Owner revision 2026-11-13: mandatory size/difficulty selections; separate magic-wand Surprise Me action; neutral rotating shimmer matching New Game; 80/20 button row. This supersedes the first review's optional/random-filter behavior.
 
 Latest visual revision: title the overlay Game Menu; match Surprise Me to the neutral primary New Game button, with a softer neutral edge animation so it does not compete with selected options.
+
+Assistance consumes the supported `createAssistancePanel`, `showAssistanceCue` and `createAssistanceAnnouncer` with the existing control row, editorial bottom sheet and V4 board fixture (UI #67, UICOMP-5). Its target cell, reasoning text and Reveal ledger are labelled fixtures; no solver, real allowance or purchase product is represented.
