@@ -35,18 +35,13 @@ function mockApi({
     const method = options.method || 'GET';
     calls.push({ url, method, body: options.body });
     const status = method === 'POST' ? postStatus : 200;
-    const body =
-      url === 'https://api.github.com/user'
-        ? { login }
-        : url.includes('/pulls?')
-          ? pullRequests
-          : url.includes('/pulls/89/comments?')
-            ? inline
-            : url.includes('/comments?')
-              ? comments
-            : url.includes('/pulls/89')
-              ? currentPr
-              : { id: 123 };
+    let body;
+    if (url === 'https://api.github.com/user') body = { login };
+    else if (url.includes('/pulls?')) body = pullRequests;
+    else if (url.includes('/pulls/89/comments?')) body = inline;
+    else if (url.includes('/comments?')) body = comments;
+    else if (url.includes('/pulls/89')) body = currentPr;
+    else body = { id: 123 };
     return {
       ok: status >= 200 && status < 300,
       status,
