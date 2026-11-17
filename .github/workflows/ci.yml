@@ -40,7 +40,7 @@ jobs:
         run: npm test
 
       - name: Review automation unit tests
-        run: node --test scripts/request-codex-review.test.mjs
+        run: node --test scripts/request-codex-review.test.mjs scripts/review-budget.test.mjs
 
       - name: Review readiness and Linear lifecycle unit tests
         run: node --test scripts/promote-reviewed-pr.test.mjs scripts/sync-linear-lifecycle.test.mjs
