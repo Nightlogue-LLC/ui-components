@@ -30,9 +30,6 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Format diff diagnostic (temporary)
-        run: npx prettier AGENTS.md | diff -u AGENTS.md - || true
-
       - name: Formatting
         run: npm run format:check
 
