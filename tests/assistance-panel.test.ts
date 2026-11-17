@@ -4,6 +4,8 @@ import {
   createAssistanceAnnouncer,
   createBoard,
   updateBoard,
+  createCluedBoard,
+  updateCluedBoard,
   showAssistanceCue,
   createGameControlRow,
   type AssistancePanelState,
@@ -271,6 +273,27 @@ describe('Explain guidance', () => {
   });
 });
 
+describe('Explain focus fallback', () => {
+  const guidance = { title: 'Row is full', text: 'Reasoning.' };
+  it('falls back to another enabled tier when Explain is disabled as guidance closes', () => {
+    const { panel, button } = setup();
+    panel.update({ ...ready, guidance });
+    button('Done').focus();
+    panel.update({ ...ready, explain: { status: 'unavailable', message: 'No step.' } });
+    expect(button('Explain').disabled).toBe(true);
+    expect(document.activeElement).toBe(button('Nudge'));
+  });
+
+  it('falls back to the section when every tier is disabled', () => {
+    const { panel, button } = setup();
+    panel.update({ ...ready, guidance });
+    button('Done').focus();
+    panel.update({ ...ready, busy: true });
+    expect(document.activeElement).toBe(panel.element);
+    expect(panel.element.tabIndex).toBe(-1);
+  });
+});
+
 describe('Nudge cue', () => {
   function board() {
     const host = document.createElement('div');
@@ -384,5 +407,35 @@ describe('host-titled panel', () => {
     });
     expect(panel.element.querySelector('h2')).toBeNull();
     expect(panel.element.getAttribute('aria-label')).toBe('Hints');
+  });
+});
+
+describe('cue with clued-board feedback', () => {
+  it('survives an unchanged-cell updateCluedBoard while feedback rings still repaint', () => {
+    const host = document.createElement('div');
+    host.className = 'nl-grim-glimmer-v4';
+    const options = {
+      presentation: 'editorial' as const,
+      label: 'Test board',
+      size: 2,
+      mode: 'interactive' as const,
+      cells: ['empty', 'empty', 'empty', 'empty'] as const,
+      rowClues: [1, 0],
+      columnClues: [1, 0],
+    };
+    const shell = createCluedBoard({ ...options, cells: [...options.cells], hints: [0] });
+    host.append(shell);
+    document.body.append(host);
+    const grid = shell.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
+    const cell = grid.children[3] as HTMLElement;
+    const cue = showAssistanceCue({ cell, reducedMotion: true });
+    updateCluedBoard(shell, { cells: [...options.cells], hints: [1] });
+    expect(cell.querySelector('.gg-v4-assistance-cue')).toBe(cue.element);
+    expect(cell.dataset.assistanceCue).toBe('nudge');
+    // Feedback still owns and replaces its own rings.
+    expect(grid.children[0]!.querySelector('.gg-v4-hint')).toBeNull();
+    expect(grid.children[1]!.querySelector('.gg-v4-hint')).not.toBeNull();
+    cue.dispose();
+    expect(cell.querySelector('.gg-v4-hint')).toBeNull();
   });
 });

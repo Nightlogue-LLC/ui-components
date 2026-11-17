@@ -74,7 +74,7 @@ still being recorded) and the count the ledger reports. Never decrement locally.
 Supplying `guidance: { title, text, lesson? }` swaps the tier list for the guidance region and
 moves focus to its heading. `lesson` is only passed when a real Logic Library destination exists;
 without it no link renders. **Done** calls `onGuidanceDone`; when the app clears `guidance`, focus
-returns to the Explain button. Updates while guidance stays open do not move focus.
+returns to the Explain button. If Explain is disabled at that moment, focus goes to another enabled tier, or to the panel section itself (`tabindex=-1`). Updates while guidance stays open do not move focus.
 
 ## Nudge cue
 
@@ -92,7 +92,7 @@ announce the app's `AssistanceContent.announcement` (e.g. "Look at row 4, column
 messages are re-announced. Per the contract, focus stays on the originating control; the dialog
 returns focus to the Hint button when the sheet closes.
 
-The app decides when the cue ends (next move, next request, navigation) and calls `dispose()`.
+Clued-board feedback updates (`updateCluedBoard`) leave the cue in place; only `dispose()` removes it. The app decides when the cue ends (next move, next request, navigation) and calls `dispose()`.
 
 ## Accessibility summary
 

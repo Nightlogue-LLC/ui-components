@@ -99,7 +99,10 @@ export function paintBoardFeedback(
   const grid = root.querySelector<HTMLElement>('.nl-grim-glimmer-board')!;
   [...grid.children].forEach((cell, index) => {
     cell.classList.toggle('gg-v4-conflict', feedback.conflicts?.includes(index) ?? false);
-    cell.querySelectorAll('.gg-v4-hint').forEach((node) => node.remove());
+    // Feedback owns only its own rings; an assistance cue is disposed by its owner.
+    cell
+      .querySelectorAll('.gg-v4-hint:not(.gg-v4-assistance-cue)')
+      .forEach((node) => node.remove());
     if (feedback.hints?.includes(index)) {
       const ring = document.createElement('span');
       ring.className = 'gg-v4-hint';

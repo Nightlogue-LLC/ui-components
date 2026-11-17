@@ -118,6 +118,8 @@ export function createAssistancePanel(options: AssistancePanelOptions): Assistan
   const descriptions = { ...ASSISTANCE_DEFAULT_DESCRIPTIONS, ...options.descriptions };
   const root = document.createElement('section');
   root.className = 'nl-grim-glimmer-assistance';
+  // Programmatic focus fallback only; not in the Tab order.
+  root.tabIndex = -1;
   const heading = text('h2', 'nl-grim-glimmer-assistance__title', options.title ?? 'Hints');
   heading.id = uniqueId('nl-assistance-title');
   if (options.showTitle === false) root.setAttribute('aria-label', heading.textContent ?? 'Hints');
@@ -272,8 +274,13 @@ export function createAssistancePanel(options: AssistancePanelOptions): Assistan
       if (!wasShowing) guidanceTitle.focus({ preventScroll: true });
     } else {
       lessonOpen = undefined;
-      if (wasShowing && (focusWasInside || document.activeElement === document.body))
-        tiers[1]!.button.focus({ preventScroll: true });
+      if (wasShowing && (focusWasInside || document.activeElement === document.body)) {
+        // Prefer Explain; a disabled button cannot take focus, so fall back to another
+        // enabled tier, then to the section itself, so keyboard focus is never lost.
+        const target = [tiers[1]!, tiers[0]!, tiers[2]!].find(({ button }) => !button.disabled);
+        if (target) target.button.focus({ preventScroll: true });
+        else root.focus({ preventScroll: true });
+      }
     }
   }
   paint(options);
