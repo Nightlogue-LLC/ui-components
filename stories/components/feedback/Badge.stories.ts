@@ -13,6 +13,14 @@ const meta = {
       description: 'The text carries the meaning; tone only adds emphasis.',
     },
     tone: { control: 'inline-radio', options: [...BADGE_TONES] },
+    id: {
+      control: 'text',
+      description:
+        'Optional DOM id for the rendered `<span>`, so other elements can reference the badge (for example ' +
+        'with `aria-describedby`). Not required; leaving it empty renders no id attribute. It does not ' +
+        'change the label or tone.',
+      table: { type: { summary: 'string' } },
+    },
   },
   render: (args) => createBadge(args),
   parameters: {
@@ -27,6 +35,10 @@ import { createBadge } from '@nightlogue-llc/ui-components';
 
 row.append(createBadge({ label: 'Coming Soon', tone: 'muted' }));
 \`\`\`
+
+Pass the optional \`id\` when another element needs to point at the badge, such as a control whose
+\`aria-describedby\` refers to it. The id is only a DOM hook: omit it when nothing references the badge.
+\`updateBadge\` removes a previous id when \`id\` is omitted or empty.
 `,
       },
     },
@@ -68,4 +80,28 @@ export const LightDarkComparison: Story = {
         BADGE_TONES.map((tone) => createBadge({ label: tone, tone })),
       ),
     ),
+};
+
+/** Optional DOM id: a control references the badge with `aria-describedby`. */
+export const WithDomId: Story = {
+  render: () => {
+    const badge = createBadge({ label: 'Coming Soon', tone: 'muted', id: 'chapter-3-status' });
+    const button = el('button', { text: 'Chapter 3' });
+    button.type = 'button';
+    button.setAttribute('aria-describedby', badge.id);
+    return el('div', { className: 'sb-row' }, [
+      button,
+      badge,
+      el('code', { text: `<span id="${badge.id}">` }),
+    ]);
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The badge renders with `id="chapter-3-status"`, and the button names it in `aria-describedby`, so ' +
+          'assistive technology reads "Coming Soon" as the button\'s description. The id is optional.',
+      },
+    },
+  },
 };
