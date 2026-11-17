@@ -53,7 +53,10 @@ test('only exact linked issue and Conductor-authored PR are eligible', () => {
   assert.equal(identifyLinkedIssue(pr), 'UICOMP-13');
   assert.equal(identifyLinkedIssue({ ...pr, user: { login: 'other' } }), null);
   assert.equal(identifyLinkedIssue({ ...pr, body: pr.body + '**REVIEW HOLD:**' }), null);
-  assert.equal(identifyLinkedIssue({ ...pr, head: { ...pr.head, ref: 'agent/uicomp-12-other' } }), null);
+  assert.equal(
+    identifyLinkedIssue({ ...pr, head: { ...pr.head, ref: 'agent/uicomp-12-other' } }),
+    null,
+  );
   assert.equal(desiredState('opened', pr), 'In Review');
   assert.equal(desiredState('closed', { ...pr, merged: true, state: 'closed' }), 'Done');
   assert.equal(desiredState('closed', { ...pr, merged: false, state: 'closed' }), null);
@@ -75,12 +78,14 @@ test('moves authorized bot PR from In Progress to In Review', async () => {
 test('closed unmerged PR and missing token cause no mutation', async () => {
   const f = apiFixture();
   assert.equal(
-    (await syncLinearLifecycle({
-      event: 'closed',
-      pr: { ...pr, state: 'closed' },
-      token: 'test-token',
-      fetchImpl: f.fetchImpl,
-    })).reason,
+    (
+      await syncLinearLifecycle({
+        event: 'closed',
+        pr: { ...pr, state: 'closed' },
+        token: 'test-token',
+        fetchImpl: f.fetchImpl,
+      })
+    ).reason,
     'ineligible',
   );
   assert.equal(f.calls.length, 0);
