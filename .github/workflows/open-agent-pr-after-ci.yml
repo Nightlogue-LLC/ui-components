@@ -70,6 +70,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             scripts/request-codex-review.mjs
+            scripts/review-budget.mjs
 
       - name: Request Codex review of CI-tested agent PR
         run: node scripts/request-codex-review.mjs
