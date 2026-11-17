@@ -43,6 +43,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   const sha = env.PR_EXPECTED_HEAD_SHA;
   const head = env.PR_HEAD;
   const token = env.CODEX_REVIEW_REQUEST_TOKEN;
+  const appToken = env.NIGHTLOGUE_APP_TOKEN;
   // An absent owner-authorized credential is an expected setup state, not
   // a failed workflow or a claim that Codex has been requested.
   if (!token) return { status: 'skipped_requester_not_configured' };
@@ -57,11 +58,11 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     throw Error('codex_request_invalid_trusted_context');
   }
 
-  const api = async (url, options = {}, stage = 'unknown') => {
+  const api = async (url, options = {}, stage = 'unknown', credential = token) => {
     const response = await fetchImpl(url, {
       ...options,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${credential}`,
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
         'User-Agent': 'nightlogue-agent-relay',
@@ -139,13 +140,12 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     // The readiness gate rejects this hold. Confirm the current head first.
     const latest = await api(`${ROOT}/pulls/${number}`, {}, 'budget_hold_recheck');
     if (!isEligiblePr(latest, sha, head)) return { status: 'skipped_pr_changed' };
-    const reason = budget.severity
-      ? budget.reason + ', ' + budget.severity
-      : budget.reason;
+    const reason = budget.severity ? budget.reason + ', ' + budget.severity : budget.reason;
     const message =
       '**REVIEW HOLD:** automated Codex review budget stopped (' +
       reason +
       '). Owner must inspect remaining findings and authorize further work. No automatic merge.';
+    if (!appToken) throw Error('review_hold_app_token_not_configured');
     await api(
       `${ROOT}/pulls/${number}`,
       {
@@ -153,6 +153,7 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
         body: JSON.stringify({ body: latest.body + '\n\n' + message }),
       },
       'budget_hold',
+      appToken,
     );
     return { status: 'review_hold', reason: budget.reason };
   }
