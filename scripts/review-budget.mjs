@@ -129,11 +129,7 @@ export function checkReviewBudget({ comments, inline, sha }) {
         .sort()
         .join('\n'),
     );
-    if (
-      latestThree[0] &&
-      latestThree[0] === latestThree[1] &&
-      latestThree[1] === latestThree[2]
-    ) {
+    if (latestThree[0] && latestThree[0] === latestThree[1] && latestThree[1] === latestThree[2]) {
       return { allowed: false, reason: 'no_progress', severity };
     }
   }
