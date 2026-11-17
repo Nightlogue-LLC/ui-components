@@ -1,4 +1,5 @@
 import { pathToFileURL } from 'node:url';
+import { checkReviewBudget } from './review-budget.mjs';
 
 const OWNER = 'Nightlogue-LLC';
 const REPO = 'ui-components';
@@ -114,6 +115,35 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   }
   if (lastPageFull) return { status: 'skipped_comment_limit' };
 
+  // Codex inline comments are the only severity evidence. Pagination must be
+  // complete, or the request fails closed rather than resetting a PR budget.
+  const inline = [];
+  for (let page = 1; page <= 10; page++) {
+    const chunk = await api(
+      `${ROOT}/pulls/${number}/comments?per_page=100&page=${page}`,
+      {}, 'inline_comments',
+    );
+    if (!Array.isArray(chunk)) throw Error('invalid_inline_comments_response');
+    inline.push(...chunk);
+    if (chunk.length < 100) break;
+    if (page === 10) return { status: 'skipped_inline_limit' };
+  }
+  const budget = checkReviewBudget({ comments, inline, sha });
+  if (!budget.allowed) {
+    if (budget.reason === 'already_requested') return { status: 'already_requested' };
+    if (budget.reason === 'previous_review_pending')
+      return { status: 'skipped_previous_review_pending' };
+    // A terminal hold must update the PR body: readiness automation already
+    // rejects this explicit marker. Re-read head before changing metadata.
+    const latest = await api(`${ROOT}/pulls/${number}`, {}, 'budget_hold_recheck');
+    if (!isEligiblePr(latest, sha, head)) return { status: 'skipped_pr_changed' };
+    const message = `**REVIEW HOLD:** automated Codex review budget stopped (${budget.reason}${budget.severity ? ', '+budget.severity : ''}). Owner must inspect unresolved findings and authorize further work. No automatic merge.`;
+    await api(`${ROOT}/pulls/${number}`, {
+      method: 'PATCH', body: JSON.stringify({ body: latest.body + '\\n\\n' + message }),
+    }, 'budget_hold');
+    return { status: 'review_hold', reason: budget.reason };
+  }
+
   // PRs can receive new commits, close, or gain a review hold during comment
   // pagination. Check the live PR again before posting any request.
   const current = await api(`${ROOT}/pulls/${number}`, {}, 'pr_recheck');
@@ -122,7 +152,8 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   }
 
   const marker = `${MARKER_PREFIX}${sha} -->`;
-  const body = `@codex review\n\n${marker}\nOwner-authorized independent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
+  const budgetMarker = `<!-- nightlogue-review-budget:v1 ${JSON.stringify({round:budget.round,severity:budget.severity})} -->`;
+  const body = `@codex review\n\n${marker}\n${budgetMarker}\nOwner-authorized independent review requested after successful CI for the exact tested commit. Owner controls approval and merge.`;
   await api(
     `${ROOT}/issues/${number}/comments`,
     {
