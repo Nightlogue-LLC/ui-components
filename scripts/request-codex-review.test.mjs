@@ -26,6 +26,7 @@ function mockApi({
   pullRequests = [pr],
   currentPr = pr,
   comments = [],
+  inline = [],
   postStatus = 201,
   login = requester,
 } = {}) {
@@ -39,6 +40,8 @@ function mockApi({
         ? { login }
         : url.includes('/pulls?')
           ? pullRequests
+          : url.includes('/pulls/89/comments?')
+            ? inline
           : url.includes('/comments?')
             ? comments
             : url.includes('/pulls/89')
