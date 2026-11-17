@@ -109,6 +109,7 @@ test('requires successful push AND pull-request CI for the exact head', () => {
 
 function fixture({ currentPr = pr, comments = [summary, receipt], ci = runs } = {}) {
   const calls = [];
+  let prReads = 0;
   const fetchImpl = async (url, init) => {
     calls.push({ url, method: init.method ?? 'GET', body: init.body });
     const response = url.includes('/issues/85/comments')
@@ -122,7 +123,9 @@ function fixture({ currentPr = pr, comments = [summary, receipt], ci = runs } = 
               },
             }
           : url.endsWith('/pulls/85')
-            ? currentPr
+            ? ++prReads === 1
+              ? pr
+              : currentPr
             : null;
     return { ok: true, json: async () => response };
   };
