@@ -18,7 +18,8 @@ export function identifyLinkedIssue(pr) {
     typeof pr?.body !== 'string' ||
     !pr.body.includes('<!-- nightlogue-auto-pr -->') ||
     pr.body.includes('**REVIEW HOLD:**')
-  ) return null;
+  )
+    return null;
   const url = pr.body.match(
     /^## Issue\s*\n(https:\/\/linear\.app\/nightlogue-llc\/issue\/UICOMP-(\d+)\/[a-z0-9-]+)\s*$/m,
   );
@@ -39,12 +40,7 @@ export function desiredState(event, pr) {
   return null;
 }
 
-export async function syncLinearLifecycle({
-  event,
-  pr,
-  token,
-  fetchImpl = fetch,
-} = {}) {
+export async function syncLinearLifecycle({ event, pr, token, fetchImpl = fetch } = {}) {
   const issueId = identifyLinkedIssue(pr);
   const target = desiredState(event, pr);
   const skip = (reason) => ({ status: 'skipped', reason });
@@ -76,12 +72,11 @@ export async function syncLinearLifecycle({
     issue.archivedAt != null ||
     issue.labels?.pageInfo?.hasNextPage !== false ||
     !issue.labels?.nodes?.some((label) => label.name === 'agent-ok')
-  ) return skip('issue_not_authorized');
+  )
+    return skip('issue_not_authorized');
   if (issue.state?.id === STATES[target]) return skip('already_synced');
-  if (
-    target === 'In Review' &&
-    !['backlog', 'unstarted', 'started'].includes(issue.state?.type)
-  ) return skip('status_not_eligible');
+  if (target === 'In Review' && !['backlog', 'unstarted', 'started'].includes(issue.state?.type))
+    return skip('status_not_eligible');
   if (target === 'Done' && issue.state?.name !== 'In Review') {
     return skip('not_in_review');
   }
@@ -93,7 +88,8 @@ export async function syncLinearLifecycle({
     updated.issueUpdate?.success !== true ||
     updated.issueUpdate?.issue?.id !== issue.id ||
     updated.issueUpdate?.issue?.state?.id !== STATES[target]
-  ) throw Error('linear_transition_unconfirmed');
+  )
+    throw Error('linear_transition_unconfirmed');
   return { status: 'updated', issue: issueId, state: target };
 }
 
@@ -104,7 +100,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     pr,
     token: process.env.LINEAR_LIFECYCLE_API_KEY,
   })
-    .then((result) => console.log('linear_lifecycle', result.status, result.reason ?? result.state ?? ''))
+    .then((result) =>
+      console.log('linear_lifecycle', result.status, result.reason ?? result.state ?? ''),
+    )
     .catch((error) => {
       console.error('linear_lifecycle_failed', error.message);
       process.exitCode = 1;
