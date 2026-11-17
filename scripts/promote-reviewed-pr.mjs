@@ -48,14 +48,16 @@ export function cleanCodexReview(comments, sha) {
     review.status !== 'completed' ||
     review.has_any_findings !== false ||
     review.has_unresolved_findings !== false
-  ) return false;
+  )
+    return false;
   if (
     security?.status != null &&
     (security.status !== 'completed' ||
       security.commit_sha !== sha ||
       security.has_any_findings !== false ||
       security.has_unresolved_findings !== false)
-  ) return false;
+  )
+    return false;
   // The status summary alone is insufficient; require the independent final receipt.
   return comments.some(
     (c) =>
@@ -81,12 +83,7 @@ export function successfulCi(runs, sha) {
   return true;
 }
 
-export async function promoteReviewedPr({
-  number,
-  readToken,
-  appToken,
-  fetchImpl = fetch,
-} = {}) {
+export async function promoteReviewedPr({ number, readToken, appToken, fetchImpl = fetch } = {}) {
   const skip = (reason) => ({ status: 'skipped', reason });
   if (!Number.isSafeInteger(number) || number < 1 || !readToken || !appToken) {
     return skip('not_configured');
@@ -124,10 +121,7 @@ export async function promoteReviewedPr({
   }
   if (!cleanCodexReview(comments, sha)) return skip('codex_not_clear');
 
-  const result = await api(
-    API + '/actions/runs?head_sha=' + sha + '&per_page=100',
-    readToken,
-  );
+  const result = await api(API + '/actions/runs?head_sha=' + sha + '&per_page=100', readToken);
   if (result.total_count > 100 || !successfulCi(result.workflow_runs, sha)) {
     return skip('ci_not_clear');
   }
@@ -139,7 +133,8 @@ export async function promoteReviewedPr({
     return skip('pr_changed');
   }
 
-  const mutation = 'mutation($id:ID!){ markPullRequestReadyForReview(input:{pullRequestId:$id}) { pullRequest { id isDraft headRefOid } } }';
+  const mutation =
+    'mutation($id:ID!){ markPullRequestReadyForReview(input:{pullRequestId:$id}) { pullRequest { id isDraft headRefOid } } }';
   const updated = await api('https://api.github.com/graphql', appToken, {
     method: 'POST',
     body: JSON.stringify({ query: mutation, variables: { id: pr.node_id } }),
@@ -148,7 +143,8 @@ export async function promoteReviewedPr({
     updated.errors?.length ||
     updated.data?.markPullRequestReadyForReview?.pullRequest?.isDraft !== false ||
     updated.data?.markPullRequestReadyForReview?.pullRequest?.headRefOid !== sha
-  ) throw Error('ready_transition_unconfirmed');
+  )
+    throw Error('ready_transition_unconfirmed');
   return { status: 'ready', number };
 }
 
