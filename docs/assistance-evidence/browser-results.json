@@ -1,0 +1,122 @@
+[
+  {
+    "label": "sheet-light-360",
+    "story": "open",
+    "width": 360,
+    "mode": "light",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "sheet-dark-360",
+    "story": "open",
+    "width": 360,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "sheet-light-390",
+    "story": "open",
+    "width": 390,
+    "mode": "light",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "sheet-dark-390",
+    "story": "open",
+    "width": 390,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "cue-light-390",
+    "story": "nudge-cue-pulse",
+    "width": 390,
+    "mode": "light",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 0,
+    "cueRunningAnimations": 1,
+    "cueOpacity": "0.448288",
+    "axeViolations": []
+  },
+  {
+    "label": "cue-dark-390",
+    "story": "nudge-cue-pulse",
+    "width": 390,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 0,
+    "cueRunningAnimations": 1,
+    "cueOpacity": "0.44834",
+    "axeViolations": []
+  },
+  {
+    "label": "cue-reduced-dark-360",
+    "story": "nudge-cue-reduced-motion",
+    "width": 360,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 0,
+    "cueRunningAnimations": 0,
+    "cueOpacity": "0.75",
+    "axeViolations": []
+  },
+  {
+    "label": "explain-dark-360",
+    "story": "open",
+    "width": 360,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 1,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "exhausted-light-360",
+    "story": "reveal-exhausted",
+    "width": 360,
+    "mode": "light",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  },
+  {
+    "label": "failure-dark-390",
+    "story": "reveal-failure",
+    "width": 390,
+    "mode": "dark",
+    "horizontalOverflow": false,
+    "smallTargets": [],
+    "targetCount": 3,
+    "cueRunningAnimations": null,
+    "cueOpacity": null,
+    "axeViolations": []
+  }
+]

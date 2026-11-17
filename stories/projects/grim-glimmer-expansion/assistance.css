@@ -1,0 +1,17 @@
+/* Story-only gallery layout. Component styles come from the project CSS entry. */
+.gg-assistance-states {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+  padding: 16px;
+  background: var(--nl-color-bg);
+}
+.gg-assistance-states__card {
+  padding: 16px;
+  border: 1px solid var(--nl-color-border);
+  border-radius: var(--nl-radius-md);
+  background: var(--nl-color-surface);
+}
+.gg-assistance-states .nl-grim-glimmer-assistance__title {
+  font-size: 1rem;
+}
