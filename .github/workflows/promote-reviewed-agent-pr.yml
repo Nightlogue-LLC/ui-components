@@ -1,0 +1,65 @@
+name: Promote Codex-cleared Conductor PRs
+
+on:
+  issue_comment:
+    types: [created, edited]
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  promote:
+    if: >-
+      ${{ github.event_name != 'issue_comment' ||
+          (github.event.issue.pull_request != null &&
+           github.event.comment.user.login == 'chatgpt-codex-connector[bot]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: nightlogue-review-ready
+      cancel-in-progress: false
+    steps:
+      - name: Mint restricted Conductor token for ready-for-review mutation
+        id: conductor
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.NIGHTLOGUE_APP_ID }}
+          private-key: ${{ secrets.NIGHTLOGUE_APP_PRIVATE_KEY }}
+          owner: Nightlogue-LLC
+          repositories: ui-components
+          permission-contents: read
+          permission-pull-requests: write
+
+      - name: Check out trusted default-branch gate only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/promote-reviewed-pr.mjs
+
+      - name: Promote eligible Codex-cleared PRs
+        shell: bash
+        env:
+          GITHUB_READ_TOKEN: ${{ github.token }}
+          NIGHTLOGUE_APP_TOKEN: ${{ steps.conductor.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "issue_comment" ]]; then
+            PR_NUMBER="$EVENT_PR_NUMBER" node scripts/promote-reviewed-pr.mjs
+          else
+            gh api 'repos/Nightlogue-LLC/ui-components/pulls?state=open&per_page=100' \
+              --jq '.[] | select(.draft == true and .user.login == "nightlogue-conductor[bot]") | .number' \
+              | while read -r pr_number; do
+                  PR_NUMBER="$pr_number" node scripts/promote-reviewed-pr.mjs
+                done
+          fi
