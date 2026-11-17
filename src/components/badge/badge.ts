@@ -6,6 +6,8 @@ export interface BadgeProps {
   label: string;
   /** Defaults to 'neutral'. */
   tone?: BadgeTone;
+  /** Optional DOM id. Omitting it (or passing an empty string) removes any previous id. */
+  id?: string;
 }
 
 /** Creates a compact, non-interactive status label. Do not put interactive elements inside it. */
@@ -18,7 +20,9 @@ export function createBadge(props: BadgeProps): HTMLSpanElement {
 
 /** Applies the full props to a badge made by `createBadge`. */
 export function updateBadge(badge: HTMLElement, props: BadgeProps): void {
-  const { label, tone = 'neutral' } = props;
+  const { label, tone = 'neutral', id } = props;
   for (const t of BADGE_TONES) badge.classList.toggle(`nl-badge--${t}`, t === tone);
   badge.textContent = label;
+  if (id) badge.id = id;
+  else badge.removeAttribute('id');
 }

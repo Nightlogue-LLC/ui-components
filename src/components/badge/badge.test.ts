@@ -34,4 +34,36 @@ describe('badge', () => {
     expect(badge.classList.contains('nl-badge--muted')).toBe(true);
     expect(badge.classList.contains('nl-badge--accent')).toBe(false);
   });
+
+  it('has no id attribute by default', () => {
+    expect(createBadge({ label: 'Play' }).hasAttribute('id')).toBe(false);
+  });
+
+  it('sets a supplied id without changing label or tone', () => {
+    const badge = createBadge({ label: 'Play', tone: 'accent', id: 'play-badge' });
+    expect(badge.id).toBe('play-badge');
+    expect(badge.getAttribute('id')).toBe('play-badge');
+    expect(badge.textContent).toBe('Play');
+    expect(badge.classList.contains('nl-badge--accent')).toBe(true);
+  });
+
+  it('changes the id on update', () => {
+    const badge = createBadge({ label: 'Play', id: 'first' });
+    updateBadge(badge, { label: 'Play', id: 'second' });
+    expect(badge.getAttribute('id')).toBe('second');
+  });
+
+  it('removes a previously set id when update omits it', () => {
+    const badge = createBadge({ label: 'Play', id: 'stale' });
+    updateBadge(badge, { label: 'Continue', tone: 'muted' });
+    expect(badge.hasAttribute('id')).toBe(false);
+    expect(badge.textContent).toBe('Continue');
+    expect(badge.classList.contains('nl-badge--muted')).toBe(true);
+  });
+
+  it('removes the id when update passes an empty string', () => {
+    const badge = createBadge({ label: 'Play', id: 'stale' });
+    updateBadge(badge, { label: 'Play', id: '' });
+    expect(badge.hasAttribute('id')).toBe(false);
+  });
 });
