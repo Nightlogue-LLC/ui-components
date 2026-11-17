@@ -20,12 +20,14 @@ const env = {
   PR_EXPECTED_HEAD_SHA: sha,
   PR_HEAD: head,
   CODEX_REVIEW_REQUEST_TOKEN: 'test-owner-token-redacted',
+  NIGHTLOGUE_APP_TOKEN: 'test-restricted-app-token',
 };
 
 function mockApi({
   pullRequests = [pr],
   currentPr = pr,
   comments = [],
+  inline = [],
   postStatus = 201,
   login = requester,
 } = {}) {
@@ -34,16 +36,13 @@ function mockApi({
     const method = options.method || 'GET';
     calls.push({ url, method, body: options.body });
     const status = method === 'POST' ? postStatus : 200;
-    const body =
-      url === 'https://api.github.com/user'
-        ? { login }
-        : url.includes('/pulls?')
-          ? pullRequests
-          : url.includes('/comments?')
-            ? comments
-            : url.includes('/pulls/89')
-              ? currentPr
-              : { id: 123 };
+    let body;
+    if (url === 'https://api.github.com/user') body = { login };
+    else if (url.includes('/pulls?')) body = pullRequests;
+    else if (url.includes('/pulls/89/comments?')) body = inline;
+    else if (url.includes('/comments?')) body = comments;
+    else if (url.includes('/pulls/89')) body = currentPr;
+    else body = { id: 123 };
     return {
       ok: status >= 200 && status < 300,
       status,
@@ -180,4 +179,66 @@ test('identity API failures report safe stage without exposing credentials', asy
     requestCodexReview({ env, fetchImpl }),
     /github_request_failed_identity_403/,
   );
+});
+
+test('P3 budget exhaustion holds PR without requesting Codex again', async () => {
+  const past = ['b'.repeat(40), 'c'.repeat(40)];
+  const comments = [];
+  const inline = [];
+  for (let i = 0; i < past.length; i++) {
+    const commit = past[i];
+    comments.push({
+      user: { login: requester },
+      created_at: '2026-11-16T23:55:0' + i + 'Z',
+      body: '@codex review\n<!-- nightlogue-codex-request:' + commit + ' -->',
+    });
+    comments.push({
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      updated_at: '2026-11-16T23:57:0' + i + 'Z',
+      body:
+        '<!-- codex-review-state:v1 ' +
+        JSON.stringify({
+          code_review: {
+            commit_sha: commit,
+            status: 'completed',
+            has_any_findings: true,
+            has_unresolved_findings: true,
+          },
+        }) +
+        ' -->',
+    });
+    comments.push({
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      body: '<!-- codex-review-receipt:v1 --> Reviewed commit: ' + commit.slice(0, 10),
+    });
+    inline.push({
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      commit_id: commit,
+      path: 'src/badge.ts',
+      body: '[P3] Minor clarity issue',
+    });
+  }
+  const api = mockApi({ comments, inline });
+  const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+  assert.deepEqual(result, { status: 'review_hold', reason: 'severity_limit' });
+  const writes = api.calls.filter((call) => ['POST', 'PATCH'].includes(call.method));
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].method, 'PATCH');
+  assert.match(JSON.parse(writes[0].body).body, /\*\*REVIEW HOLD:\*\*/);
+});
+
+test('unfinished previous Codex review never starts another request', async () => {
+  const api = mockApi({
+    comments: [
+      {
+        user: { login: requester },
+        created_at: '2026-11-16T23:55:00Z',
+        body: '@codex review\n<!-- nightlogue-codex-request:' + 'b'.repeat(40) + ' -->',
+      },
+    ],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'skipped_previous_review_pending',
+  });
+  assert.equal(api.calls.filter((call) => call.method === 'POST').length, 0);
 });

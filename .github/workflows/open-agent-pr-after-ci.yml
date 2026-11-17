@@ -70,6 +70,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             scripts/request-codex-review.mjs
+            scripts/review-budget.mjs
 
       - name: Request Codex review of CI-tested agent PR
         run: node scripts/request-codex-review.mjs
@@ -81,3 +82,4 @@ jobs:
           # Owner-authorized token posts review request. App-authored comments
           # do not initiate Codex in the verified smoke test.
           CODEX_REVIEW_REQUEST_TOKEN: ${{ secrets.CODEX_REVIEW_REQUEST_TOKEN }}
+          NIGHTLOGUE_APP_TOKEN: ${{ steps.app.outputs.token }}

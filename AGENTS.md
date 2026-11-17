@@ -56,3 +56,21 @@ accessibility, or compatibility defects with locations and consequences;
 leave formatting and mechanical checks to CI.
 
 Independent Codex review does not replace owner approval and merge.
+
+## Review-cycle budget
+
+- The protected-main `scripts/request-codex-review.mjs` gate decides whether
+  another independent Codex request is allowed. Do not bypass its decision by
+  posting `@codex review` directly from an implementation session.
+- The initial Codex review is round zero. Across all commits on one PR,
+  allow at most five repair-review rounds total: P1 up to five, P2 up to
+  three, P3 up to one. Mixed findings use the highest severity.
+- Two consecutive repair revisions with unchanged, identifiable substantive
+  Codex findings require an owner review hold. Unclassified findings receive
+  P1-level budget treatment; review evidence must come from the Codex bot.
+- If the budget is exhausted, do not push another review-triggering repair.
+  The protected gate marks `**REVIEW HOLD:**` in the PR body. Ask the owner
+  to decide on further implementation or follow-up issues. A new SHA never
+  resets the PR counter, and no automation may merge a held PR.
+- Treat a missing or unfinished prior Codex review as pending rather than
+  requesting another review or asserting it passed.
