@@ -27,6 +27,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Collect formatted source (temporary diagnostic)
+        run: |
+          npx prettier --write scripts/promote-reviewed-pr.mjs scripts/promote-reviewed-pr.test.mjs scripts/sync-linear-lifecycle.mjs scripts/sync-linear-lifecycle.test.mjs
+          node -e "const fs=require('node:fs');for(const path of ['scripts/promote-reviewed-pr.mjs','scripts/promote-reviewed-pr.test.mjs','scripts/sync-linear-lifecycle.mjs','scripts/sync-linear-lifecycle.test.mjs'])console.log('FORMATTED_SOURCE:'+JSON.stringify({path,content:fs.readFileSync(path,'utf8')}))"
+          exit 1
+
       - name: Lint
         run: npm run lint
 
