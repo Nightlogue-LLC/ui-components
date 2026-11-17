@@ -42,6 +42,9 @@ jobs:
       - name: Review automation unit tests
         run: node --test scripts/request-codex-review.test.mjs
 
+      - name: Review readiness and Linear lifecycle unit tests
+        run: node --test scripts/promote-reviewed-pr.test.mjs scripts/sync-linear-lifecycle.test.mjs
+
       - name: Build library
         run: npm run build
 
