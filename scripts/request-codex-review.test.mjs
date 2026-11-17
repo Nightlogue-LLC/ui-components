@@ -42,8 +42,8 @@ function mockApi({
           ? pullRequests
           : url.includes('/pulls/89/comments?')
             ? inline
-          : url.includes('/comments?')
-            ? comments
+            : url.includes('/comments?')
+              ? comments
             : url.includes('/pulls/89')
               ? currentPr
               : { id: 123 };
@@ -185,43 +185,64 @@ test('identity API failures report safe stage without exposing credentials', asy
   );
 });
 
-test('P3 budget exhaustion updates PR review hold without requesting Codex', async () => {
-  const shas=['b'.repeat(40),'c'.repeat(40)];
-  const comments=[];
-  const inline=[];
-  for (let i=0;i<2;i++){
+test('P3 budget exhaustion holds PR without requesting Codex again', async () => {
+  const past = ['b'.repeat(40), 'c'.repeat(40)];
+  const comments = [];
+  const inline = [];
+  for (let i = 0; i < past.length; i++) {
+    const commit = past[i];
     comments.push({
-      user:{login:requester},created_at:`2026-11-16T23:55:0${i}Z`,
-      body:`@codex review\n<!-- nightlogue-codex-request:${shas[i]} -->`,
+      user: { login: requester },
+      created_at: '2026-11-16T23:55:0' + i + 'Z',
+      body: '@codex review\n<!-- nightlogue-codex-request:' + commit + ' -->',
     });
     comments.push({
-      user:{login:'chatgpt-codex-connector[bot]'},updated_at:`2026-11-16T23:57:0${i}Z`,
-      body:'<!-- codex-review-state:v1 '+JSON.stringify({code_review:{
-        commit_sha:shas[i],status:'completed',has_any_findings:true,has_unresolved_findings:true,
-      }})+' -->',
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      updated_at: '2026-11-16T23:57:0' + i + 'Z',
+      body:
+        '<!-- codex-review-state:v1 ' +
+        JSON.stringify({
+          code_review: {
+            commit_sha: commit,
+            status: 'completed',
+            has_any_findings: true,
+            has_unresolved_findings: true,
+          },
+        }) +
+        ' -->',
     });
     comments.push({
-      user:{login:'chatgpt-codex-connector[bot]'},
-      body:`<!-- codex-review-receipt:v1 --> Reviewed commit: ${shas[i].slice(0,10)}`,
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      body: '<!-- codex-review-receipt:v1 --> Reviewed commit: ' + commit.slice(0, 10),
     });
-    inline.push({user:{login:'chatgpt-codex-connector[bot]'},commit_id:shas[i],
-      path:'src/badge.ts',body:'[P3] Minor clarity issue'});
+    inline.push({
+      user: { login: 'chatgpt-codex-connector[bot]' },
+      commit_id: commit,
+      path: 'src/badge.ts',
+      body: '[P3] Minor clarity issue',
+    });
   }
-  const api=mockApi({comments,inline});
-  const result=await requestCodexReview({env,fetchImpl:api.fetchImpl});
-  assert.deepEqual(result,{status:'review_hold',reason:'severity_limit'});
-  const writes=api.calls.filter(c=>c.method==='POST'||c.method==='PATCH');
-  assert.equal(writes.length,1);
-  assert.equal(writes[0].method,'PATCH');
-  assert.match(JSON.parse(writes[0].body).body,/\*\*REVIEW HOLD:\*\*/);
+  const api = mockApi({ comments, inline });
+  const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+  assert.deepEqual(result, { status: 'review_hold', reason: 'severity_limit' });
+  const writes = api.calls.filter((call) => ['POST', 'PATCH'].includes(call.method));
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].method, 'PATCH');
+  assert.match(JSON.parse(writes[0].body).body, /\*\*REVIEW HOLD:\*\*/);
 });
 
-test('an incomplete previous Codex review does not trigger a second one',async()=>{
-  const api=mockApi({comments:[{
-    user:{login:requester},created_at:'2026-11-16T23:55:00Z',
-    body:`@codex review\n<!-- nightlogue-codex-request:${'b'.repeat(40)} -->`,
-  }]});
-  assert.deepEqual(await requestCodexReview({env,fetchImpl:api.fetchImpl}),
-    {status:'skipped_previous_review_pending'});
-  assert.equal(api.calls.filter(c=>c.method==='POST').length,0);
+test('unfinished previous Codex review never starts another request', async () => {
+  const api = mockApi({
+    comments: [
+      {
+        user: { login: requester },
+        created_at: '2026-11-16T23:55:00Z',
+        body: '@codex review\n<!-- nightlogue-codex-request:' + 'b'.repeat(40) + ' -->',
+      },
+    ],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'skipped_previous_review_pending',
+  });
+  assert.equal(api.calls.filter((call) => call.method === 'POST').length, 0);
 });
