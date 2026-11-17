@@ -20,6 +20,7 @@ const env = {
   PR_EXPECTED_HEAD_SHA: sha,
   PR_HEAD: head,
   CODEX_REVIEW_REQUEST_TOKEN: 'test-owner-token-redacted',
+  NIGHTLOGUE_APP_TOKEN: 'test-restricted-app-token',
 };
 
 function mockApi({
