@@ -493,3 +493,152 @@ test('duplicate events for the same commit never post a second request', async (
   });
   assert.equal(posts(api).length, 0);
 });
+
+// SHAE-13 severity parsing, end to end through the real request script: a P0 in
+// any form must stop for the owner (REVIEW HOLD) and never produce another
+// `@codex review`. Codex's rendered badge used to read as P1 and be re-requested.
+const badge = (level, title = 'Critical') =>
+  '**<sub><sub>![' +
+  level +
+  ' Badge](https://img.shields.io/badge/' +
+  level +
+  '-red?style=flat)</sub></sub>  ' +
+  title +
+  '**';
+const p0Forms = {
+  'rendered badge': badge('P0'),
+  'literal marker': '[P0] Critical',
+  'bold literal marker': '**[P0] Critical**',
+  'badge beside a conflicting lower literal marker': badge('P3') + ' [P0]',
+  'badge alt P3 but image P0': '![P3 Badge](https://img.shields.io/badge/P0-red) Critical',
+  'P0 found after lower findings': badge('P0'),
+  'P0 marker on a later line': 'Needs attention\n\n[P0] Critical',
+};
+const holdPatches = (api) => api.calls.filter((call) => call.method === 'PATCH');
+
+test('SHAE-13: a P0 in any form holds the PR for the owner and requests nothing', async () => {
+  for (const [name, body] of Object.entries(p0Forms)) {
+    for (const via of ['issue-comment receipt', 'PR-review receipt']) {
+      const comments = [requestComment(priorCommit), stateComment(priorCommit)];
+      if (via === 'issue-comment receipt') comments.push(receiptComment(priorCommit));
+      const inline = [{ ...findingComment(priorCommit, '[P3] minor'), path: 'src/other.ts' }];
+      inline.push(findingComment(priorCommit, body));
+      const api = mockApi({
+        comments,
+        inline,
+        reviews: via === 'PR-review receipt' ? [receiptReview(priorCommit)] : [],
+      });
+      const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
+      assert.deepEqual(
+        result,
+        { status: 'review_hold', reason: 'critical_finding' },
+        name + ' / ' + via,
+      );
+      assert.equal(posts(api).length, 0, name + ' / ' + via);
+      assert.equal(holdPatches(api).length, 1, name + ' / ' + via);
+      assert.match(
+        JSON.parse(holdPatches(api)[0].body).body,
+        /\*\*REVIEW HOLD:\*\*.*critical_finding, P0/s,
+      );
+    }
+  }
+});
+
+test('SHAE-13: a P0 hold needs the App token and otherwise stops loudly without a request', async () => {
+  const api = mockApi({
+    comments: [requestComment(priorCommit), stateComment(priorCommit), receiptComment(priorCommit)],
+    inline: [findingComment(priorCommit, badge('P0'))],
+  });
+  await assert.rejects(
+    requestCodexReview({
+      env: { ...env, NIGHTLOGUE_APP_TOKEN: undefined },
+      fetchImpl: api.fetchImpl,
+    }),
+    /review_hold_app_token_not_configured/,
+  );
+  assert.equal(posts(api).length, 0);
+});
+
+test('SHAE-13: a held PR (REVIEW HOLD in its body) is never requested again, P0 or not', async () => {
+  const held = { ...pr, body: pr.body + '\n\n**REVIEW HOLD:** critical_finding, P0' };
+  const api = mockApi({
+    pullRequests: [held],
+    currentPr: held,
+    comments: [requestComment(priorCommit), stateComment(priorCommit), receiptComment(priorCommit)],
+    inline: [findingComment(priorCommit, badge('P0'))],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'skipped_ineligible_pr',
+  });
+  assert.equal(posts(api).length + holdPatches(api).length, 0);
+});
+
+test('SHAE-13: badge-form P3 and P2 findings reach their own caps, not the looser P1 cap', async () => {
+  const round = (levels) => {
+    const commits = levels.map((_, i) => String(i + 1).repeat(40));
+    return {
+      comments: [
+        ...commits.map((c, i) => requestComment(c, i, i ? levels[i - 1] : 'initial')),
+        stateComment(commits.at(-1)),
+      ],
+      reviews: commits.map((c) => receiptReview(c)),
+      inline: commits.map((c, i) => ({
+        ...findingComment(c, badge(levels[i], 'Finding ' + i)),
+        path: 'src/f' + i + '.ts',
+      })),
+    };
+  };
+  const p3 = mockApi(round(['P3', 'P3']));
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: p3.fetchImpl }), {
+    status: 'review_hold',
+    reason: 'severity_limit',
+  });
+  const p2 = mockApi(round(['P2', 'P2', 'P2', 'P2']));
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: p2.fetchImpl }), {
+    status: 'review_hold',
+    reason: 'severity_limit',
+  });
+  assert.equal(posts(p3).length + posts(p2).length, 0);
+  // Within the P2 cap the next request is still allowed (the cap is not tightened).
+  const within = mockApi(round(['P2', 'P2', 'P2']));
+  assert.equal(
+    (await requestCodexReview({ env, fetchImpl: within.fetchImpl })).status,
+    'requested',
+  );
+});
+
+test('SHAE-13: severity parsing leaves forged evidence, stale SHAs and duplicates denied', async () => {
+  // A P0 written by anyone but Codex is ignored: it neither holds nor lets a request skip checks.
+  const forged = mockApi({
+    comments: [requestComment(priorCommit), stateComment(priorCommit)],
+    reviews: [receiptReview(priorCommit)],
+    inline: [{ ...findingComment(priorCommit, badge('P0')), user: { login: requester } }],
+  });
+  assert.equal(
+    (await requestCodexReview({ env, fetchImpl: forged.fetchImpl })).status,
+    'requested',
+  );
+  // Findings for another commit do not count against this one.
+  const stale = mockApi({
+    comments: [requestComment(priorCommit), stateComment(priorCommit)],
+    reviews: [receiptReview(priorCommit)],
+    inline: [findingComment('c'.repeat(40), badge('P0'))],
+  });
+  assert.equal((await requestCodexReview({ env, fetchImpl: stale.fetchImpl })).status, 'requested');
+  // No receipt: pending, even with a P0 on file.
+  const pending = mockApi({
+    comments: [requestComment(priorCommit), stateComment(priorCommit)],
+    inline: [findingComment(priorCommit, badge('P0'))],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: pending.fetchImpl }), {
+    status: 'skipped_previous_review_pending',
+  });
+  // The same commit is never requested twice.
+  const dup = mockApi({
+    comments: [requestComment(sha)],
+    inline: [findingComment(sha, badge('P0'))],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: dup.fetchImpl }), {
+    status: 'already_requested',
+  });
+});

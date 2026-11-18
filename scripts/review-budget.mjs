@@ -140,6 +140,33 @@ export function classifyCodexReview({ comments, reviews, sha }) {
   return { status: 'clean', receipt };
 }
 
+// Codex states a finding's priority in the FIRST line of its inline comment, in
+// one of two forms (both observed):
+//   rendered badge: **<sub><sub>![P0 Badge](https://img.shields.io/badge/P0-red?style=flat)</sub></sub>  Title**
+//   literal marker: [P0] Title   (possibly wrapped in Markdown emphasis)
+// Ported from the Agent Relay parser, with one deliberate difference: when the
+// first line carries more than one marker (for example a badge alt text that
+// disagrees with its image URL, or a badge plus a bracket marker), the MOST
+// SEVERE one wins. A conflicting lower marker can therefore never hide a P0.
+// Below the first line only a P0 marker counts: it escalates (the previous parser
+// matched a marker anywhere, so this keeps that safety property), while lower
+// markers there are ignored and can never change or lower a severity. A comment
+// with no recognizable marker is P1, never a minor issue.
+const BADGE = /!\[P([0123]) Badge\]\(([^\n)]*)\)/gi;
+const BADGE_URL_LEVEL = /\/badge\/P([0123])(?![0-9])/i;
+const BRACKET = /(?:^|\s)\[P([0123])\](?![\w[])/gi;
+
+function firstLineLevels(firstLine, plainLine) {
+  const levels = [];
+  for (const badge of firstLine.matchAll(BADGE)) {
+    levels.push(Number(badge[1]));
+    const fromUrl = badge[2].match(BADGE_URL_LEVEL);
+    if (fromUrl) levels.push(Number(fromUrl[1]));
+  }
+  for (const bracket of plainLine.matchAll(BRACKET)) levels.push(Number(bracket[1]));
+  return levels;
+}
+
 export function findingsForSha(inlineComments, sha) {
   return (inlineComments ?? [])
     .filter(
@@ -149,11 +176,21 @@ export function findingsForSha(inlineComments, sha) {
         typeof comment.body === 'string',
     )
     .map((comment) => {
-      const match = comment.body.match(/\[P([0123])\]/i);
-      const severity = match ? 'P' + match[1] : 'P1';
-      const title = comment.body
-        .replace(/^\s*\[P[0123]\]\s*/i, '')
-        .split('\n')[0]
+      const firstLine = comment.body.split('\n', 1)[0];
+      // Replace emphasis and <sub> wrappers with spaces so a legacy marker such
+      // as **[P0] Title** is word-bounded.
+      const plainLine = firstLine.replace(/<\/?sub>/gi, ' ').replace(/[*_~`]+/g, ' ');
+      const levels = firstLineLevels(firstLine, plainLine);
+      // A P0 anywhere in the comment escalates; nothing below line one can lower.
+      const rest = comment.body.slice(firstLine.length);
+      if (rest) {
+        const restPlain = rest.replace(/<\/?sub>/gi, ' ').replace(/[*_~`]+/g, ' ');
+        if (firstLineLevels(rest, restPlain).includes(0)) levels.push(0);
+      }
+      const severity = levels.length ? 'P' + Math.min(...levels) : 'P1';
+      const title = plainLine
+        .replace(/!\[P[0123] Badge\]\([^\n)]*\)/gi, ' ')
+        .replace(/(?:^|\s)\[P[0123]\](?![\w[])/gi, ' ')
         .trim()
         .replace(/\s+/g, ' ')
         .toLowerCase();
