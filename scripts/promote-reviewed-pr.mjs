@@ -1,12 +1,10 @@
 import { pathToFileURL } from 'node:url';
+import { classifyCodexReview } from './review-budget.mjs';
 
 const OWNER = 'Nightlogue-LLC';
 const REPO = 'ui-components';
 const API = 'https://api.github.com/repos/' + OWNER + '/' + REPO;
 const BOT = 'nightlogue-conductor[bot]';
-const CODEX = 'chatgpt-codex-connector[bot]';
-const REVIEW_PREFIX = '<!-- codex-review-state:v1 ';
-const RECEIPT_PREFIX = '<!-- codex-review-receipt:v1 -->';
 const SHA = /^[a-f0-9]{40}$/;
 
 export function eligiblePr(pr) {
@@ -25,48 +23,11 @@ export function eligiblePr(pr) {
   );
 }
 
-export function cleanCodexReview(comments, sha) {
-  if (!SHA.test(sha) || !Array.isArray(comments)) return false;
-  const summaries = comments
-    .filter((c) => c?.user?.login === CODEX && typeof c.body === 'string')
-    .filter((c) => c.body.includes(REVIEW_PREFIX))
-    .sort((a, b) => (a.updated_at ?? '').localeCompare(b.updated_at ?? ''));
-  const last = summaries.at(-1);
-  if (!last) return false;
-  const match = last.body.match(/<!-- codex-review-state:v1 (\{[^\n]*\}) -->/);
-  if (!match) return false;
-  let state;
-  try {
-    state = JSON.parse(match[1]);
-  } catch {
-    return false;
-  }
-  const review = state?.code_review;
-  const security = state?.security_review;
-  if (
-    review?.commit_sha !== sha ||
-    review.status !== 'completed' ||
-    review.has_any_findings !== false ||
-    review.has_unresolved_findings !== false
-  )
-    return false;
-  if (
-    security?.status != null &&
-    (security.status !== 'completed' ||
-      security.commit_sha !== sha ||
-      security.has_any_findings !== false ||
-      security.has_unresolved_findings !== false)
-  )
-    return false;
-  // The status summary alone is insufficient; require the independent final receipt.
-  return comments.some(
-    (c) =>
-      c?.user?.login === CODEX &&
-      typeof c.body === 'string' &&
-      c.body.includes(RECEIPT_PREFIX) &&
-      c.body.includes('Reviewed commit:') &&
-      c.body.includes(sha.slice(0, 10)),
-  );
+// Ready only when Codex finished the exact head, its receipt is verified (issue
+// comment or PR review) and it reported no findings. Findings-bearing and
+// still-pending reviews are both "not clear"; the classifier says which.
+export function cleanCodexReview(comments, sha, reviews = []) {
+  return classifyCodexReview({ comments, reviews, sha }).status === 'clean';
 }
 
 export function successfulCi(runs, sha) {
@@ -119,7 +80,24 @@ export async function promoteReviewedPr({ number, readToken, appToken, fetchImpl
     if (chunk.length < 100) break;
     if (page === 5) return skip('comments_limit');
   }
-  if (!cleanCodexReview(comments, sha)) return skip('codex_not_clear');
+
+  // Review-with-findings receipts are PR reviews, not issue comments. Fail
+  // closed when the review list is too long to scan completely.
+  const reviews = [];
+  for (let page = 1; page <= 5; page++) {
+    const chunk = await api(
+      API + '/pulls/' + number + '/reviews?per_page=100&page=' + page,
+      readToken,
+    );
+    if (!Array.isArray(chunk)) return skip('bad_reviews');
+    reviews.push(...chunk);
+    if (chunk.length < 100) break;
+    if (page === 5) return skip('reviews_limit');
+  }
+  const review = classifyCodexReview({ comments, reviews, sha });
+  if (review.status !== 'clean') {
+    return { ...skip('codex_not_clear'), detail: review.reason ?? review.status };
+  }
 
   const result = await api(API + '/actions/runs?head_sha=' + sha + '&per_page=100', readToken);
   if (result.total_count > 100 || !successfulCi(result.workflow_runs, sha)) {
@@ -155,7 +133,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     readToken: process.env.GITHUB_READ_TOKEN,
     appToken: process.env.NIGHTLOGUE_APP_TOKEN,
   })
-    .then((result) => console.log('codex_ready_gate', result.status, result.reason ?? ''))
+    .then((result) =>
+      console.log('codex_ready_gate', result.status, result.reason ?? '', result.detail ?? ''),
+    )
     .catch((error) => {
       console.error('codex_ready_gate_failed', error.message);
       process.exitCode = 1;

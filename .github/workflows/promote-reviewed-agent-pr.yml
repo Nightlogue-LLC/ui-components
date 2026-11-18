@@ -27,8 +27,15 @@ jobs:
             github.event.workflow_run.head_repository.full_name == 'Nightlogue-LLC/ui-components')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # GitHub keeps one running and one pending run per group and cancels an
+    # older pending run when a newer one queues. A Codex comment names exactly
+    # one PR, so it gets a per-PR group: another PR's activity cannot displace
+    # it. CI-completion, hourly and manual runs re-scan every draft PR, so any
+    # newer sweep fully replaces an older pending one and they share a group.
     concurrency:
-      group: nightlogue-review-ready
+      group: >-
+        nightlogue-review-ready-${{ github.event_name == 'issue_comment' &&
+        format('pr-{0}', github.event.issue.number) || 'sweep' }}
       cancel-in-progress: false
     steps:
       - name: Mint restricted Conductor token for ready-for-review mutation
@@ -49,6 +56,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             scripts/promote-reviewed-pr.mjs
+            scripts/review-budget.mjs
 
       - name: Promote eligible Codex-cleared PRs
         shell: bash

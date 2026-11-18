@@ -48,7 +48,7 @@ The comment shows as the owner because the owner-authorized token posts it. I ca
 | Case                                                                                                                                                               | Coverage                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | Missing owner token → no GitHub call, no claim of a request                                                                                                        | **Existing test** (`request-codex-review.test.mjs`)                                                           |
-| Token of the App or another user → `skipped_wrong_requester`, no comment                                                                                           | **Existing test**                                                                                             |
+| Token of the App or another user → fails with `codex_request_wrong_requester`, no comment, PR untouched (SHAE-13 F-2; was `skipped_wrong_requester`)               | **Changed test** (`request-codex-review.test.mjs`)                                                            |
 | Identity API failure → fixed stage label, no credential in the message                                                                                             | **Existing test**                                                                                             |
 | Duplicate request for one SHA; head moves, PR closes or gains a hold before the post                                                                               | **Existing test**                                                                                             |
 | Review cap, P0, unchanged findings, unfinished prior review                                                                                                        | **Existing test** (`review-budget.test.mjs`, `request-codex-review.test.mjs`)                                 |
@@ -68,7 +68,7 @@ Run: `node --test scripts/request-codex-review.test.mjs scripts/review-budget.te
 
 **U-3 · Informational · Lifecycle parser.** `scripts/sync-linear-lifecycle.mjs` only accepts an `## Issue` URL of the form `…/issue/UICOMP-<n>/<slug>` on a branch `agent/uicomp-<n>-…`. A SHAE-5 PR here therefore does not move any Linear issue. That is safe, and it means SHAE-5 status must be updated by hand.
 
-**U-4 · Same as relay F-1.** `scripts/review-budget.mjs` and `scripts/promote-reviewed-pr.mjs` read the Codex receipt only from issue comments. Clean reviews post it there (#89 at 05:55:36Z, #93 at 23:09:40Z), so the ready gate works. Reviews with findings post it as a pull-request review, so after a round with findings the budget stops at `previous_review_pending`. Safe stop; the repair-review loop cannot advance automatically. Not changed.
+**U-4 · Same as relay F-1.** `scripts/review-budget.mjs` and `scripts/promote-reviewed-pr.mjs` read the Codex receipt only from issue comments. Clean reviews post it there (#89 at 05:55:36Z, #93 at 23:09:40Z), so the ready gate works. Reviews with findings post it as a pull-request review, so after a round with findings the budget stops at `previous_review_pending`. Safe stop; the repair-review loop cannot advance automatically. **Fixed by SHAE-13** (see the SHAE-13 section below).
 
 ## Still needs the owner
 
@@ -77,3 +77,12 @@ Run: `node --test scripts/request-codex-review.test.mjs scripts/review-budget.te
 3. On a disposable `agent/shae-5-ui-smoke` branch, make `check` fail and confirm the PR is blocked from merge in the merge box, without merging.
 4. Decide on `require_last_push_approval` and code-owner review (F-5), and record any owner-approved change.
 5. SHAE-4 is still Todo; escalation behavior cannot be accepted until it ships.
+
+## SHAE-13 remediation status (2026-11-18, UTC)
+
+Linear: [SHAE-13](https://linear.app/nightlogue-llc/issue/SHAE-13). Delivered as a separate PR; **nothing below is live until the owner reviews and merges it.** SHAE-13 is an operational ticket, so this PR does not move any UICOMP issue (see U-3).
+
+- **F-1 / U-4:** `scripts/review-budget.mjs` adds `codexReceipt` and `classifyCodexReview`. A Codex receipt is accepted from the Codex bot as an issue comment (clean review) or a submitted pull-request review (review with findings), only for the exact head (`commit_id`, receipt marker and `Reviewed commit:` prefix). `request-codex-review.mjs` and `promote-reviewed-pr.mjs` read `GET /pulls/{n}/reviews`; the gate marks a PR ready only for a clean review. Budget caps and CI rules are unchanged. Tests: `scripts/review-budget.test.mjs`, `scripts/request-codex-review.test.mjs`, `scripts/promote-reviewed-pr.test.mjs`.
+- **F-2:** a valid token for another GitHub user now fails the step with a fixed annotation and requests nothing.
+- **F-3:** this repository's PR-creation job was already per branch (`agent-pr-<branch>`), so competing branches cannot displace each other. The readiness gate used one repo-wide group; it is now per PR for a Codex comment and one shared group for sweeps. Tests: `scripts/review-gate-trigger.test.mjs` (replays events through GitHub's one-running/one-pending rule using the real group expressions; Actions itself was not run).
+- **Not changed (new finding, owner decision):** this repository's severity parser in `scripts/review-budget.mjs` reads only literal `[P0]`–`[P3]` markers, while the relay's parser also reads the rendered `![P2 Badge]` form that Codex emits (observed on relay PR #27). If UI reviews use the badge form, a P0 would be classified as P1 and would not stop for the owner. I did not observe a UI review with findings, so this is inferred from the code, not from a live case.

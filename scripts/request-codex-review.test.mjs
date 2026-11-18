@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { isEligiblePr, hasRequestForCommit, requestCodexReview } from './request-codex-review.mjs';
 
 const sha = 'a'.repeat(40);
@@ -28,6 +30,7 @@ function mockApi({
   currentPr = pr,
   comments = [],
   inline = [],
+  reviews = [],
   postStatus = 201,
   login = requester,
 } = {}) {
@@ -40,6 +43,7 @@ function mockApi({
     if (url === 'https://api.github.com/user') body = { login };
     else if (url.includes('/pulls?')) body = pullRequests;
     else if (url.includes('/pulls/89/comments?')) body = inline;
+    else if (url.includes('/pulls/89/reviews?')) body = reviews;
     else if (url.includes('/comments?')) body = comments;
     else if (url.includes('/pulls/89')) body = currentPr;
     else body = { id: 123 };
@@ -164,13 +168,54 @@ test('missing owner token never calls GitHub or claims review was requested', as
   assert.equal(api.calls.length, 0);
 });
 
+// SHAE-13 F-2: a valid token for the wrong GitHub user used to end as a green
+// "skipped" run. It must now fail the workflow without touching the PR.
 test('App identity or another GitHub account cannot request the Codex review', async () => {
   for (const login of [bot, 'someone-else']) {
     const api = mockApi({ login });
-    const result = await requestCodexReview({ env, fetchImpl: api.fetchImpl });
-    assert.deepEqual(result, { status: 'skipped_wrong_requester' });
-    assert.equal(api.calls.filter((call) => call.method === 'POST').length, 0);
+    await assert.rejects(
+      requestCodexReview({ env, fetchImpl: api.fetchImpl }),
+      (error) =>
+        error.message === 'codex_request_wrong_requester' && !error.message.includes(login),
+    );
+    // Only the identity probe ran: no PR lookup, no comment, no PR edit.
+    assert.deepEqual(
+      api.calls.map((call) => call.url),
+      ['https://api.github.com/user'],
+    );
   }
+});
+
+test('wrong-owner token exits non-zero with a fixed diagnostic and leaks nothing', () => {
+  const stub =
+    "globalThis.fetch = async (url) => { if (url === 'https://api.github.com/user') " +
+    "return { ok: true, status: 200, json: async () => ({ login: 'someone-else' }) }; " +
+    "throw Error('unexpected request ' + url); };";
+  const token = 'secret-owner-token-0123456789';
+  const run = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      'data:text/javascript,' + encodeURIComponent(stub),
+      fileURLToPath(new URL('./request-codex-review.mjs', import.meta.url)),
+    ],
+    { env: { ...env, CODEX_REVIEW_REQUEST_TOKEN: token }, encoding: 'utf8' },
+  );
+  const output = run.stdout + run.stderr;
+  assert.equal(run.status, 1);
+  assert.match(output, /::error title=Codex review not requested::/);
+  assert.match(output, /remains a draft/);
+  assert.match(output, /codex_request_wrong_requester/);
+  assert.doesNotMatch(output, /codex_review_request requested/);
+  assert.equal(output.includes(token), false);
+  assert.equal(output.includes('someone-else'), false);
+});
+
+test('a correctly owned token still reports success and a request', async () => {
+  const api = mockApi();
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'requested',
+  });
 });
 
 test('identity API failures report safe stage without exposing credentials', async () => {
@@ -241,4 +286,210 @@ test('unfinished previous Codex review never starts another request', async () =
     status: 'skipped_previous_review_pending',
   });
   assert.equal(api.calls.filter((call) => call.method === 'POST').length, 0);
+});
+
+// SHAE-13 F-1: a review that reported findings publishes its receipt as a PR
+// review (not an issue comment). The request path must read both shapes, but
+// accept only Codex-authored evidence for the exact previous commit.
+const codexBot = 'chatgpt-codex-connector[bot]';
+const priorCommit = 'b'.repeat(40);
+const requestComment = (commit, minute = 0, severity = minute ? 'P2' : 'initial') => ({
+  user: { login: requester },
+  created_at: '2026-11-16T23:5' + minute + ':00Z',
+  body:
+    '@codex review\n<!-- nightlogue-codex-request:' +
+    commit +
+    ' -->\n<!-- nightlogue-review-budget:v1 {"round":' +
+    minute +
+    ',"severity":"' +
+    severity +
+    '"} -->',
+});
+const stateComment = (commit, over = {}) => ({
+  user: { login: codexBot },
+  updated_at: '2026-11-16T23:57:00Z',
+  body:
+    '<!-- codex-review-state:v1 ' +
+    JSON.stringify({
+      code_review: {
+        commit_sha: commit,
+        status: 'completed',
+        has_any_findings: true,
+        has_unresolved_findings: true,
+        ...over,
+      },
+    }) +
+    ' -->',
+});
+const receiptBody = (commit) =>
+  '<!-- codex-review-receipt:v1 -->\n\n### Codex Review\n\n**Reviewed commit:** `' +
+  commit.slice(0, 10) +
+  '`';
+const receiptComment = (commit, over = {}) => ({
+  user: { login: codexBot },
+  body: receiptBody(commit),
+  ...over,
+});
+const receiptReview = (commit, over = {}) => ({
+  user: { login: codexBot, type: 'Bot' },
+  state: 'COMMENTED',
+  commit_id: commit,
+  body: receiptBody(commit),
+  ...over,
+});
+// UI Components' severity parser reads literal "[P#]" markers.
+const findingComment = (commit, title = '[P2] Needs a fix') => ({
+  user: { login: codexBot },
+  commit_id: commit,
+  path: 'src/badge.ts',
+  body: title,
+});
+const priorRound = [requestComment(priorCommit), stateComment(priorCommit)];
+const posts = (api) => api.calls.filter((call) => call.method === 'POST');
+
+test('F-1: a findings review whose receipt is a PR review lets the next request proceed', async () => {
+  const api = mockApi({
+    comments: priorRound,
+    reviews: [receiptReview(priorCommit)],
+    inline: [findingComment(priorCommit)],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'requested',
+  });
+  assert.equal(posts(api).length, 1);
+  assert.match(JSON.parse(posts(api)[0].body).body, /"round":1,"severity":"P2"/);
+});
+
+test('F-1: the issue-comment receipt of a clean review still lets the next request proceed', async () => {
+  const api = mockApi({
+    comments: [
+      requestComment(priorCommit),
+      stateComment(priorCommit, { has_any_findings: false, has_unresolved_findings: false }),
+      receiptComment(priorCommit),
+    ],
+  });
+  assert.equal((await requestCodexReview({ env, fetchImpl: api.fetchImpl })).status, 'requested');
+});
+
+test('F-1: missing, forged, stale or incomplete review receipts keep the request pending', async () => {
+  const forgedBy = (login) => receiptReview(priorCommit, { user: { login, type: 'User' } });
+  const cases = {
+    'no receipt anywhere': [],
+    'review authored by the owner': [forgedBy(requester)],
+    'review authored by Conductor': [forgedBy(bot)],
+    'lookalike bot login': [
+      receiptReview(priorCommit, { user: { login: 'chatgpt-codex-connector' } }),
+    ],
+    'human account typed as User': [
+      receiptReview(priorCommit, { user: { login: codexBot, type: 'User' } }),
+    ],
+    'review for a different head': [receiptReview(priorCommit, { commit_id: 'c'.repeat(40) })],
+    'body names a different commit': [
+      receiptReview(priorCommit, { body: receiptBody('c'.repeat(40)) }),
+    ],
+    'body lacks the receipt marker': [
+      receiptReview(priorCommit, { body: 'Reviewed commit: ' + priorCommit.slice(0, 10) }),
+    ],
+    'body lacks the Reviewed commit line': [
+      receiptReview(priorCommit, { body: '<!-- codex-review-receipt:v1 -->' }),
+    ],
+    'unsubmitted PENDING review': [receiptReview(priorCommit, { state: 'PENDING' })],
+    'DISMISSED review': [receiptReview(priorCommit, { state: 'DISMISSED' })],
+    'inline finding alone is not a receipt': [],
+  };
+  for (const [name, reviews] of Object.entries(cases)) {
+    const api = mockApi({ comments: priorRound, reviews, inline: [findingComment(priorCommit)] });
+    assert.deepEqual(
+      await requestCodexReview({ env, fetchImpl: api.fetchImpl }),
+      { status: 'skipped_previous_review_pending' },
+      name,
+    );
+    assert.equal(posts(api).length, 0, name);
+  }
+});
+
+test('F-1: an unfinished review state is pending even when a receipt review exists', async () => {
+  const api = mockApi({
+    comments: [requestComment(priorCommit), stateComment(priorCommit, { status: 'running' })],
+    reviews: [receiptReview(priorCommit)],
+  });
+  assert.equal(
+    (await requestCodexReview({ env, fetchImpl: api.fetchImpl })).status,
+    'skipped_previous_review_pending',
+  );
+  assert.equal(posts(api).length, 0);
+});
+
+test('F-1: review-budget limits still hold when receipts are PR reviews', async () => {
+  // Two prior P3-or-worse rounds with PR-review receipts: the severity cap
+  // must still produce a REVIEW HOLD instead of another request.
+  const past = ['b'.repeat(40), 'c'.repeat(40)];
+  const comments = [];
+  const reviews = [];
+  const inline = [];
+  past.forEach((commit, i) => {
+    comments.push(requestComment(commit, i, i ? 'P3' : 'initial'), stateComment(commit));
+    reviews.push(receiptReview(commit));
+    inline.push({ ...findingComment(commit), body: '[P3] Minor clarity issue' });
+  });
+  const api = mockApi({ comments, reviews, inline });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'review_hold',
+    reason: 'severity_limit',
+  });
+  assert.equal(posts(api).length, 0);
+  const patches = api.calls.filter((call) => call.method === 'PATCH');
+  assert.equal(patches.length, 1);
+  assert.match(JSON.parse(patches[0].body).body, /\*\*REVIEW HOLD:\*\*/);
+});
+
+test('F-1: PR reviews are read only after a previous request exists', async () => {
+  const first = mockApi();
+  await requestCodexReview({ env, fetchImpl: first.fetchImpl });
+  assert.equal(
+    first.calls.some((call) => call.url.includes('/reviews?')),
+    false,
+  );
+  const later = mockApi({ comments: priorRound, reviews: [receiptReview(priorCommit)] });
+  await requestCodexReview({ env, fetchImpl: later.fetchImpl });
+  assert.equal(
+    later.calls.some((call) => call.url.includes('/pulls/89/reviews?per_page=100&page=1')),
+    true,
+  );
+  // Reads are plain GETs; nothing here can submit, approve or dismiss a review.
+  assert.equal(
+    later.calls.filter((call) => call.url.includes('/reviews') && call.method !== 'GET').length,
+    0,
+  );
+});
+
+test('F-1: an unreadable or over-long review list denies the request', async () => {
+  const bad = mockApi({ comments: priorRound, reviews: { message: 'nope' } });
+  await assert.rejects(
+    requestCodexReview({ env, fetchImpl: bad.fetchImpl }),
+    /invalid_reviews_response/,
+  );
+  assert.equal(posts(bad).length, 0);
+  const many = mockApi({
+    comments: priorRound,
+    reviews: Array.from({ length: 100 }, () => ({
+      user: { login: 'someone' },
+      state: 'COMMENTED',
+    })),
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: many.fetchImpl }), {
+    status: 'skipped_review_limit',
+  });
+  assert.equal(posts(many).length, 0);
+});
+
+test('duplicate events for the same commit never post a second request', async () => {
+  const api = mockApi({
+    comments: [requestComment(sha)],
+    reviews: [receiptReview(priorCommit)],
+  });
+  assert.deepEqual(await requestCodexReview({ env, fetchImpl: api.fetchImpl }), {
+    status: 'already_requested',
+  });
+  assert.equal(posts(api).length, 0);
 });

@@ -30,8 +30,11 @@ step exits cleanly with `skipped_requester_not_configured` and **does not**
 claim a Codex review was requested.
 
 The script verifies that the token's authenticated GitHub user is
-`shavonne-senpai` before searching or commenting. A wrong principal is a
-safe skip. The PR must be bot-authored, open, belong to the same repo,
+`shavonne-senpai` before searching or commenting. A valid token that belongs
+to any other principal fails the workflow step with a fixed, sanitized
+`::error` annotation (`codex_request_wrong_requester`): no review is requested,
+nothing is posted, and the PR stays a draft. The other account's login and the
+token are never printed. The PR must be bot-authored, open, belong to the same repo,
 have complete issue-specific description, and match the exact CI-verified
 commit, including a fresh check immediately before commenting.
 

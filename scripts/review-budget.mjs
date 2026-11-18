@@ -6,6 +6,7 @@ export const SEVERITY_BUDGET = Object.freeze({ P1: 5, P2: 3, P3: 1 });
 const REQUEST = /<!-- nightlogue-codex-request:([a-f0-9]{40}) -->/;
 const BUDGET = /<!-- nightlogue-review-budget:v1 (\{[^\n]*\}) -->/;
 const STATUS = /<!-- codex-review-state:v1 (\{[^\n]*\}) -->/;
+const STATUS_PREFIX = '<!-- codex-review-state:v1 ';
 const CODEX = 'chatgpt-codex-connector[bot]';
 const OWNER = 'shavonne-senpai';
 const SHA = /^[a-f0-9]{40}$/;
@@ -49,6 +50,96 @@ export function reviewState(comments, sha) {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Codex completion evidence (SHAE-13 F-1)
+//
+// Codex publishes its final receipt in one of two shapes, observed live:
+//   * clean review:            an ISSUE COMMENT authored by the Codex bot;
+//   * review with findings:    a PULL REQUEST REVIEW authored by the Codex bot
+//                              (inline findings hang off that review).
+// Both carry `<!-- codex-review-receipt:v1 -->` and a `Reviewed commit:` line.
+// Evidence is accepted only from the exact Codex bot identity and only for the
+// exact commit. Nothing here clears a hold or lowers any requirement.
+// ---------------------------------------------------------------------------
+const RECEIPT_MARKER = '<!-- codex-review-receipt:v1 -->';
+// Matches "Reviewed commit: abc", "**Reviewed commit:** `abc`" and similar.
+const REVIEWED_COMMIT = /Reviewed commit:(?:\*\*)?\s*`?([a-f0-9]{10,40})`?(?![a-f0-9])/i;
+// PENDING reviews are unsubmitted drafts and DISMISSED reviews are withdrawn.
+const SUBMITTED_REVIEW_STATES = new Set(['COMMENTED', 'APPROVED', 'CHANGES_REQUESTED']);
+
+function isCodexBot(user) {
+  // The `[bot]` login can only belong to a GitHub App. When GitHub reports a
+  // type, it must agree.
+  return user?.login === CODEX && (user.type === undefined || user.type === 'Bot');
+}
+
+function receiptNamesCommit(body, sha) {
+  if (typeof body !== 'string' || !body.includes(RECEIPT_MARKER)) return false;
+  const named = body.match(REVIEWED_COMMIT)?.[1]?.toLowerCase();
+  return typeof named === 'string' && sha.startsWith(named);
+}
+
+// Returns { source } for the first valid receipt of this exact commit, else null.
+export function codexReceipt({ comments, reviews, sha }) {
+  if (!SHA.test(sha ?? '')) return null;
+  for (const comment of Array.isArray(comments) ? comments : []) {
+    if (isCodexBot(comment?.user) && receiptNamesCommit(comment.body, sha)) {
+      return { source: 'issue_comment' };
+    }
+  }
+  for (const review of Array.isArray(reviews) ? reviews : []) {
+    if (
+      isCodexBot(review?.user) &&
+      SUBMITTED_REVIEW_STATES.has(review.state) &&
+      // Full 40-character head the review was written for, not just the text.
+      review.commit_id === sha &&
+      receiptNamesCommit(review.body, sha)
+    ) {
+      return { source: 'pull_request_review' };
+    }
+  }
+  return null;
+}
+
+// Classifies Codex's review of exactly `sha` as:
+//   pending  - not provably finished for this commit (default; fails closed)
+//   findings - finished, receipt verified, findings reported
+//   clean    - finished, receipt verified, no findings of any kind
+export function classifyCodexReview({ comments, reviews, sha }) {
+  const pending = (reason) => ({ status: 'pending', reason });
+  if (!SHA.test(sha ?? '') || !Array.isArray(comments)) return pending('invalid_input');
+  const summary = comments
+    .filter(
+      (c) => isCodexBot(c?.user) && typeof c.body === 'string' && c.body.includes(STATUS_PREFIX),
+    )
+    .sort((a, b) => (a.updated_at ?? '').localeCompare(b.updated_at ?? ''))
+    .at(-1);
+  if (!summary) return pending('summary_missing');
+  let state;
+  try {
+    state = JSON.parse(summary.body.match(STATUS)?.[1]);
+  } catch {
+    return pending('summary_unreadable');
+  }
+  const code = state?.code_review;
+  const security = state?.security_review;
+  if (code?.commit_sha !== sha) return pending('summary_for_other_commit');
+  if (code.status !== 'completed') return pending('review_not_completed');
+  const securityRan = security?.status != null;
+  if (securityRan && (security.status !== 'completed' || security.commit_sha !== sha)) {
+    return pending('security_review_not_completed');
+  }
+  const receipt = codexReceipt({ comments, reviews, sha });
+  if (!receipt) return pending('receipt_missing');
+
+  const flags = [code.has_any_findings, code.has_unresolved_findings];
+  if (securityRan) flags.push(security.has_any_findings, security.has_unresolved_findings);
+  if (flags.includes(true)) return { status: 'findings', receipt };
+  // Anything other than an explicit "no findings" is uncertain, never clean.
+  if (flags.some((flag) => flag !== false)) return pending('findings_state_unknown');
+  return { status: 'clean', receipt };
+}
+
 export function findingsForSha(inlineComments, sha) {
   return (inlineComments ?? [])
     .filter(
@@ -79,7 +170,7 @@ function highestSeverity(findings) {
   return 'P1';
 }
 
-export function checkReviewBudget({ comments, inline, sha }) {
+export function checkReviewBudget({ comments, inline, reviews, sha }) {
   if (!SHA.test(sha)) return { allowed: false, reason: 'invalid_sha' };
 
   const requests = reviewRequests(comments);
@@ -96,13 +187,11 @@ export function checkReviewBudget({ comments, inline, sha }) {
   if (!previous || previous.status !== 'completed') {
     return { allowed: false, reason: 'previous_review_pending' };
   }
-  const hasReceipt = (comments ?? []).some(
-    (comment) =>
-      comment?.user?.login === CODEX &&
-      comment.body?.includes('<!-- codex-review-receipt:v1 -->') &&
-      comment.body?.includes(last.sha.slice(0, 10)),
-  );
-  if (!hasReceipt) return { allowed: false, reason: 'previous_review_pending' };
+  // The receipt may be an issue comment (clean review) or a PR review (review
+  // with findings). Either must be Codex-authored and name the exact commit.
+  if (!codexReceipt({ comments, reviews, sha: last.sha })) {
+    return { allowed: false, reason: 'previous_review_pending' };
+  }
 
   const findings = findingsForSha(inline, last.sha);
   const severity = highestSeverity(findings);
