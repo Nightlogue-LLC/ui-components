@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url';
-import { checkReviewBudget } from './review-budget.mjs';
+import { checkReviewBudget, reviewRequests } from './review-budget.mjs';
 
 const OWNER = 'Nightlogue-LLC';
 const REPO = 'ui-components';
@@ -78,8 +78,11 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   };
 
   const requester = await api('https://api.github.com/user', {}, 'identity');
+  // A valid token that belongs to the wrong GitHub user is a misconfiguration,
+  // not a skippable state: fail the run visibly. Nothing is posted and the PR
+  // is not touched, so it stays a draft. The actual login is never echoed.
   if (requester?.login !== REQUESTER) {
-    return { status: 'skipped_wrong_requester' };
+    throw Error('codex_request_wrong_requester');
   }
 
   const search = new URLSearchParams({
@@ -131,7 +134,25 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
     if (page === 10) return { status: 'skipped_inline_limit' };
   }
 
-  const budget = checkReviewBudget({ comments, inline, sha });
+  // A review that reported findings publishes its receipt as a PR review, not
+  // an issue comment. Only needed once an earlier request exists. An
+  // incomplete scan denies the request rather than guessing.
+  const reviews = [];
+  if (reviewRequests(comments).length) {
+    for (let page = 1; page <= 10; page++) {
+      const chunk = await api(
+        `${ROOT}/pulls/${number}/reviews?per_page=100&page=${page}`,
+        {},
+        'review_list',
+      );
+      if (!Array.isArray(chunk)) throw Error('invalid_reviews_response');
+      reviews.push(...chunk);
+      if (chunk.length < 100) break;
+      if (page === 10) return { status: 'skipped_review_limit' };
+    }
+  }
+
+  const budget = checkReviewBudget({ comments, inline, reviews, sha });
   if (!budget.allowed) {
     if (budget.reason === 'already_requested') return { status: 'already_requested' };
     if (budget.reason === 'previous_review_pending') {
@@ -182,11 +203,22 @@ export async function requestCodexReview({ env = process.env, fetchImpl = fetch 
   return { status: 'requested' };
 }
 
+// Fixed, credential-free explanations for known failures. Never interpolate
+// response data, usernames or tokens into these.
+export const DIAGNOSTICS = Object.freeze({
+  codex_request_wrong_requester:
+    'CODEX_REVIEW_REQUEST_TOKEN is a valid GitHub token but it does not belong to the required owner requester account (' +
+    REQUESTER +
+    '). No Codex review was requested and the PR remains a draft. Replace the repository Actions secret with a token issued by that account.',
+});
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   requestCodexReview()
     .then((result) => console.log('codex_review_request', result.status))
     .catch((error) => {
       console.error('codex_review_request_failed', error.message);
+      const explanation = DIAGNOSTICS[error.message];
+      if (explanation) console.log('::error title=Codex review not requested::' + explanation);
       process.exitCode = 1;
     });
 }
