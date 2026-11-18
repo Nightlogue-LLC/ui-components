@@ -1,12 +1,13 @@
 {
-  "issue": "https://linear.app/nightlogue-llc/issue/UICOMP-18/smoke-test-conductor-pr-creation-and-shae-3-merge-webhook",
-  "problem": "Verify trusted push-CI-to-Conductor PR creation and the SHAE-3 GitHub owner-merge webhook in observation-only mode. The initial webhook ping redelivery was ignored correctly, but no qualifying PR merge has been observed.",
-  "solution": "Add a documentation-only smoke-test marker with issue-specific PR metadata. This triggers branch push CI and protected Conductor draft PR creation; owner may merge only after review and while successor dispatch is disabled.",
+  "issue": "https://linear.app/nightlogue-llc/issue/SHAE-5",
+  "problem": "The UI Components Codex review gate had no recorded verification of forged or incomplete Codex evidence, or of skipped and cancelled CI on either event, and its GitHub merge restrictions had no documented evidence. The record in the relay repository covers the shared findings but not what is specific to this repository.",
+  "solution": "Add three focused negative-path tests to scripts/promote-reviewed-pr.test.mjs (forged or incomplete Codex evidence, non-green CI conclusions on either event, ready or owner-authored PRs never promoted) and docs/shae-5-merge-restriction-verification.md with live GitHub evidence and UTC times, the observed PR #93 cycle, four repository-specific findings and the owner-run steps still required. No script, workflow, ruleset, secret or component code is changed.",
   "tests": [
-    "Full UI Components CI on this agent branch must pass for its exact head SHA",
-    "Verify bot-owned draft PR, owner-authorized independent Codex review and correct issue metadata",
-    "After owner merge, inspect GitHub webhook delivery for action observed / mode observe_only"
+    "node --test scripts/request-codex-review.test.mjs scripts/review-budget.test.mjs scripts/promote-reviewed-pr.test.mjs scripts/sync-linear-lifecycle.test.mjs scripts/review-gate-trigger.test.mjs: 38 passed, 0 failed (35 before this change)",
+    "Mutation checks: removing the receipt author check, the summary author check, or counting skipped CI as success each made a new test fail; the gate script was restored and is unchanged in this PR",
+    "npx eslint and npx prettier --check on the changed files passed",
+    "Not run: live ruleset reads, Conductor push or approval attempts, a failed-check merge-box test on a disposable branch. These need the owner; see the doc."
   ],
-  "risks": "Disposable documentation-only file and PR metadata change. Do not enable AGENT_RELAY_SUCCESSOR_ENABLED, add agent-ok, launch Claude sessions, auto-merge or deploy game behavior.",
-  "review": "Check only docs/merge-webhook-observation-smoke.md and .agent/pr-description.json are changed; CI must be green; bot author, Codex review receipt, and explicit owner merge required."
+  "risks": "Test and documentation changes only. No library API, token or theme change. The doc records open policy questions for the owner (last-push approval, code-owner review, bypass actors) and four findings; none were fixed here. SHAE-4, a blocker of SHAE-5, is still Todo.",
+  "review": "Check that the three new tests assert the real gate functions, that each live claim in the doc has a link and UTC time, and that U-1 (PR-creation token spans both repositories) matches open-agent-pr-after-ci.yml. Owner decides the remaining steps."
 }

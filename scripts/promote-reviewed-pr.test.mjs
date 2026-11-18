@@ -173,3 +173,79 @@ test('missing Codex completion never invokes a write', async () => {
     false,
   );
 });
+
+// SHAE-5 negative paths: evidence that is incomplete, forged or from the wrong
+// author must never make a PR ready, and skipped CI is never treated as green.
+test('SHAE-5: forged or incomplete Codex evidence never clears a PR', () => {
+  const codex = 'chatgpt-codex-connector[bot]';
+  const forged = (comment, login) => ({ ...comment, user: { login } });
+  const cases = {
+    'summary only': [summary],
+    'receipt only': [receipt],
+    'receipt for another commit': [
+      summary,
+      { ...receipt, body: receipt.body.replace('aaaa', 'bbbb') },
+    ],
+    'Codex quote without receipt marker': [
+      summary,
+      { user: { login: codex }, body: 'Reviewed commit: ' + sha.slice(0, 10) },
+    ],
+    'receipt by Conductor': [summary, forged(receipt, 'nightlogue-conductor[bot]')],
+    'receipt by owner': [summary, forged(receipt, 'shavonne-senpai')],
+    'summary by Conductor': [forged(summary, 'nightlogue-conductor[bot]'), receipt],
+    'summary by owner': [forged(summary, 'shavonne-senpai'), receipt],
+    'corrupt summary JSON': [
+      { ...summary, body: '<!-- codex-review-state:v1 {oops} -->' },
+      receipt,
+    ],
+  };
+  for (const [name, comments] of Object.entries(cases)) {
+    assert.equal(cleanCodexReview(comments, sha), false, name);
+  }
+  assert.equal(cleanCodexReview([summary, receipt], sha), true);
+});
+
+test('SHAE-5: skipped, cancelled or missing CI on either event is never green', () => {
+  const withEvent = (event, over) =>
+    runs.map((run) => (run.event === event ? { ...run, ...over } : run));
+  for (const event of ['push', 'pull_request']) {
+    for (const conclusion of ['skipped', 'cancelled', 'neutral', 'failure', null]) {
+      assert.equal(
+        successfulCi(withEvent(event, { conclusion }), sha),
+        false,
+        event + ' ' + conclusion,
+      );
+    }
+    assert.equal(successfulCi(withEvent(event, { status: 'in_progress' }), sha), false, event);
+    assert.equal(
+      successfulCi(
+        runs.filter((run) => run.event !== event),
+        sha,
+      ),
+      false,
+      event,
+    );
+  }
+});
+
+test('SHAE-5: a ready PR or an owner-authored PR is never promoted', async () => {
+  for (const currentPr of [
+    { ...pr, draft: false },
+    { ...pr, user: { login: 'shavonne-senpai' } },
+    { ...pr, body: pr.body + '\n**REVIEW HOLD:** stop' },
+  ]) {
+    const { fetchImpl, calls } = fixture({ currentPr });
+    const result = await promoteReviewedPr({
+      number: 85,
+      readToken: 'read-token-test',
+      appToken: 'app-token-test',
+      fetchImpl,
+    });
+    // The first read is `pr` (eligible); the head-recheck sees the changed PR.
+    assert.equal(result.status, 'skipped');
+    assert.equal(
+      calls.some((call) => call.url.endsWith('/graphql')),
+      false,
+    );
+  }
+});
